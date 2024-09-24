@@ -1,6 +1,7 @@
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import "./custom-slick.css"; 
 
 const offers = [
   {
@@ -30,13 +31,13 @@ export default function WidgetOffer() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl pt-32 sm:py-18 lg:pt-28">
+    <div className="mx-auto max-w-7xl pt-20  sm:py-18 lg:pt-16">
       
-      <Slider {...settings} className="flex  justify-center ">
+      <Slider {...settings} className="flex justify-center  ">
         {offers.map((offer, index) => (
-          <div key={index} className="flex flex-col items-center bg-secondary py-16 px-6  rounded-lg shadow-lg ">
-            <div className="flex items-center justify-between w-full ">
-              <div className="flex flex-col md:flex-row items-center md:justify-start w-full">
+          <div key={index} className="px-2 ">
+            <div className="flex  flex-col items-center  bg-secondary py-16 px-6 rounded-lg shadow-lg  justify-between ">
+              <div className="flex flex-col md:flex-row  items-center md:justify-start w-full">
                 <img
                   src={offer.imageUrl}
                   alt={offer.title}
@@ -48,7 +49,7 @@ export default function WidgetOffer() {
                   <p className="text-muted-foreground">
                     {offer.description}
                   </p>
-                  <div className='flex'>
+                  <div className='flex lg:justify-start justify-center items-center '>
                     <button className="bg-primary-foreground text-secondary py-2 px-4 my-2 rounded-full flex items-center shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
                       <span>Know more</span>
                       <ion-icon name="arrow-forward-outline"></ion-icon>
