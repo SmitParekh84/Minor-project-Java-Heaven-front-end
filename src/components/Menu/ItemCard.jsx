@@ -1,13 +1,12 @@
-// ItemCard.jsx
-import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import React from "react"
+import { useNavigate } from "react-router-dom" // Import useNavigate
 
 const ItemCard = ({ item }) => {
-  const navigate = useNavigate(); // Initialize navigate function
+  const navigate = useNavigate() // Initialize navigate function
 
   const handleAddItem = () => {
-    navigate(`/item/${item.id}`); // Navigate to ItemDetail with the item ID
-  };
+    navigate(`/item/${item.id}`) // Navigate to ItemDetail with the item ID
+  }
 
   return (
     <div className="bg-card rounded-lg shadow-md p-4 flex">
@@ -22,17 +21,19 @@ const ItemCard = ({ item }) => {
           <p className="text-sm text-muted-foreground">{item.description}</p>
         </div>
         <div className="flex justify-between items-end mt-2">
-          <span className="block text-lg font-bold text-card-title">₹ {item.price.toFixed(2)}</span>
-          <button 
+          <span className="block text-lg font-bold text-card-title">
+            ₹ {item.price.toFixed(2)}
+          </span>
+          <button
             className="bg-primary-foreground text-secondary-foreground hover:bg-primary-foreground/80 mt-2 p-2 rounded-full"
             onClick={handleAddItem} // Use the handler here
           >
-            Add Item
+            View Details
           </button>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ItemCard;
+export default ItemCard
