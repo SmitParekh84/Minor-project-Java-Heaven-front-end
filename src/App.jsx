@@ -9,6 +9,7 @@ import Navbar from "./components/Navbar/Navbar"; // Adjust the path based on you
 import Cart from "./components/Menu/Cart"; // Import the Cart component
 import SignUp from "./components/Pages/SignUp";
 import Profile from "./components/Pages/Profile"; // Import your Profile component
+import NotFound from "./components/Pages/NotFound"; // Create a NotFound component
 import React, { useState } from "react"; // Import React and useState
 
 export default function App() {
@@ -30,7 +31,7 @@ export default function App() {
             path="/profile"
             element={user ? <Profile user={user} /> : <Login setUser={setUser} />}
           />
-
+          <Route path="*" element={<NotFound />} /> {/* Catch all unmatched routes */}
         </Routes>
       </Router>
     </CartProvider>

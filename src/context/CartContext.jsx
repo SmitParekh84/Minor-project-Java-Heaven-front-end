@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 
 // Create Cart Context
 const CartContext = createContext();
@@ -10,7 +10,16 @@ export const useCart = () => {
 
 // Cart Provider Component
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(() => {
+    // Load initial state from local storage if available
+    const savedCart = localStorage.getItem('cartItems');
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+
+  // Effect to sync cart with local storage
+  useEffect(() => {
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+  }, [cartItems]);
 
   // Add item to cart (with id and size)
   const addToCart = (newItem) => {
@@ -40,6 +49,7 @@ export const CartProvider = ({ children }) => {
 
   // Update item quantity
   const updateCartItemQuantity = (itemId, itemSize, newQuantity) => {
+    if (newQuantity < 0) return; // Prevent setting negative quantity
     setCartItems((prevItems) =>
       prevItems.map((item) =>
         item.id === itemId && item.size === itemSize
@@ -54,10 +64,17 @@ export const CartProvider = ({ children }) => {
     setCartItems([]);
   };
 
+  // Memoize the context value
+  const value = useMemo(() => ({
+    cartItems,
+    addToCart,
+    removeFromCart,
+    updateCartItemQuantity,
+    clearCart,
+  }), [cartItems]);
+
   return (
-    <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, updateCartItemQuantity, clearCart }}
-    >
+    <CartContext.Provider value={value}>
       {children}
     </CartContext.Provider>
   );

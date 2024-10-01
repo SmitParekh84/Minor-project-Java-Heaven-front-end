@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Dialog, DialogPanel } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '../../context/CartContext'; // Adjust the path based on your folder structure
 
 const navigation = [
@@ -14,6 +14,7 @@ const navigation = [
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { cartItems } = useCart(); // Use the Cart Context to get cart items
+  const location = useLocation(); // Get current location for active link indication
 
   // Calculate total quantity of items in the cart
   const totalItemsInCart = cartItems.reduce((total, item) => total + item.quantity, 0);
@@ -26,7 +27,7 @@ export default function Navbar() {
             <span className="sr-only">Your Company</span>
             <img
               alt="Company-Logo"
-              src="images/logo-3.png"
+              src="images/logo-3.png" // Ensure this path is correct
               className="h-16 w-auto"
             />
           </Link>
@@ -47,18 +48,24 @@ export default function Navbar() {
             <Bars3Icon aria-hidden="true" className="h-6 w-6" />
           </button>
         </div>
+
         <div className="hidden lg:flex lg:gap-x-12">
           {navigation.map((item) => (
-            <Link key={item.name} to={item.href} className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
+            <Link
+              key={item.name}
+              to={item.href}
+              className={`text-sm font-semibold leading-6 text-gray-900 hover:text-secondary ${location.pathname === item.href ? 'text-secondary font-bold' : ''}`}
+            >
               {item.name}
             </Link>
           ))}
           {/* Add Cart Link */}
           <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
             <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-            Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`} {/* Show number of items in cart */}
+            Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
           </Link>
         </div>
+
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <Link to="/profile" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
             Log in <span aria-hidden="true">&rarr;</span>
@@ -73,8 +80,8 @@ export default function Navbar() {
             <Link to="/" className="-m-1.5 p-1.5">
               <span className="sr-only">Coffee Haven</span>
               <img
-                alt=""
-                src="../../../public/images/logo-3.png"
+                alt="Company Logo"
+                src="images/logo-3.png" // Ensure this path is correct
                 className="h-16 w-auto"
               />
             </Link>
@@ -94,7 +101,7 @@ export default function Navbar() {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                    className={`-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 ${location.pathname === item.href ? 'bg-gray-100' : ''}`}
                   >
                     {item.name}
                   </Link>

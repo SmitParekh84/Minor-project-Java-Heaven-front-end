@@ -1,37 +1,44 @@
-import React, { useState } from "react"
-import { useNavigate } from "react-router-dom" // Import useNavigate for redirection
-import axios from "axios" // Import axios for API requests
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function SignUp() {
-  const navigate = useNavigate() // Hook for navigation
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     mobno: "",
     email: "",
     password: "",
     confirmPassword: "",
-  })
-  const [error, setError] = useState("") // State for error messages
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // State for loading indication
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
-  }
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    setError(""); // Clear previous errors
+    setLoading(true); // Set loading to true while processing
+
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match")
-      return
+      setError("Passwords do not match");
+      setLoading(false); // Reset loading on error
+      return;
     }
 
     try {
-      await axios.post("http://localhost:5000/api/signup", formData) // Adjust API endpoint as necessary
-      navigate("/login") // Redirect to login page
+      await axios.post("http://localhost:5000/api/signup", formData);
+      navigate("/login");
     } catch (err) {
-      setError(err.response.data.msg || "Registration failed")
+      setError(err.response?.data?.msg || "Registration failed");
+    } finally {
+      setLoading(false); // Reset loading after processing
     }
-  }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
@@ -41,20 +48,16 @@ export default function SignUp() {
             <h2 className="text-2xl text-center font-bold text-primary-foreground mb-6">
               Sign Up
             </h2>
-            {error && <p className="text-red-500 mb-4">{error}</p>}{" "}
-            {/* Display error message */}
+            {error && <p className="text-red-500 mb-4" aria-live="polite">{error}</p>}
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label
-                  className="block text-muted-foreground"
-                  htmlFor="username"
-                >
+                <label className="block text-muted-foreground" htmlFor="username">
                   USERNAME
                 </label>
                 <input
                   type="text"
                   id="username"
-                  name="username" // Set name for form handling
+                  name="username"
                   placeholder="Enter your username *"
                   className="mt-1 block w-full border border-border rounded-md p-2 focus:outline-none focus:ring focus:ring-ring"
                   value={formData.username}
@@ -67,7 +70,7 @@ export default function SignUp() {
                   MOBILE NUMBER
                 </label>
                 <input
-                  type="text"
+                  type="tel" // Changed to 'tel' for numeric input
                   id="mobno"
                   name="mobno"
                   placeholder="Enter your mobile number *"
@@ -93,10 +96,7 @@ export default function SignUp() {
                 />
               </div>
               <div className="mb-4">
-                <label
-                  className="block text-muted-foreground"
-                  htmlFor="password"
-                >
+                <label className="block text-muted-foreground" htmlFor="password">
                   PASSWORD
                 </label>
                 <input
@@ -111,16 +111,13 @@ export default function SignUp() {
                 />
               </div>
               <div className="mb-4">
-                <label
-                  className="block text-muted-foreground"
-                  htmlFor="confirm-password"
-                >
+                <label className="block text-muted-foreground" htmlFor="confirm-password">
                   CONFIRM PASSWORD
                 </label>
                 <input
                   type="password"
                   id="confirm-password"
-                  name="confirmPassword" // Change name to match state
+                  name="confirmPassword"
                   placeholder="Confirm Password *"
                   className="mt-1 block w-full border border-border rounded-md p-2 focus:outline-none focus:ring focus:ring-ring"
                   value={formData.confirmPassword}
@@ -136,9 +133,10 @@ export default function SignUp() {
               </p>
               <button
                 type="submit"
-                className="w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold"
+                className={`w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={loading} // Disable button while loading
               >
-                Sign Up
+                {loading ? 'Signing Up...' : 'Sign Up'}
               </button>
             </form>
             <p className="mt-2 text-muted-foreground">
@@ -151,5 +149,5 @@ export default function SignUp() {
         </div>
       </div>
     </div>
-  )
+  );
 }

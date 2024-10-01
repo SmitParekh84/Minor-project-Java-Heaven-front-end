@@ -43,15 +43,16 @@ const ItemList = () => {
     setSelectedFilter(filter); // Update selected filter
   };
 
-  if (loading)
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full" role="status"></div>
         <span className="ml-2">Loading...</span>
       </div>
     ); // Show loading state with spinner
+  }
 
-  if (error)
+  if (error) {
     return (
       <div className="text-center text-red-500">
         <p>Error: {error}</p>
@@ -63,15 +64,18 @@ const ItemList = () => {
         </button>
       </div>
     ); // Show error message with retry button
+  }
 
   return (
-    <div className="container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
+    <section className="container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
       {/* Filter Bar */}
       <div className="relative isolate px-8 lg:px-8 py-16 bg-primary-foreground font-spartan">
         <FilterBar onFilterChange={handleFilterChange} />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
           {filteredItems.length > 0 ? (
-            filteredItems.map((item) => <ItemCard key={item.id} item={item} />)
+            filteredItems.map((item) => (
+              <ItemCard key={item._id} item={item} /> // Use _id for a unique key
+            ))
           ) : (
             <div className="col-span-full text-center text-gray-500">
               No items found matching the selected filter.
@@ -79,7 +83,7 @@ const ItemList = () => {
           )}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

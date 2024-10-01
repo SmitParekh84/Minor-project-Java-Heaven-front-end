@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useCart } from "../../context/CartContext"; // Import the Cart Context
-import { Link } from 'react-router-dom';
 
 const ItemDetail = () => {
   const { id } = useParams(); // Get the item ID from the URL
@@ -38,10 +37,15 @@ const ItemDetail = () => {
   }, [id]);
 
   // Handle case when loading
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="loader">Loading...</div>; // Optionally style the loading state
 
   // Handle error case
-  if (error) return <div>Error: {error}</div>;
+  if (error) return (
+    <div>
+      <p>Error: {error}</p>
+      <button onClick={() => window.location.reload()}>Retry</button> {/* Retry button */}
+    </div>
+  );
 
   // Handle case when item is not found
   if (!item) return <div>Item not found</div>;
@@ -61,7 +65,7 @@ const ItemDetail = () => {
       <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
         {/* Render item image */}
         <img
-          src={item.image || "default-image-url.jpg"} // Fallback to a default image if not available
+          src={item.image || "https://example.com/default-image.jpg"} // Fallback to a default image if not available
           alt={item.name || "Item Image"}
           className="w-full h-48 object-cover rounded-md"
         />
@@ -80,10 +84,10 @@ const ItemDetail = () => {
             {["Small", "Medium", "Large"].map((size) => (
               <button
                 key={size}
-                className={`border rounded py-1 px-2 ${
+                className={`border rounded py-1 px-2 transition duration-300 ${
                   selectedSize === size
                     ? "bg-secondary text-primary-foreground"
-                    : ""
+                    : "hover:bg-gray-100"
                 }`}
                 onClick={() => handleSizeSelection(size)} // Handle size selection
               >
@@ -96,7 +100,7 @@ const ItemDetail = () => {
         {/* Add item button */}
         <div className="flex items-center mt-4">
           <button
-            className="bg-secondary text-primary-foreground py-2 px-4 rounded"
+            className="bg-secondary text-primary-foreground py-2 px-4 rounded transition duration-300"
             disabled={!selectedSize}
             onClick={handleAddToCart} // Call add to cart on button click
           >
