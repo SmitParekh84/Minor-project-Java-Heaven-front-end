@@ -5,7 +5,7 @@ const ItemCard = ({ item }) => {
   const navigate = useNavigate() // Initialize navigate function
 
   const handleAddItem = () => {
-    navigate(`/item/${item.id}`) // Navigate to ItemDetail with the item ID
+    navigate(`/item/${item._id}`) // Navigate to ItemDetail with the correct item ID
   }
 
   return (
