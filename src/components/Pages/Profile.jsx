@@ -1,9 +1,10 @@
 // Profile.jsx
-import React from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
 
-export default function Profile({ user, setUser }) {
-    const navigate = useNavigate(); // Initialize navigate for redirection
+import React, { useContext } from "react";
+import { UserContext } from "../../context/UserContext"; // Adjust the path based on your file structure
+
+export default function Profile() {
+    const { user, setUser } = useContext(UserContext); // Access user and setUser from context
 
     const handleLogout = () => {
         // Clear user session and state
@@ -11,7 +12,7 @@ export default function Profile({ user, setUser }) {
         localStorage.removeItem("sessionStartTime");
         localStorage.removeItem("userInfo");
         setUser(null); // Reset user state
-        navigate("/login"); // Redirect to login page after logout
+
     };
 
     return (
@@ -32,8 +33,9 @@ export default function Profile({ user, setUser }) {
                 )}
                 <button
                     className="w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold"
-                    onClick={handleLogout} // Use the handleLogout function
-                    aria-label="Logout" // Add an aria-label for accessibility
+
+                    onClick={handleLogout} // Call the handleLogout function
+
                 >
                     Logout
                 </button>
