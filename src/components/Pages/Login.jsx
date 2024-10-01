@@ -30,11 +30,13 @@ export default function Login({ setUser }) { // Accept setUser as a prop
 
             // Set user state to the response user info
             setUser(userInfo); // Set the user information in the state
+            console.log("User Info:", userInfo); // Log user info
 
             // Redirect to the profile page
-            navigate("/profile");
+            navigate("/");
         } catch (err) {
-            setError(err.response.data.msg || "Login failed");
+            // More robust error handling
+            setError(err.response?.data?.msg || "Login failed. Please try again.");
         }
     };
 

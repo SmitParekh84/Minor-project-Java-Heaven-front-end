@@ -1,7 +1,6 @@
-import { useState } from 'react';
-import { Dialog, DialogPanel } from '@headlessui/react';
-import { Bars3Icon, XMarkIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'; import { Dialog, DialogPanel } from '@headlessui/react';
+import { Bars3Icon, XMarkIcon, ShoppingCartIcon, UserIcon } from '@heroicons/react/24/outline';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext'; // Adjust the path based on your folder structure
 
 const navigation = [
@@ -11,12 +10,36 @@ const navigation = [
   { name: 'Store', href: '/store' },
 ];
 
+
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { cartItems } = useCart(); // Use the Cart Context to get cart items
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // State for login status
+  const [user, setUser] = useState(null); // User state to hold user information
+  const [showProfileMenu, setShowProfileMenu] = useState(false); // State to toggle profile menu
+  const navigate = useNavigate(); // Hook for navigation
 
   // Calculate total quantity of items in the cart
   const totalItemsInCart = cartItems.reduce((total, item) => total + item.quantity, 0);
+
+  useEffect(() => {
+    // Check if user is logged in by using localStorage or authentication state
+    const loggedInUser = localStorage.getItem('userInfo'); // Use the correct key
+    if (loggedInUser) {
+      const foundUser = JSON.parse(loggedInUser);
+      setUser(foundUser);
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    setIsLoggedIn(false); // Log out the user
+    setUser(null); // Clear user data
+    setShowProfileMenu(false); // Hide profile dropdown
+    localStorage.removeItem('userInfo'); // Remove user info from localStorage
+    navigate('/'); // Redirect to home page after logout
+  };
+
 
   return (
     <header className="absolute inset-x-0 top-0 z-50">
@@ -47,6 +70,7 @@ export default function Navbar() {
             <Bars3Icon aria-hidden="true" className="h-6 w-6" />
           </button>
         </div>
+
         <div className="hidden lg:flex lg:gap-x-12">
           {navigation.map((item) => (
             <Link key={item.name} to={item.href} className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
@@ -56,28 +80,55 @@ export default function Navbar() {
           {/* Add Cart Link */}
           <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
             <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-            Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`} {/* Show number of items in cart */}
+            Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
           </Link>
         </div>
+
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <Link to="/profile" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
-            Log in <span aria-hidden="true">&rarr;</span>
-          </Link>
+          {isLoggedIn ? (
+            <div className="relative">
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary"
+              >
+                <UserIcon className="h-5 w-5 mr-1" aria-hidden="true" />
+                {user.name}
+              </button>
+              {showProfileMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-50">
+                  <div className="px-4 py-2 text-gray-800">{user.email}</div>
+                  <div className="border-t border-gray-300"></div>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-200"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link to="/login" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
+              Log in <span aria-hidden="true">&rarr;</span>
+            </Link>
+          )}
         </div>
       </nav>
 
       <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
         <div className="fixed inset-0 z-50" />
+
         <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-primary-foreground px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
             <Link to="/" className="-m-1.5 p-1.5">
-              <span className="sr-only">Coffee Haven</span>
+              <span className="sr-only">Coffee Havean</span>
               <img
                 alt=""
                 src="../../../public/images/logo-3.png"
                 className="h-16 w-auto"
               />
             </Link>
+
             <button
               type="button"
               onClick={() => setMobileMenuOpen(false)}
@@ -87,6 +138,7 @@ export default function Navbar() {
               <XMarkIcon aria-hidden="true" className="h-6 w-6" />
             </button>
           </div>
+
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
@@ -109,12 +161,35 @@ export default function Navbar() {
                 </Link>
               </div>
               <div className="py-6">
-                <Link
-                  to="/profile" // Change this link to point to the profile page
-                  className="-mx-3 block px-3 py-2.5 text-base font-semibold leading-7 bg-secondary rounded-full text-center text-primary hover:bg-gray-50"
-                >
-                  Log in
-                </Link>
+                {isLoggedIn ? (
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowProfileMenu(!showProfileMenu)}
+                      className="-mx-3 block px-3 py-2.5 text-base font-semibold leading-7 bg-secondary rounded-full text-center text-primary hover:bg-gray-50"
+                    >
+                      Profile
+                    </button>
+                    {showProfileMenu && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-50">
+                        <div className="px-4 py-2 text-gray-800">{user.email}</div>
+                        <div className="border-t border-gray-300"></div>
+                        <button
+                          onClick={handleLogout}
+                          className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-200"
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="-mx-3 block px-3 py-2.5 text-base font-semibold leading-7 bg-secondary rounded-full text-center text-primary hover:bg-gray-50"
+                  >
+                    Log in
+                  </Link>
+                )}
               </div>
             </div>
           </div>
