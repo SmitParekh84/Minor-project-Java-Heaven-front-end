@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Dialog, DialogPanel } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
-
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext'; // Adjust the path based on your folder structure
 
@@ -32,10 +31,10 @@ export default function Navbar() {
             />
           </Link>
         </div>
-        
+
         <div className="flex items-center lg:hidden">
-         {/* Cart Link for Mobile View */}
-         <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4">
+          {/* Cart Link for Mobile View */}
+          <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4">
             <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
             Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
           </Link>
@@ -56,32 +55,29 @@ export default function Navbar() {
           ))}
           {/* Add Cart Link */}
           <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
-          <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
+            <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
             Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`} {/* Show number of items in cart */}
           </Link>
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <Link to="/login" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
+          <Link to="/profile" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
             Log in <span aria-hidden="true">&rarr;</span>
           </Link>
         </div>
       </nav>
-      
+
       <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
-      
         <div className="fixed inset-0 z-50" />
-        
         <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-primary-foreground px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
             <Link to="/" className="-m-1.5 p-1.5">
-              <span className="sr-only">Coffee Havean</span>
+              <span className="sr-only">Coffee Haven</span>
               <img
                 alt=""
                 src="../../../public/images/logo-3.png"
                 className="h-16 w-auto"
               />
             </Link>
-            
             <button
               type="button"
               onClick={() => setMobileMenuOpen(false)}
@@ -91,11 +87,9 @@ export default function Navbar() {
               <XMarkIcon aria-hidden="true" className="h-6 w-6" />
             </button>
           </div>
-          
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
-             
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
@@ -105,18 +99,18 @@ export default function Navbar() {
                     {item.name}
                   </Link>
                 ))}
-                 {/* Add Cart Link in mobile menu */}
-              <Link
+                {/* Add Cart Link in mobile menu */}
+                <Link
                   to="/cart"
                   className="flex items-center -mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
-                 <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
+                  <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
                   Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
                 </Link>
               </div>
               <div className="py-6">
                 <Link
-                  to="/login"
+                  to="/profile" // Change this link to point to the profile page
                   className="-mx-3 block px-3 py-2.5 text-base font-semibold leading-7 bg-secondary rounded-full text-center text-primary hover:bg-gray-50"
                 >
                   Log in
