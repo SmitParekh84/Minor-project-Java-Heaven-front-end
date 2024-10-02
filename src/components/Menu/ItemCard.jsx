@@ -1,12 +1,12 @@
-import React from "react"
-import { useNavigate } from "react-router-dom" // Import useNavigate
+import React from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const ItemCard = ({ item }) => {
-  const navigate = useNavigate() // Initialize navigate function
+  const navigate = useNavigate(); // Initialize navigate function
 
   const handleAddItem = () => {
-    navigate(`/item/${item._id}`) // Navigate to ItemDetail with the correct item ID
-  }
+    navigate(`/item/${item._id}`); // Navigate to ItemDetail with the correct item ID
+  };
 
   return (
     <div className="bg-card rounded-lg shadow-md p-4 flex">
@@ -33,7 +33,7 @@ const ItemCard = ({ item }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ItemCard
+export default ItemCard;

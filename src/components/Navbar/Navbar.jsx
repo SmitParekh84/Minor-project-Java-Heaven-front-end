@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react'; import { Dialog, DialogPanel
 import { Bars3Icon, XMarkIcon, ShoppingCartIcon, UserIcon } from '@heroicons/react/24/outline';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext'; // Adjust the path based on your folder structure
+import toast from 'react-hot-toast';
 
 const navigation = [
   { name: 'Home', href: '/' },
-  { name: 'Order', href: '/order' },
-  { name: 'Pay', href: '/pay' },
-  { name: 'Store', href: '/store' },
+  { name: 'Menu', href: '/order' },
+  { name: 'My Orders', href: '/my-orders' },
+
 ];
 
 
@@ -22,23 +23,25 @@ export default function Navbar() {
   // Calculate total quantity of items in the cart
   const totalItemsInCart = cartItems.reduce((total, item) => total + item.quantity, 0);
 
+  const loggedInUser = localStorage.getItem('userInfo'); // Use the correct key
   useEffect(() => {
     // Check if user is logged in by using localStorage or authentication state
-    const loggedInUser = localStorage.getItem('userInfo'); // Use the correct key
     if (loggedInUser) {
       const foundUser = JSON.parse(loggedInUser);
       setUser(foundUser);
       setIsLoggedIn(true);
     }
-  }, []);
+  }, [loggedInUser]);
 
   const handleLogout = () => {
     setIsLoggedIn(false); // Log out the user
     setUser(null); // Clear user data
     setShowProfileMenu(false); // Hide profile dropdown
     localStorage.removeItem('userInfo'); // Remove user info from localStorage
+    toast.success("Logout Successfully")
     navigate('/'); // Redirect to home page after logout
   };
+  console.log(localStorage.getItem('userInfo'));
 
 
   return (
@@ -54,13 +57,42 @@ export default function Navbar() {
             />
           </Link>
         </div>
-
+        {/* Cart Link for Mobile View */}
         <div className="flex items-center lg:hidden">
           {/* Cart Link for Mobile View */}
-          <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4">
-            <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-            Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
-          </Link>
+          {isLoggedIn && ( // Only show the cart if the user is logged in
+            <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4">
+              <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
+              Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
+            </Link>
+          )}
+          {isLoggedIn ? (
+            <div className="relative">
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4"
+              >
+                <UserIcon className="h-5 w-5 mr-1" aria-hidden="true" />
+
+              </button>
+              {showProfileMenu && (
+                <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-50">
+                  <div className="px-4 py-2 text-gray-800">{user.email}</div>
+                  <div className="border-t border-gray-300"></div>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-200"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link to="/login" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
+              Log in <span aria-hidden="true">&rarr;</span>
+            </Link>
+          )}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(true)}
@@ -70,7 +102,7 @@ export default function Navbar() {
             <Bars3Icon aria-hidden="true" className="h-6 w-6" />
           </button>
         </div>
-
+        {/* Cart Link for pc View */}
         <div className="hidden lg:flex lg:gap-x-12">
           {navigation.map((item) => (
             <Link key={item.name} to={item.href} className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
@@ -78,29 +110,40 @@ export default function Navbar() {
             </Link>
           ))}
           {/* Add Cart Link */}
-          <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
-            <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-            Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
-          </Link>
+          {isLoggedIn ? (
+            <div className="relative flex items-center">
+              <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4">
+                <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
+                Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
+              </Link>
+
+
+
+            </div>
+          ) : (""
+
+          )}
         </div>
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           {isLoggedIn ? (
-            <div className="relative">
+            <div className="relative ">
+
               <button
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
                 className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary"
-              >
+              >{user.username}
                 <UserIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-                {user.name}
+
+
               </button>
               {showProfileMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-50">
+                <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-50">
                   <div className="px-4 py-2 text-gray-800">{user.email}</div>
                   <div className="border-t border-gray-300"></div>
                   <button
                     onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-200"
+                    className="block w-full text-left px-4 py-2 text-center text-sm text-red-600 hover:bg-gray-200"
                   >
                     Logout
                   </button>
@@ -142,35 +185,17 @@ export default function Navbar() {
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-                {/* Add Cart Link in mobile menu */}
-                <Link
-                  to="/cart"
-                  className="flex items-center -mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                >
-                  <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-                  Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
-                </Link>
-              </div>
-              <div className="py-6">
-                {isLoggedIn ? (
-                  <div className="relative">
+                {isLoggedIn ?
+                  <>
                     <button
                       onClick={() => setShowProfileMenu(!showProfileMenu)}
-                      className="-mx-3 block px-3 py-2.5 text-base font-semibold leading-7 bg-secondary rounded-full text-center text-primary hover:bg-gray-50"
+                      className="flex mx-3  rounded-lg px-3 py-2 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
                     >
-                      Profile
+                      <UserIcon className="h-5 w-5 mr-1" aria-hidden="true" />
+                      {user.username}
                     </button>
                     {showProfileMenu && (
-                      <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-50">
+                      <div className="absolute left-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-50">
                         <div className="px-4 py-2 text-gray-800">{user.email}</div>
                         <div className="border-t border-gray-300"></div>
                         <button
@@ -181,13 +206,36 @@ export default function Navbar() {
                         </button>
                       </div>
                     )}
-                  </div>
-                ) : (
+                  </> : ""}
+                {/* Add Cart Link in mobile menu */}
+                {isLoggedIn ? (
+
+                  <Link to="/cart" className="flex mx-3  rounded-lg px-3 py-2 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50">
+                    <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
+                    Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
+                  </Link>
+
+
+
+
+                ) : (""
+
+                )}
+                {navigation.map((item) => (
                   <Link
-                    to="/login"
-                    className="-mx-3 block px-3 py-2.5 text-base font-semibold leading-7 bg-secondary rounded-full text-center text-primary hover:bg-gray-50"
+                    key={item.name}
+                    to={item.href}
+                    className="mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >
-                    Log in
+                    {item.name}
+                  </Link>
+                ))}
+
+              </div>
+              <div className="py-6">
+                {isLoggedIn ? "" : (
+                  <Link to="/login" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
+                    Log in <span aria-hidden="true">&rarr;</span>
                   </Link>
                 )}
               </div>

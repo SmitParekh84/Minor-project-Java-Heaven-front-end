@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import ItemCard from "./ItemCard"
 import FilterBar from "./FilterBar"
+import toast from "react-hot-toast"
 
 const ItemList = () => {
   const [items, setItems] = useState([]) // State to hold the fetched items
@@ -15,7 +16,8 @@ const ItemList = () => {
       try {
         const response = await fetch("http://localhost:5000/api/items")
         if (!response.ok) {
-          throw new Error("Network response was not ok")
+          toast.error("Network response was not ok")
+          return
         }
         const data = await response.json()
         setItems(data) // Update state with fetched data

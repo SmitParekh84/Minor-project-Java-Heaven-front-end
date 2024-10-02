@@ -22,7 +22,7 @@ const offers = [
   // Add more offers here
 ];
 
-export default function WidgetOffer() {
+export default function   WidgetOffer() {
   const settings = {
     infinite: true,
     speed: 500,

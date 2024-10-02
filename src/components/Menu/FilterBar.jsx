@@ -46,9 +46,9 @@ const FilterBar = ({ onFilterChange }) => {
                 "Bestseller",
                 "Drinks",
                 "Food",
-                "Merchandise",
+
                 "Coffee At Home",
-                "Ready to Eat",
+
               ].map((filter) => (
                 <button
                   key={filter}
@@ -70,9 +70,9 @@ const FilterBar = ({ onFilterChange }) => {
             "Bestseller",
             "Drinks",
             "Food",
-            "Merchandise",
+
             "Coffee At Home",
-            "Ready to Eat",
+ 
           ].map((filter) => (
             <button
               key={filter}

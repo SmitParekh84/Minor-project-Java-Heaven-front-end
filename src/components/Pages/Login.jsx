@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../context/UserContext"; // Adjust the import path
 import axios from "axios";
+import toast from "react-hot-toast";
 
-export default function Login({ setUser }) { // Accept setUser as a prop
+export default function Login() {
     const navigate = useNavigate();
+    const { setUser } = useUser(); // Access setUser from UserContext
     const [credentials, setCredentials] = useState({
         username: "",
         password: "",
@@ -20,25 +23,22 @@ export default function Login({ setUser }) { // Accept setUser as a prop
 
         try {
             const response = await axios.post("http://localhost:5000/api/login", credentials);
-            const sessionId = response.data.sessionId; // Assume your backend returns a session ID
-            const userInfo = response.data.user; // Assuming your response contains user info
+            const sessionId = response.data.sessionId;
+            toast.success(response.data.msg ?? 'Login successful.')
+            const userInfo = response.data.user;
 
-            // Store session ID and current timestamp
             localStorage.setItem("sessionId", sessionId);
             localStorage.setItem("sessionStartTime", Date.now());
-            localStorage.setItem("userInfo", JSON.stringify(userInfo)); // Store user info
+            localStorage.setItem("userInfo", JSON.stringify(userInfo));
 
-            // Set user state to the response user info
-            setUser(userInfo); // Set the user information in the state
-            console.log("User Info:", userInfo); // Log user info
-
-            // Redirect to the profile page
-            navigate("/");
+            setUser(userInfo); // Set user information in context
+            navigate("/"); // Redirect to home page
         } catch (err) {
-            // More robust error handling
-            setError(err.response?.data?.msg || "Login failed. Please try again.");
+
+            toast.error(err.response?.data?.msg || "Login failed. Please try again.");
         }
     };
+
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-background">
@@ -46,7 +46,7 @@ export default function Login({ setUser }) { // Accept setUser as a prop
                 <h2 className="text-2xl text-center font-bold text-primary-foreground mb-6">
                     Login
                 </h2>
-                {error && <p className="text-red-500 mb-4">{error}</p>}
+
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label className="block text-muted-foreground" htmlFor="username">

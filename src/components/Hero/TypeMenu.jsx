@@ -18,6 +18,7 @@ const items = [
 
 ];
 
+
 export default function TypeMenu() {
   const settings = {
     dots: true,
@@ -41,7 +42,7 @@ export default function TypeMenu() {
         settings: {
           slidesToShow: 3,
           slidesToScroll: 3,
-          
+
         }
       },
       {
@@ -49,7 +50,7 @@ export default function TypeMenu() {
         settings: {
           slidesToShow: 4,
           slidesToScroll: 4,
-          
+
         }
       }
     ]

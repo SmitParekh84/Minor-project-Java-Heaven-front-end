@@ -1,8 +1,7 @@
-import React, { useState } from "react"; // Import React and useState
-
+import React from "react"; // Import React
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { CartProvider } from "./context/CartContext"; // Import CartProvider
-import { UserProvider } from "./context/UserContext"; // Import UserProvider
+import { UserProvider, useUser } from "./context/UserContext"; // Import UserProvider and useUser hook
 import Hero from "./components/Hero/Hero";
 import GetHelp from "./components/Pages/GetHelp";
 import ItemList from "./components/Menu/ItemList";
@@ -12,31 +11,47 @@ import Navbar from "./components/Navbar/Navbar"; // Adjust the path based on you
 import Cart from "./components/Menu/Cart"; // Import the Cart component
 import SignUp from "./components/Pages/SignUp";
 import Profile from "./components/Pages/Profile"; // Import your Profile component
+import MyOrders from "./components/Pages/MyOrders";
+import toast, { Toaster } from "react-hot-toast"; // Import Toaster from react-hot-toast
+import Footer from "./components/Pages/Footer";
+// ProfileRoute component to handle user context for profile
+const ProfileRoute = () => {
+  const { user } = useUser(); // Access user from UserContext
+  return user ? <Profile /> : <Login />; // Render Profile or Login based on user state
+};
 
 export default function App() {
-  const [user, setUser] = useState(null); // State to manage user information
-
   return (
-    <CartProvider>
-      <UserProvider> {/* Wrap your application with UserProvider */}
-        <Router>
-          <Navbar user={user} setUser={setUser} /> {/* Include the Navbar */}
-          <Routes>
-            <Route path="/" element={<Hero />} />
-            <Route path="/order" element={<ItemList />} />
-            <Route path="/get-help" element={<GetHelp />} />
-            <Route path="/login" element={<Login setUser={setUser} />} />
-            <Route path="/sign-up" element={<SignUp />} />
-            <Route path="/item/:id" element={<ItemDetail />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route
-              path="/profile"
-              element={user ? <Profile user={user} /> : <Login setUser={setUser} />}
-            />
+    <>
 
-          </Routes>
-        </Router>
-      </UserProvider>
-    </CartProvider>
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+      />
+
+      <CartProvider>
+        <UserProvider> {/* Wrap your application with UserProvider */}
+          <Router>
+            <Navbar /> {/* Include the Navbar, user prop is now handled in context */}
+            <Routes>
+              <Route path="/" element={<Hero />} />
+              <Route path="/order" element={<ItemList />} />
+              <Route path="/get-help" element={<GetHelp />} />
+              <Route
+                path="/login"
+                element={<Login />} // No need to pass setUser here, handle it within Login
+              />
+
+              <Route path="/sign-up" element={<SignUp />} />
+              <Route path="/item/:id" element={<ItemDetail />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/my-orders" element={<MyOrders />} />
+              <Route path="/profile" element={<ProfileRoute />} /> {/* Use ProfileRoute to manage user context */}
+            </Routes>
+            <Footer />
+          </Router>
+        </UserProvider>
+      </CartProvider>
+    </>
   );
 }
