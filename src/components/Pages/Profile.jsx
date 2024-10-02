@@ -1,9 +1,19 @@
-// Profile.jsx
-import React, { useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { useUser } from "../../context/UserContext"; // Use the custom hook to access UserContext
 
 export default function Profile() {
     const { user, setUser } = useUser(); // Access user and setUser from context using the custom hook
+    const [localUser, setLocalUser] = useState(null); // State to hold user data from localStorage
+
+    useEffect(() => {
+        // Fetch user data from localStorage
+        const storedUserInfo = localStorage.getItem("userInfo");
+        if (storedUserInfo) {
+            const parsedUserInfo = JSON.parse(storedUserInfo);
+            setLocalUser(parsedUserInfo); // Set localUser state with parsed data
+            setUser(parsedUserInfo); // Set user in context
+        }
+    }, [setUser]);
 
     const handleLogout = () => {
         // Clear user session and state
@@ -11,23 +21,22 @@ export default function Profile() {
         localStorage.removeItem("sessionStartTime");
         localStorage.removeItem("userInfo");
         setUser(null); // Reset user state
+        setLocalUser(null); // Clear local user data
     };
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-background">
             <div className="bg-secondary rounded-lg shadow-lg m-5 p-11 max-w-sm w-full">
                 <h2 className="text-2xl text-center font-bold text-primary-foreground mb-6">Profile</h2>
-                {user ? ( // Check if user exists
+                {localUser ? ( // Check if localUser exists
                     <>
                         <div className="mb-4">
-                            <p className="text-muted-foreground">Username: {user.username}</p>
+                            <p className="text-muted-foreground">Username: {localUser.username || "N/A"}</p>
                         </div>
                         <div className="mb-4">
-                            <p className="text-muted-foreground">Email: {user.email}</p>
+                            <p className="text-muted-foreground">Email: {localUser.email || "N/A"}</p>
                         </div>
-                        <div className="mb-4">
-                            <p className="text-muted-foreground">Mobile Number: {user.mobileNumber}</p> {/* Add mobile number here */}
-                        </div>
+
                         <button
                             className="w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold"
                             onClick={handleLogout} // Call the handleLogout function

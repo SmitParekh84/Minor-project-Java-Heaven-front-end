@@ -1,31 +1,31 @@
-import React, { useState, useEffect } from 'react'; import { Dialog, DialogPanel } from '@headlessui/react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Dialog, DialogPanel } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon, ShoppingCartIcon, UserIcon } from '@heroicons/react/24/outline';
 import { Link, useNavigate } from 'react-router-dom';
-import { useCart } from '../../context/CartContext'; // Adjust the path based on your folder structure
+import { useCart } from '../../context/CartContext';
 import toast from 'react-hot-toast';
 
-const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Menu', href: '/order' },
-  { name: 'My Orders', href: '/my-orders' },
-
+const adminNavigation = [
+  { name: 'Dashboard', href: '/admin-dashboard' },
+  { name: 'Orders', href: 'admin/orders' },
+  { name: 'Admin Edit', href: '/admin/edit' },
+  { name: 'Revenue', href: '/revenue' },
+  { name: 'Add Menu Item', href: '/admin/add-menu-item' },
+  { name: 'Best Selling Item', href: 'admin/best-selling' },
 ];
-
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { cartItems } = useCart(); // Use the Cart Context to get cart items
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // State for login status
-  const [user, setUser] = useState(null); // User state to hold user information
-  const [showProfileMenu, setShowProfileMenu] = useState(false); // State to toggle profile menu
-  const navigate = useNavigate(); // Hook for navigation
+  const { cartItems } = useCart();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const navigate = useNavigate();
 
-  // Calculate total quantity of items in the cart
-  const totalItemsInCart = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const totalItemsInCart = useMemo(() => cartItems.reduce((total, item) => total + item.quantity, 0), [cartItems]);
+  const loggedInUser = localStorage.getItem('userInfo');
 
-  const loggedInUser = localStorage.getItem('userInfo'); // Use the correct key
   useEffect(() => {
-    // Check if user is logged in by using localStorage or authentication state
     if (loggedInUser) {
       const foundUser = JSON.parse(loggedInUser);
       setUser(foundUser);
@@ -34,15 +34,15 @@ export default function Navbar() {
   }, [loggedInUser]);
 
   const handleLogout = () => {
-    setIsLoggedIn(false); // Log out the user
-    setUser(null); // Clear user data
-    setShowProfileMenu(false); // Hide profile dropdown
-    localStorage.removeItem('userInfo'); // Remove user info from localStorage
-    toast.success("Logout Successfully")
-    navigate('/'); // Redirect to home page after logout
+    setIsLoggedIn(false);
+    setUser(null);
+    setShowProfileMenu(false);
+    localStorage.removeItem('userInfo');
+    toast.success("Logout Successfully");
+    navigate('/');
   };
-  console.log(localStorage.getItem('userInfo'));
 
+  const isAdmin = user?.role === 'admin'; // Check if the logged-in user is an admin
 
   return (
     <header className="absolute inset-x-0 top-0 z-50">
@@ -50,33 +50,31 @@ export default function Navbar() {
         <div className="flex lg:flex-1">
           <Link to="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Your Company</span>
-            <img
-              alt="Company-Logo"
-              src="images/logo-3.png"
-              className="h-16 w-auto"
-            />
+            <img alt="Company-Logo" src="/images/logo-3.png" className="h-16 w-auto" />
           </Link>
         </div>
-        {/* Cart Link for Mobile View */}
+
         <div className="flex items-center lg:hidden">
-          {/* Cart Link for Mobile View */}
-          {isLoggedIn && ( // Only show the cart if the user is logged in
+          {isLoggedIn && !isAdmin && ( // Show cart link only if user is logged in and not an admin
             <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4">
               <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
               Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
             </Link>
           )}
+
           {isLoggedIn ? (
             <div className="relative">
               <button
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
                 className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4"
+                aria-haspopup="true"
+                aria-expanded={showProfileMenu}
               >
                 <UserIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-
               </button>
               {showProfileMenu && (
                 <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-50">
+                  <div className="px-4 py-2 text-gray-800">{user.username}</div>
                   <div className="px-4 py-2 text-gray-800">{user.email}</div>
                   <div className="border-t border-gray-300"></div>
                   <button
@@ -102,40 +100,45 @@ export default function Navbar() {
             <Bars3Icon aria-hidden="true" className="h-6 w-6" />
           </button>
         </div>
-        {/* Cart Link for pc View */}
+
         <div className="hidden lg:flex lg:gap-x-12">
-          {navigation.map((item) => (
-            <Link key={item.name} to={item.href} className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
-              {item.name}
-            </Link>
-          ))}
-          {/* Add Cart Link */}
-          {isLoggedIn ? (
-            <div className="relative flex items-center">
+          <Link key="home" to="/" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
+            Home
+          </Link>
+          <Link key="menu" to="/order" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
+            Menu
+          </Link>
+
+          {isLoggedIn && !isAdmin && ( // Show My Orders and Cart only if user is logged in and not an admin
+            <>
+              <Link key="my-orders" to="/my-orders" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
+                My Orders
+              </Link>
               <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4">
                 <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
                 Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
               </Link>
-
-
-
-            </div>
-          ) : (""
-
+            </>
           )}
+
+          {isLoggedIn && isAdmin && adminNavigation.map((item) => (
+            <Link key={item.name} to={item.href} className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
+              {item.name}
+            </Link>
+          ))}
         </div>
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           {isLoggedIn ? (
-            <div className="relative ">
-
+            <div className="relative">
               <button
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
                 className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary"
-              >{user.username}
+                aria-haspopup="true"
+                aria-expanded={showProfileMenu}
+              >
                 <UserIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-
-
+                {user.username}
               </button>
               {showProfileMenu && (
                 <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-50">
@@ -158,18 +161,13 @@ export default function Navbar() {
         </div>
       </nav>
 
-      <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
+      <Dialog open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} className="lg:hidden">
         <div className="fixed inset-0 z-50" />
-
         <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-primary-foreground px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
             <Link to="/" className="-m-1.5 p-1.5">
-              <span className="sr-only">Coffee Havean</span>
-              <img
-                alt=""
-                src="../../../public/images/logo-3.png"
-                className="h-16 w-auto"
-              />
+              <span className="sr-only">Your Company</span>
+              <img alt="" src="/images/logo-3.png" className="h-16 w-auto" />
             </Link>
 
             <button
@@ -183,59 +181,43 @@ export default function Navbar() {
           </div>
 
           <div className="mt-6 flow-root">
-            <div className="-my-6 divide-y divide-gray-500/10">
+            <div className="-my-6 divide-y divide-gray-500">
               <div className="space-y-2 py-6">
-                {isLoggedIn ?
+                <Link key="home" to="/" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
+                  Home
+                </Link>
+                <Link key="menu" to="/order" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
+                  Menu
+                </Link>
+
+                {isLoggedIn && !isAdmin && ( // Show My Orders and Cart links only for logged in non-admin users
                   <>
-                    <button
-                      onClick={() => setShowProfileMenu(!showProfileMenu)}
-                      className="flex mx-3  rounded-lg px-3 py-2 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
-                    >
-                      <UserIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-                      {user.username}
-                    </button>
-                    {showProfileMenu && (
-                      <div className="absolute left-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-50">
-                        <div className="px-4 py-2 text-gray-800">{user.email}</div>
-                        <div className="border-t border-gray-300"></div>
-                        <button
-                          onClick={handleLogout}
-                          className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-200"
-                        >
-                          Logout
-                        </button>
-                      </div>
-                    )}
-                  </> : ""}
-                {/* Add Cart Link in mobile menu */}
-                {isLoggedIn ? (
-
-                  <Link to="/cart" className="flex mx-3  rounded-lg px-3 py-2 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50">
-                    <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-                    Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
-                  </Link>
-
-
-
-
-                ) : (""
-
+                    <Link key="my-orders" to="/my-orders" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
+                      My Orders
+                    </Link>
+                    <Link to="/cart" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
+                      Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
+                    </Link>
+                  </>
                 )}
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className="mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >
+
+                {isLoggedIn && isAdmin && adminNavigation.map((item) => (
+                  <Link key={item.name} to={item.href} className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
                     {item.name}
                   </Link>
                 ))}
-
               </div>
               <div className="py-6">
-                {isLoggedIn ? "" : (
-                  <Link to="/login" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
-                    Log in <span aria-hidden="true">&rarr;</span>
+                {isLoggedIn ? (
+                  <button
+                    onClick={handleLogout}
+                    className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-red-600 hover:bg-gray-200"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <Link to="/login" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
+                    Log in
                   </Link>
                 )}
               </div>

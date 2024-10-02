@@ -12,8 +12,14 @@ import Cart from "./components/Menu/Cart"; // Import the Cart component
 import SignUp from "./components/Pages/SignUp";
 import Profile from "./components/Pages/Profile"; // Import your Profile component
 import MyOrders from "./components/Pages/MyOrders";
+import AdminDashboard from "./components/Pages/AdminDashboard"; // Import AdminDashboard component
+import AdminLogin from "./components/Pages/AdminLogin";
 import toast, { Toaster } from "react-hot-toast"; // Import Toaster from react-hot-toast
 import Footer from "./components/Pages/Footer";
+import AdminEdit from "./components/Pages/AdminEdit"; // Import AdminEdit component
+import AddMenuItem from "./components/Pages/AddMenuItem"; // Import AddMenuItem component
+import AdminOrders from "./components/Pages/AdminOrders";
+import BestSellingItem from "./components/Pages/BestSellingItem";
 // ProfileRoute component to handle user context for profile
 const ProfileRoute = () => {
   const { user } = useUser(); // Access user from UserContext
@@ -47,6 +53,13 @@ export default function App() {
               <Route path="/cart" element={<Cart />} />
               <Route path="/my-orders" element={<MyOrders />} />
               <Route path="/profile" element={<ProfileRoute />} /> {/* Use ProfileRoute to manage user context */}
+              {/* New route for Admin Dashboard */}
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin-dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/edit" element={<AdminEdit />} />
+              <Route path="/admin/add-menu-item" element={<AddMenuItem />} />
+              <Route path="/admin/orders" element={<AdminOrders />} />
+              <Route path="/admin/best-selling" element={<BestSellingItem />} />
             </Routes>
             <Footer />
           </Router>

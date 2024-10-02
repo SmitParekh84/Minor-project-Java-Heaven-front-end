@@ -10,6 +10,7 @@ export const UserProvider = ({ children }) => {
         username: "", // Initialize username
         email: "",    // Initialize email
         id: "",       // Initialize user ID
+        mobno: "",    // Initialize mobile number
     });
 
     return (

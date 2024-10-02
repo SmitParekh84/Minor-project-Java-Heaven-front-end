@@ -50,48 +50,66 @@ const ItemDetail = () => {
   };
 
   return (
-    <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
-      <img
-        src={item.image || "fallback-image-url"} // Use fallback image URL
-        alt={item.name}
-        className="w-full h-48 object-cover rounded-md"
-      />
-      <h2 className="text-2xl font-bold mt-4">{item.name}</h2>
-      <p className="text-gray-600 mt-2">{item.description}</p>
-      <p className="text-lg font-semibold mt-4">
-        Price: ₹ {item.price.toFixed(2)}
-      </p>
+    <div className="rounded-lg p-10 w-full h-screen flex items-center justify-center ">
+      <div className="rounded-lg w-full p-10 flex flex-col md:flex-row items-start bg-gray-100 shadow-lg">
 
-      {/* Options for cup sizes */}
-      <div className="mt-4">
-        <h3 className="text-lg font-semibold">Select Cup Size:</h3>
-        <div className="flex space-x-4 mt-2">
-          {["Small", "Medium", "Large"].map((size) => (
+        <div className="flex-shrink-0">
+          {/* Image Section */}
+          <img
+            src={item.imageUrl || "fallback-image-url"} // Use fallback image URL
+            alt={item.name}
+            className="w-48 h-48 object-cover rounded-md mx-auto md:mx-0 md:mr-6" // Center on mobile, align left on desktop
+          />
+        </div>
+
+        {/* Details Section */}
+        <div className="flex flex-col justify-between w-full md:ml-6">
+          <div>
+            <h2 className="text-2xl font-bold">{item.name}</h2>
+            <p className="text-gray-600 mt-2">{item.description}</p>
+            <p className="text-lg font-semibold mt-4">
+              Price: ₹ {item.price.toFixed(2)}
+            </p>
+          </div>
+
+          {/* Options for cup sizes */}
+          <div className="mt-4">
+            <h3 className="text-lg font-semibold">Select Cup Size:</h3>
+            <div className="flex space-x-4 mt-2">
+              {["Small", "Medium", "Large"].map((size) => (
+                <button
+                  key={size}
+                  className={`border rounded py-1 px-2 transition duration-300 ${selectedSize === size
+                    ? "bg-secondary text-primary-foreground font-semibold"
+                    : "bg-gray-200 hover:bg-gray-300"
+                    }`}
+                  onClick={() => handleSizeSelection(size)} // Handle size selection
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Add item button */}
+          <div className="flex items-center mt-4">
             <button
-              key={size}
-              className={`border rounded py-1 px-2 ${selectedSize === size
-                ? "bg-secondary text-primary-foreground"
-                : "bg-gray-200"
-                }`}
-              onClick={() => handleSizeSelection(size)} // Handle size selection
+              className={`bg-secondary text-primary-foreground py-2 px-4 rounded transition duration-300 ${!selectedSize ? "opacity-50 cursor-not-allowed" : ""}`}
+              disabled={!selectedSize} // Disable button if no size selected
+              onClick={handleAddToCart} // Call add to cart on button click
             >
-              {size}
+              Add to Cart
             </button>
-          ))}
+          </div>
         </div>
       </div>
-
-      {/* Add item button */}
-      <div className="flex items-center mt-4">
-        <button
-          className="bg-secondary text-primary-foreground py-2 px-4 rounded"
-          disabled={!selectedSize} // Disable button if no size selected
-          onClick={handleAddToCart} // Call add to cart on button click
-        >
-          Add to Cart
-        </button>
-      </div>
     </div>
+
+
+
+
+
+
   );
 };
 
