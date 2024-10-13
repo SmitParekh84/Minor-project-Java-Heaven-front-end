@@ -5,7 +5,7 @@ import "./custom-slick.css";
 
 const offers = [
   {
-    title: "Starbucks Rewards",
+    title: "Java Heaven Rewards",
     description: "Collect Stars Any Way You Pay. Rewards got a makeover—no surprises, just perks!",
     imageUrl: "https://static.vecteezy.com/system/resources/previews/029/283/030/original/coffee-coffee-cup-coffee-cup-coffee-cup-clipart-restaurant-coffee-cup-transparent-background-ai-generative-free-png.png",
   },

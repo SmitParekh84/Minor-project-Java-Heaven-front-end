@@ -49,7 +49,7 @@ export default function Navbar() {
       <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-10">
         <div className="flex lg:flex-1">
           <Link to="/" className="-m-1.5 p-1.5">
-            <span className="sr-only">Your Company</span>
+            <span className="sr-only">Java Heaven</span>
             <img alt="Company-Logo" src="/images/logo-3.png" className="h-16 w-auto" />
           </Link>
         </div>
@@ -102,15 +102,19 @@ export default function Navbar() {
         </div>
 
         <div className="hidden lg:flex lg:gap-x-12">
-          <Link key="home" to="/" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
-            Home
-          </Link>
-          <Link key="menu" to="/order" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
-            Menu
-          </Link>
+
 
           {isLoggedIn && !isAdmin && ( // Show My Orders and Cart only if user is logged in and not an admin
             <>
+              <Link key="home" to="/" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
+                Home
+              </Link>
+              <Link key="menu" to="/about" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
+                About
+              </Link>
+              <Link key="menu" to="/order" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
+                Menu
+              </Link>
               <Link key="my-orders" to="/my-orders" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
                 My Orders
               </Link>
@@ -183,15 +187,16 @@ export default function Navbar() {
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500">
               <div className="space-y-2 py-6">
-                <Link key="home" to="/" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
-                  Home
-                </Link>
-                <Link key="menu" to="/order" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
-                  Menu
-                </Link>
+
 
                 {isLoggedIn && !isAdmin && ( // Show My Orders and Cart links only for logged in non-admin users
                   <>
+                    <Link key="home" to="/" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
+                      Home
+                    </Link>
+                    <Link key="menu" to="/order" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
+                      Menu
+                    </Link>
                     <Link key="my-orders" to="/my-orders" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
                       My Orders
                     </Link>

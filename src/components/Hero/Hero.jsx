@@ -3,6 +3,7 @@ import TypeMenu from './TypeMenu'
 import Recommend from '../Pages/Recommend'
 
 import About from '../Pages/About'
+import AboutCard from '../Pages/AboutCard'
 export default function Hero() {
   return (
     <div className="bg-primary-foreground font-spartan">
@@ -16,7 +17,7 @@ export default function Hero() {
 
         <TypeMenu />
         <Recommend />
-        <About />
+        <AboutCard />
 
       </div>
 

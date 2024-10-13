@@ -5,21 +5,21 @@ import "slick-carousel/slick/slick-theme.css";
 const items = [
   {
     title: "Cappuccino",
-    description: "SHORT(0).",
-    price: "₹ 283.50",
-    imageUrl: "https://starbucksstatic.cognizantorderserv.com/Items/Small/webP/100447.webp",
+    description: "Coffee mixed with steamed milk and topped with foamed milk.",
+    price: "₹ 240.00",
+    imageUrl: "https://img.freepik.com/free-psd/close-up-coffee-cup_23-2151806475.jpg?t=st=1727901716~exp=1727905316~hmac=61df07149cfa106c42a113cb81f21c706e61293628f76e57b36cc40fb72b4ca2&w=740",
   },
   {
-    title: "Signature Hot Chocolate",
-    description: "SHORT(237 ML), 284 kcal",
-    price: "₹ 294.00",
-    imageUrl: "https://placehold.co/100x100",
+    title: "Espresso",
+    description: "A strong coffee brewed by forcing hot water through finely-ground coffee beans.",
+    price: "₹ 399.00",
+    imageUrl: "https://img.freepik.com/free-psd/delicious-coffee-cup-isolated_23-2151806481.jpg?t=st=1727901498~exp=1727905098~hmac=2f35f8083e7d1f35575b81f67512d156696c14c4ecdcf8a61d1831e92b41fe1c&w=740",
   },
   {
-    title: "Vanilla Milkshake",
-    description: "TALL(354 ML), PER SERVE (354ml) - 531 Kcal",
-    price: "₹ 367.50",
-    imageUrl: "https://placehold.co/100x100",
+    title: "Vanilla Latte",
+    description: "A delicious blend of espresso and steamed milk, topped with vanilla.",
+    price: "₹ 599.00",
+    imageUrl: "https://img.freepik.com/free-psd/close-up-coffee-cup_23-2151806475.jpg?t=st=1727901716~exp=1727905316~hmac=61df07149cfa106c42a113cb81f21c706e61293628f76e57b36cc40fb72b4ca2&w=740",
   }
   // Add more items here
 ];
@@ -28,19 +28,19 @@ export default function Widget() {
   const settings = {
     dots: true,
     infinite: true,
-    
+
     speed: 500,
     slidesToShow: 2,
     slidesToScroll: 1,
-    
-    
+
+
     autoplay: true,
     autoplaySpeed: 3000,
     slide: 'div',
     cssEase: 'linear',
-    
-    
-    
+
+
+
     responsive: [
       {
         breakpoint: 768, // Small devices (tablets)
@@ -54,7 +54,7 @@ export default function Widget() {
         settings: {
           slidesToShow: 2,
           slidesToScroll: 2,
-         
+
         },
       },
     ],

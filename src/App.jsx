@@ -20,6 +20,7 @@ import AdminEdit from "./components/Pages/AdminEdit"; // Import AdminEdit compon
 import AddMenuItem from "./components/Pages/AddMenuItem"; // Import AddMenuItem component
 import AdminOrders from "./components/Pages/AdminOrders";
 import BestSellingItem from "./components/Pages/BestSellingItem";
+import About from "./components/Pages/About";
 // ProfileRoute component to handle user context for profile
 const ProfileRoute = () => {
   const { user } = useUser(); // Access user from UserContext
@@ -48,13 +49,14 @@ export default function App() {
                 element={<Login />} // No need to pass setUser here, handle it within Login
               />
 
+              <Route path="/about" element={<About />} />
               <Route path="/sign-up" element={<SignUp />} />
               <Route path="/item/:id" element={<ItemDetail />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/my-orders" element={<MyOrders />} />
               <Route path="/profile" element={<ProfileRoute />} /> {/* Use ProfileRoute to manage user context */}
               {/* New route for Admin Dashboard */}
-              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin" element={<AdminLogin />} />
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
               <Route path="/admin/edit" element={<AdminEdit />} />
               <Route path="/admin/add-menu-item" element={<AddMenuItem />} />

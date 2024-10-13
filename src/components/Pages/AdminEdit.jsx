@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 const AdminEdit = () => {
     const [admins, setAdmins] = useState([]);
@@ -106,8 +108,9 @@ const AdminEdit = () => {
                     {error && <p className="text-red-500 mt-2">{error}</p>}
                     <button
                         type="submit"
-                        className="mt-4 bg-blue-600 text-white rounded-lg py-2 px-4 hover:bg-blue-700 transition duration-300"
+                        className="mt-4 bg-blue-600 text-white rounded-lg py-2 px-4 hover:bg-blue-700 transition duration-300 flex items-center"
                     >
+                        <FontAwesomeIcon icon={faPlus} className="mr-2" />
                         {editingAdminId ? 'Save Changes' : 'Add Admin'}
                     </button>
                 </form>

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import toast from "react-hot-toast";
+import toast from 'react-hot-toast';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faEdit, faTrash, faCheck, faCoffee } from '@fortawesome/free-solid-svg-icons';
+
 const AddMenuItem = () => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -12,6 +15,9 @@ const AddMenuItem = () => {
     const [editId, setEditId] = useState(null);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
+
+    // Replace with your categories
+    const categories = ['Drinks', 'Food', 'Coffee At Home'];
 
     // Fetch existing items from the API
     const fetchItems = async () => {
@@ -89,51 +95,81 @@ const AddMenuItem = () => {
         setEditId(item._id);
     };
 
+    // Handle deletion of an item
+    const handleDelete = async (id) => {
+        try {
+            await axios.delete(`http://localhost:5000/api/items/${id}`);
+            toast.success('Item deleted successfully!');
+            fetchItems(); // Fetch items again to get the updated list
+        } catch (err) {
+            toast.error('Error deleting item');
+        }
+    };
+
+    // Calculate total amount of all items
+    const totalAmount = items.reduce((total, item) => total + Number(item.price), 0).toFixed(2);
+
     return (
         <div className="rounded-lg p-8 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
             <div className="rounded-lg p-6 w-full bg-white shadow-lg mt-6">
                 <h2 className="text-2xl font-bold mb-6 text-gray-800">{editId ? 'Edit Menu Item' : 'Add New Menu Item'}</h2>
                 <form onSubmit={handleSubmit} className="mb-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="Item Name"
-                            required
-                            className="border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200"
-                        />
-                        <input
-                            type="text"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Description"
-                            required
-                            className="border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200"
-                        />
-                        <input
-                            type="number"
-                            value={price}
-                            onChange={(e) => setPrice(e.target.value)}
-                            placeholder="Price"
-                            required
-                            className="border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200"
-                        />
-                        <input
-                            type="text"
+                        <div className="flex items-center border border-gray-300 rounded-lg">
+                            <FontAwesomeIcon icon={faCoffee} className="ml-3" />
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="Item Name"
+                                required
+                                className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
+                            />
+                        </div>
+                        <div className="flex items-center border border-gray-300 rounded-lg">
+                            <FontAwesomeIcon icon={faCheck} className="ml-3" />
+                            <input
+                                type="text"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                placeholder="Description"
+                                required
+                                className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
+                            />
+                        </div>
+                        <div className="flex items-center border border-gray-300 rounded-lg">
+                            <FontAwesomeIcon icon={faCheck} className="ml-3" />
+                            <input
+                                type="number"
+                                value={price}
+                                onChange={(e) => setPrice(e.target.value)}
+                                placeholder="Price"
+                                required
+                                className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
+                            />
+                        </div>
+                        {/* Category dropdown */}
+                        <select
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
-                            placeholder="Category"
                             required
                             className="border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200"
-                        />
-                        <input
-                            type="text"
-                            value={imageUrl}
-                            onChange={(e) => setImageUrl(e.target.value)}
-                            placeholder="Image URL"
-                            className="border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200"
-                        />
+                        >
+                            <option value="" disabled>Select Category</option>
+                            {categories.map((cat, index) => (
+                                <option key={index} value={cat}>{cat}</option>
+                            ))}
+                        </select>
+                        <div className="flex items-center border border-gray-300 rounded-lg">
+                            <FontAwesomeIcon icon={faCheck} className="ml-3" />
+                            <input
+                                type="text"
+                                value={imageUrl}
+                                onChange={(e) => setImageUrl(e.target.value)}
+                                placeholder="Image URL"
+                                className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
+                            />
+                        </div>
                         <div className="col-span-2 flex items-center mb-4">
                             <input
                                 type="checkbox"
@@ -162,18 +198,28 @@ const AddMenuItem = () => {
                                 <img src={item.imageUrl} alt={item.name} className="w-16 h-16 object-cover rounded-lg mr-4" />
                                 <span className="text-gray-700">{item.name} - {item.price} ₹</span>
                             </div>
-                            <button
-                                onClick={() => handleEdit(item)}
-                                className="bg-secondary hover:bg-secondary/90 text-white rounded-lg py-2 px-4 transition duration-300"
-                            >
-                                Edit
-                            </button>
+                            <div className="flex space-x-2">
+                                <button
+                                    onClick={() => handleEdit(item)}
+                                    className="bg-secondary hover:bg-secondary/90 text-white rounded-lg py-2 px-4 transition duration-300 flex items-center"
+                                >
+                                    <FontAwesomeIcon icon={faEdit} className="mr-1" /> Edit
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(item._id)}
+                                    className="bg-red-500 hover:bg-red-600 text-white rounded-lg py-2 px-4 transition duration-300 flex items-center"
+                                >
+                                    <FontAwesomeIcon icon={faTrash} className="mr-1" /> Delete
+                                </button>
+                            </div>
                         </li>
                     ))}
                 </ul>
+
+                {/* Display total amount */}
+                <h4 className="mt-4 text-lg font-semibold text-gray-800">Total Amount: {totalAmount} ₹</h4>
             </div>
         </div>
-
     );
 };
 
