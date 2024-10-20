@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { API_URL } from "../../config";
 
 const FilterBar = ({ onFilterChange }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,7 +35,7 @@ const FilterBar = ({ onFilterChange }) => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/items");
+        const response = await fetch(`${API_URL}/api/items`);
         if (!response.ok) throw new Error("Failed to fetch items");
 
         const items = await response.json();
