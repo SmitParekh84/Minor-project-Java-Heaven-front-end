@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const AdminEdit = () => {
     const [admins, setAdmins] = useState([]);
@@ -32,6 +32,16 @@ const AdminEdit = () => {
         setEmail(admin.email);
         setMobno(admin.mobno);
         setPassword(''); // Clear password for editing
+    };
+
+    const handleDelete = async (adminId) => {
+        try {
+            await axios.delete(`http://localhost:5000/api/admin/delete/${adminId}`);
+            setAdmins(prevAdmins => prevAdmins.filter(admin => admin._id !== adminId));
+        } catch (err) {
+            console.error(err);
+            setError(err.response?.data?.msg || "Error deleting admin");
+        }
     };
 
     const handleSave = async (e) => {
@@ -108,7 +118,7 @@ const AdminEdit = () => {
                     {error && <p className="text-red-500 mt-2">{error}</p>}
                     <button
                         type="submit"
-                        className="mt-4 bg-blue-600 text-white rounded-lg py-2 px-4 hover:bg-blue-700 transition duration-300 flex items-center"
+                        className="mt-4 bg-secondary text-white rounded-lg py-2 px-4 hover:brightness-150 transition duration-300 flex items-center"
                     >
                         <FontAwesomeIcon icon={faPlus} className="mr-2" />
                         {editingAdminId ? 'Save Changes' : 'Add Admin'}
@@ -124,12 +134,21 @@ const AdminEdit = () => {
                                 <h3 className="font-bold">{admin.username}</h3>
                                 <p className="text-gray-600">{admin.email}</p>
                                 <p className="text-gray-600">{admin.mobno}</p>
-                                <button
-                                    className="mt-2 bg-yellow-500 text-white rounded-lg py-1 px-2 hover:bg-yellow-600 transition duration-300"
-                                    onClick={() => handleEdit(admin)}
-                                >
-                                    Edit
-                                </button>
+                                <div className="flex space-x-2 mt-2">
+                                    <button
+                                        className="bg-secondary text-white rounded-lg py-1 px-2 hover:brightness-150 transition duration-300"
+                                        onClick={() => handleEdit(admin)}
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        className="bg-red-600 text-white rounded-lg py-1 px-2 hover:bg-red-700 transition duration-300"
+                                        onClick={() => handleDelete(admin._id)}
+                                    >
+                                        <FontAwesomeIcon icon={faTrash} className="mr-1" />
+                                        Delete
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>
