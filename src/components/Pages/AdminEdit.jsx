@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { API_URL } from '../../config';
 
 const AdminEdit = () => {
     const [admins, setAdmins] = useState([]);
@@ -36,7 +37,7 @@ const AdminEdit = () => {
 
     const handleDelete = async (adminId) => {
         try {
-            await axios.delete(`http://localhost:5000/api/admin/delete/${adminId}`);
+            await axios.delete(`${API_URL}/api/admin/delete/${adminId}`);
             setAdmins(prevAdmins => prevAdmins.filter(admin => admin._id !== adminId));
         } catch (err) {
             console.error(err);
@@ -48,7 +49,7 @@ const AdminEdit = () => {
         e.preventDefault();
         try {
             if (editingAdminId) {
-                await axios.put(`http://localhost:5000/api/admin/edit/${editingAdminId}`, {
+                await axios.put(`${API_URL}/api/admin/edit/${editingAdminId}`, {
                     username,
                     email,
                     mobno,

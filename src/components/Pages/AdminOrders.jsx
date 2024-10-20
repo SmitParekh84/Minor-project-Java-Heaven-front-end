@@ -40,7 +40,7 @@ const AdminOrders = () => {
         }
 
         try {
-            await axios.put(`http://localhost:5000/api/orders/${orderId}/status`, { status: newStatus });
+            await axios.put(`${API_URL}/api/orders/${orderId}/status`, { status: newStatus });
             setOrders(prevOrders =>
                 prevOrders.map(order =>
                     order._id === orderId ? { ...order, status: newStatus } : order

@@ -45,7 +45,7 @@ const MyOrders = () => {
 
     const fetchOrders = async (userId) => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/orders/${userId}`);
+            const response = await axios.get(`${API_URL}/api/orders/${userId}`);
             setOrders(response.data.orders);
             setLoading(false);
         } catch (err) {

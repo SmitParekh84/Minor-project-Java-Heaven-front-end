@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Navigate  } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext"; // Import the Cart Context
 import { useUser } from "../../context/UserContext"; // Import the User Context
 import toast from "react-hot-toast";
+import { API_URL } from "../../config";
 
 const ItemDetail = () => {
   const { id } = useParams(); // Get the item ID from the URL
@@ -16,14 +17,14 @@ const ItemDetail = () => {
   useEffect(() => {
     const fetchItem = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/items/${id}`);
+        const response = await fetch(`${API_URL}/api/items/${id}`);
         if (!response.ok) {
           toast.error("Failed to fetch item");
           return
         }
         const foundItem = await response.json();
         setItem(foundItem);
-        
+
       } catch (err) {
         setError(err.message); // Set error message if fetch fails
       } finally {

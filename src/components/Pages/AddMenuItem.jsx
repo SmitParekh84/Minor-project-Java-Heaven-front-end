@@ -46,7 +46,7 @@ const AddMenuItem = () => {
         try {
             if (editId) {
                 // Edit existing item
-                await axios.put(`http://localhost:5000/api/items/${editId}`, {
+                await axios.put(`${API_URL}/api/items/${editId}`, {
                     name,
                     description,
                     price,
@@ -101,7 +101,7 @@ const AddMenuItem = () => {
     // Handle deletion of an item
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/api/items/${id}`);
+            await axios.delete(`${API_URL}/api/items/${id}`);
             toast.success('Item deleted successfully!');
             fetchItems(); // Fetch items again to get the updated list
         } catch (err) {
