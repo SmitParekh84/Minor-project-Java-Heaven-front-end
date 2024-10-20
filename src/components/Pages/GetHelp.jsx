@@ -23,10 +23,11 @@ export default function GetHelp() {
           toast.success("OTP sent to your email");
           setStep(2);
         } else {
-          toast(data.message);
+          toast.error(data.message);
         }
       } catch (error) {
         console.error("Error:", error);
+        toast.error("An error occurred. Please try again.");
       }
     } else if (step === 2) {
       try {
@@ -45,21 +46,22 @@ export default function GetHelp() {
           setOtp("");
           setNewPassword("");
         } else {
-          toast(data.message);
+          toast.error(data.message);
         }
       } catch (error) {
         console.error("Error:", error);
+        toast.error("An error occurred. Please try again.");
       }
     }
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-opacity-50">
-      <div className="bg-card rounded-lg shadow-lg p-8 m-5 max-w-sm w-full">
-        <h2 className="text-lg font-semibold text-primary-foreground">
+    <div className="flex items-center justify-center min-h-screen bg-background">
+      <div className="bg-card rounded-lg shadow-lg p-8 m-5 max-w-md w-full">
+        <h2 className="text-lg font-semibold text-primary-foreground mb-4">
           {step === 1 ? "Get Help" : "Reset Password"}
         </h2>
-        <p className="text-muted-foreground mb-4">
+        <p className="text-muted-foreground mb-6">
           {step === 1
             ? "Please enter your registered email, and we will send you an OTP to reset your password."
             : "Please enter the OTP sent to your email and your new password."}
@@ -67,17 +69,14 @@ export default function GetHelp() {
         <form onSubmit={handleSubmit}>
           {step === 1 ? (
             <div className="mb-4">
-              <label
-                className="block text-sm text-muted-foreground"
-                htmlFor="email"
-              >
-                EMAIL
+              <label className="block text-sm text-muted-foreground mb-1" htmlFor="email">
+                Email
               </label>
               <input
                 type="email"
                 id="email"
                 placeholder="Enter Email ID *"
-                className="mt-1 block w-full border border-border rounded-md p-2 focus:ring focus:ring-ring"
+                className="block w-full border border-border rounded-md p-3 focus:ring focus:ring-ring transition duration-200"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -86,34 +85,28 @@ export default function GetHelp() {
           ) : (
             <>
               <div className="mb-4">
-                <label
-                  className="block text-sm text-muted-foreground"
-                  htmlFor="otp"
-                >
+                <label className="block text-sm text-muted-foreground mb-1" htmlFor="otp">
                   OTP
                 </label>
                 <input
                   type="text"
                   id="otp"
                   placeholder="Enter OTP *"
-                  className="mt-1 block w-full border border-border rounded-md p-2 focus:ring focus:ring-ring"
+                  className="block w-full border border-border rounded-md p-3 focus:ring focus:ring-ring transition duration-200"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                   required
                 />
               </div>
               <div className="mb-4">
-                <label
-                  className="block text-sm text-muted-foreground"
-                  htmlFor="newPassword"
-                >
+                <label className="block text-sm text-muted-foreground mb-1" htmlFor="newPassword">
                   New Password
                 </label>
                 <input
                   type="password"
                   id="newPassword"
                   placeholder="Enter New Password *"
-                  className="mt-1 block w-full border border-border rounded-md p-2 focus:ring focus:ring-ring"
+                  className="block w-full border border-border rounded-md p-3 focus:ring focus:ring-ring transition duration-200"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
@@ -123,11 +116,24 @@ export default function GetHelp() {
           )}
           <button
             type="submit"
-            className="bg-primary-foreground text-secondary hover:bg-primary/80 w-full font-medium p-2 rounded-full"
+            className="bg-primary-foreground text-secondary hover:bg-primary/80 w-full font-medium p-2 rounded-full transition duration-200"
           >
             {step === 1 ? "Send OTP" : "Reset Password"}
           </button>
         </form>
+        <div className="mt-4 text-center text-sm text-muted-foreground">
+          <p>
+            {step === 1
+              ? "Already have an account?"
+              : "Back to login?"}
+            <span
+              className="text-primary cursor-pointer hover:underline"
+              onClick={() => setStep(1)}
+            >
+              {step === 1 ? " Log in" : " Go back"}
+            </span>
+          </p>
+        </div>
       </div>
     </div>
   );

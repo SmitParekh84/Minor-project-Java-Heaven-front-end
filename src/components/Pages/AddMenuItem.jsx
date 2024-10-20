@@ -9,15 +9,14 @@ const AddMenuItem = () => {
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [category, setCategory] = useState('');
+    const [newCategory, setNewCategory] = useState('');
     const [isBestseller, setIsBestseller] = useState(false);
     const [imageUrl, setImageUrl] = useState('');
     const [items, setItems] = useState([]);
+    const [categories, setCategories] = useState(['Drinks', 'Food', 'Coffee At Home']);
     const [editId, setEditId] = useState(null);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
-
-    // Replace with your categories
-    const categories = ['Drinks', 'Food', 'Coffee At Home'];
 
     // Fetch existing items from the API
     const fetchItems = async () => {
@@ -106,6 +105,18 @@ const AddMenuItem = () => {
         }
     };
 
+    // Handle category submission
+    const handleAddCategory = (e) => {
+        e.preventDefault();
+        if (newCategory && !categories.includes(newCategory)) {
+            setCategories([...categories, newCategory]);
+            setNewCategory('');
+            toast.success('Category added successfully!');
+        } else {
+            toast.error('Category already exists or is empty');
+        }
+    };
+
     // Calculate total amount of all items
     const totalAmount = items.reduce((total, item) => total + Number(item.price), 0).toFixed(2);
 
@@ -190,34 +201,59 @@ const AddMenuItem = () => {
                     </button>
                 </form>
 
+                {/* Category Addition Form */}
+                <h3 className="text-xl font-semibold mb-4 text-gray-800">Add New Category</h3>
+                <form onSubmit={handleAddCategory} className="mb-6">
+                    <div className="flex items-center border border-gray-300 rounded-lg">
+                        <input
+                            type="text"
+                            value={newCategory}
+                            onChange={(e) => setNewCategory(e.target.value)}
+                            placeholder="New Category Name"
+                            required
+                            className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
+                        />
+                        <button
+                            type="submit"
+                            className="ml-3 bg-secondary text-white rounded-lg py-2 px-4 hover:bg-secondary/90 transition duration-300 flex items-center"
+                        >
+                            <FontAwesomeIcon icon={faPlus} className="mr-1" /> Add
+                        </button>
+                    </div>
+                </form>
+
                 <h3 className="text-xl font-semibold mb-4 text-gray-800">Existing Menu Items</h3>
                 <ul className="list-disc pl-5 space-y-3">
                     {items.map((item) => (
-                        <li key={item._id} className="flex justify-between items-center border-b pb-2">
-                            <div className="flex items-center">
-                                <img src={item.imageUrl} alt={item.name} className="w-16 h-16 object-cover rounded-lg mr-4" />
-                                <span className="text-gray-700">{item.name} - {item.price} ₹</span>
+                        <li key={item._id} className="flex justify-between items-center bg-gray-100 p-4 rounded-lg">
+                            <div>
+                                <h4 className="font-bold">{item.name}</h4>
+                                <p>{item.description}</p>
+                                <p className="text-gray-600">Price: ${item.price}</p>
+                                <p className="text-gray-600">Category: {item.category}</p>
+                                <p className="text-gray-600">{item.isBestseller ? 'Bestseller' : ''}</p>
                             </div>
                             <div className="flex space-x-2">
                                 <button
                                     onClick={() => handleEdit(item)}
-                                    className="bg-secondary hover:bg-secondary/90 text-white rounded-lg py-2 px-4 transition duration-300 flex items-center"
+                                    className="text-blue-500 hover:underline"
                                 >
-                                    <FontAwesomeIcon icon={faEdit} className="mr-1" /> Edit
+                                    <FontAwesomeIcon icon={faEdit} />
                                 </button>
                                 <button
                                     onClick={() => handleDelete(item._id)}
-                                    className="bg-red-500 hover:bg-red-600 text-white rounded-lg py-2 px-4 transition duration-300 flex items-center"
+                                    className="text-red-500 hover:underline"
                                 >
-                                    <FontAwesomeIcon icon={faTrash} className="mr-1" /> Delete
+                                    <FontAwesomeIcon icon={faTrash} />
                                 </button>
                             </div>
                         </li>
                     ))}
                 </ul>
 
-                {/* Display total amount */}
-                <h4 className="mt-4 text-lg font-semibold text-gray-800">Total Amount: {totalAmount} ₹</h4>
+                <div className="mt-6">
+                    <h4 className="font-semibold">Total Amount: ${totalAmount}</h4>
+                </div>
             </div>
         </div>
     );

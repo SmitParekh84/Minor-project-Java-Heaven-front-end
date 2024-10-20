@@ -72,9 +72,9 @@ const AdminOrders = () => {
 
     return (
         <div className="rounded-lg p-8 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
-            <h1 className="text-2xl font-bold mb-6 flex justify-between items-center">
+            <h1 className="text-2xl font-bold mb-6 mt-12 flex justify-between items-center">
                 Admin Dashboard - Orders
-                <button onClick={handleRefresh} className="flex items-center bg-secondary text-white px-4 py-2 rounded-md transition duration-300 hover:bg-blue-700">
+                <button onClick={handleRefresh} className="flex items-center bg-secondary text-white px-4 py-2 rounded-md transition duration-300 hover:brightness-150">
                     <FontAwesomeIcon icon={faSyncAlt} className="mr-2" />
                     Refresh
                 </button>
