@@ -26,7 +26,7 @@ export default function SignUp() {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/signup", formData) // Adjust API endpoint as necessary
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/signup`, formData) // Adjust API endpoint as necessary
       navigate("/login") // Redirect to login page
     } catch (err) {
       setError(err.response.data.msg || "Registration failed")

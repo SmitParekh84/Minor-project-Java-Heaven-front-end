@@ -15,7 +15,7 @@ const AdminEdit = () => {
     useEffect(() => {
         const fetchAdmins = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/admin/list');
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/list`);
                 setAdmins(response.data.admins);
             } catch (err) {
                 console.error(err);
@@ -56,7 +56,7 @@ const AdminEdit = () => {
                 });
                 setEditingAdminId(null); // Reset editing state
             } else {
-                await axios.post('http://localhost:5000/api/admin/add', {
+                await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/admin/add`, {
                     username,
                     password,
                     mobno,
@@ -69,7 +69,7 @@ const AdminEdit = () => {
             setMobno('');
             setPassword('');
             // Optionally fetch updated admin list
-            const response = await axios.get('http://localhost:5000/api/admin/list');
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/list`);
             setAdmins(response.data.admins);
         } catch (err) {
             console.error(err);

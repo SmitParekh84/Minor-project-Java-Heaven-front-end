@@ -11,7 +11,7 @@ export default function GetHelp() {
     e.preventDefault();
     if (step === 1) {
       try {
-        const response = await fetch("http://localhost:5000/api/forgot-password", {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/forgot-password`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -31,7 +31,7 @@ export default function GetHelp() {
       }
     } else if (step === 2) {
       try {
-        const response = await fetch("http://localhost:5000/api/reset-password", {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/reset-password`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

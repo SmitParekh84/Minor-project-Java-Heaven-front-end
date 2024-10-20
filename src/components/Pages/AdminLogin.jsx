@@ -22,7 +22,7 @@ export default function AdminLogin() {
         e.preventDefault();
 
         try {
-            const response = await axios.post("http://localhost:5000/api/admin/login", credentials);
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/admin/login`, credentials);
             const userInfo = response.data.admin; // Admin information
             const sessionId = response.data.sessionId; // Ensure this is correctly accessed
 

@@ -72,7 +72,7 @@ const Cart = () => {
       console.log("Cart Items:", cartItems);
       console.log("Delivery Option:", deliveryOption);
 
-      const response = await axios.post("http://localhost:5000/api/orders", {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/orders`, {
         userId: userInfo.username,
         cartItems, // Make sure this is structured correctly
         deliveryOption,

@@ -33,7 +33,7 @@ const BestSellingItem = () => {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/dashboard');
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard`);
                 setTotalOrders(response.data.totalOrders);
                 setTotalUsers(response.data.totalUsers);
                 setTotalSales(response.data.totalSales);

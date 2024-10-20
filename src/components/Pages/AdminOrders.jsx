@@ -15,7 +15,7 @@ const AdminOrders = () => {
         const fetchOrders = async () => {
             setLoading(true);
             try {
-                const response = await axios.get('http://localhost:5000/api/admin/orders');
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/orders`);
                 setOrders(response.data.orders);
             } catch (err) {
                 setError(err.message);

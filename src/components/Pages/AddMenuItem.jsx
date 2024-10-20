@@ -21,7 +21,7 @@ const AddMenuItem = () => {
     // Fetch existing items from the API
     const fetchItems = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/items');
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/items`);
             setItems(response.data);
             // Extract unique categories from the fetched items
             const uniqueCategories = [...new Set(response.data.map(item => item.category))];
@@ -56,7 +56,7 @@ const AddMenuItem = () => {
                 toast.success('Item updated successfully!');
             } else {
                 // Add new item
-                await axios.post('http://localhost:5000/api/items', {
+                await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/items`, {
                     name,
                     description,
                     price,
