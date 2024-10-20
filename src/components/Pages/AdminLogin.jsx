@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext"; // Adjust the import path
 import axios from "axios";
 import toast from "react-hot-toast";
+import { API_URL } from "../../config";
 
 export default function AdminLogin() {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ export default function AdminLogin() {
         e.preventDefault();
 
         try {
-            const response = await axios.post("http://localhost:5000/api/admin/login", credentials);
+            const response = await axios.post(`${API_URL}/api/admin/login`, credentials);
             const userInfo = response.data.admin; // Admin information
             const sessionId = response.data.sessionId; // Ensure this is correctly accessed
 

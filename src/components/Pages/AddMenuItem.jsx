@@ -2,28 +2,31 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faEdit, faTrash, faCheck, faCoffee } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faEdit, faTrash, faCheck, faCoffee, faDollar, faRupee, faImage } from '@fortawesome/free-solid-svg-icons';
+import { API_URL } from '../../config';
 
 const AddMenuItem = () => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [category, setCategory] = useState('');
+    const [newCategory, setNewCategory] = useState('');
     const [isBestseller, setIsBestseller] = useState(false);
     const [imageUrl, setImageUrl] = useState('');
     const [items, setItems] = useState([]);
+    const [categories, setCategories] = useState([]); // Initially set to an empty array
     const [editId, setEditId] = useState(null);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
 
-    // Replace with your categories
-    const categories = ['Drinks', 'Food', 'Coffee At Home'];
-
     // Fetch existing items from the API
     const fetchItems = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/items');
+            const response = await axios.get(`${API_URL}/api/items`);
             setItems(response.data);
+            // Extract unique categories from the fetched items
+            const uniqueCategories = [...new Set(response.data.map(item => item.category))];
+            setCategories(uniqueCategories);
         } catch (err) {
             console.error('Error fetching items:', err);
             toast.error('Error fetching items');
@@ -54,7 +57,7 @@ const AddMenuItem = () => {
                 toast.success('Item updated successfully!');
             } else {
                 // Add new item
-                await axios.post('http://localhost:5000/api/items', {
+                await axios.post(`${API_URL}/api/items`, {
                     name,
                     description,
                     price,
@@ -106,6 +109,18 @@ const AddMenuItem = () => {
         }
     };
 
+    // Handle category submission
+    const handleAddCategory = (e) => {
+        e.preventDefault();
+        if (newCategory && !categories.includes(newCategory)) {
+            setCategories([...categories, newCategory]);
+            setNewCategory('');
+            toast.success('Category added successfully!');
+        } else {
+            toast.error('Category already exists or is empty');
+        }
+    };
+
     // Calculate total amount of all items
     const totalAmount = items.reduce((total, item) => total + Number(item.price), 0).toFixed(2);
 
@@ -127,7 +142,7 @@ const AddMenuItem = () => {
                             />
                         </div>
                         <div className="flex items-center border border-gray-300 rounded-lg">
-                            <FontAwesomeIcon icon={faCheck} className="ml-3" />
+                            <FontAwesomeIcon icon={faEdit} className="ml-3" />
                             <input
                                 type="text"
                                 value={description}
@@ -138,7 +153,7 @@ const AddMenuItem = () => {
                             />
                         </div>
                         <div className="flex items-center border border-gray-300 rounded-lg">
-                            <FontAwesomeIcon icon={faCheck} className="ml-3" />
+                            <FontAwesomeIcon icon={faDollar} className="ml-3" />
                             <input
                                 type="number"
                                 value={price}
@@ -149,19 +164,21 @@ const AddMenuItem = () => {
                             />
                         </div>
                         {/* Category dropdown */}
+
                         <select
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
                             required
                             className="border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200"
                         >
+
                             <option value="" disabled>Select Category</option>
                             {categories.map((cat, index) => (
                                 <option key={index} value={cat}>{cat}</option>
                             ))}
                         </select>
                         <div className="flex items-center border border-gray-300 rounded-lg">
-                            <FontAwesomeIcon icon={faCheck} className="ml-3" />
+                            <FontAwesomeIcon icon={faImage} className="ml-3" />
                             <input
                                 type="text"
                                 value={imageUrl}
@@ -170,6 +187,18 @@ const AddMenuItem = () => {
                                 className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
                             />
                         </div>
+
+                        {/* Image Preview Section */}
+                        {imageUrl && (
+                            <div className="col-span-2 mt-4 flex justify-center">
+                                <img
+                                    src={imageUrl}
+                                    alt="Preview"
+                                    className="rounded-lg max-w-full h-auto"
+                                />
+                            </div>
+                        )}
+
                         <div className="col-span-2 flex items-center mb-4">
                             <input
                                 type="checkbox"
@@ -185,41 +214,78 @@ const AddMenuItem = () => {
                     <button
                         type="submit"
                         className="mt-6 bg-secondary text-white rounded-lg py-3 px-6 hover:bg-secondary/90 transition duration-300 focus:outline-none"
-                    >
-                        {editId ? 'Save Changes' : 'Add Item'}
+                    ><FontAwesomeIcon icon={faPlus} className="ml-1" />
+                        {editId ? ' Save Changes' : ' Add Item'}
                     </button>
+                </form>
+
+                {/* Category Addition Form */}
+                <h3 className="text-xl font-semibold mb-4 text-gray-800">Add New Category</h3>
+                <form onSubmit={handleAddCategory} className="mb-6">
+                    <div className="flex items-center border border-gray-300 rounded-lg">
+                        <input
+                            type="text"
+                            value={newCategory}
+                            onChange={(e) => setNewCategory(e.target.value)}
+                            placeholder="New Category Name"
+                            required
+                            className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
+                        />
+                        <button
+                            type="submit"
+                            className="ml-3 bg-secondary text-white rounded-lg py-2 px-4 hover:bg-secondary/90 transition duration-300 flex items-center"
+                        >
+                            <FontAwesomeIcon icon={faPlus} className="mr-1" /> Add
+                        </button>
+                    </div>
                 </form>
 
                 <h3 className="text-xl font-semibold mb-4 text-gray-800">Existing Menu Items</h3>
                 <ul className="list-disc pl-5 space-y-3">
                     {items.map((item) => (
-                        <li key={item._id} className="flex justify-between items-center border-b pb-2">
+                        <li key={item._id} className="flex justify-between items-center bg-gray-100 p-4 rounded-lg">
                             <div className="flex items-center">
-                                <img src={item.imageUrl} alt={item.name} className="w-16 h-16 object-cover rounded-lg mr-4" />
-                                <span className="text-gray-700">{item.name} - {item.price} ₹</span>
+                                {/* Display the image if it exists */}
+                                {item.imageUrl && (
+                                    <img
+                                        src={item.imageUrl}
+                                        alt={item.name}
+                                        className="w-16 h-16 object-cover rounded-lg mr-4"
+                                    />
+                                )}
+                                <div>
+                                    <h4 className="font-bold">{item.name}</h4>
+                                    <p>{item.description}</p>
+                                    <p className="text-gray-600">Price: ${item.price}</p>
+                                    <p className="text-gray-600">Category: {item.category}</p>
+                                    <p className="text-gray-600">{item.isBestseller ? 'Bestseller' : ''}</p>
+                                </div>
                             </div>
                             <div className="flex space-x-2">
                                 <button
                                     onClick={() => handleEdit(item)}
-                                    className="bg-secondary hover:bg-secondary/90 text-white rounded-lg py-2 px-4 transition duration-300 flex items-center"
+                                    className="text-blue-500 hover:underline"
                                 >
-                                    <FontAwesomeIcon icon={faEdit} className="mr-1" /> Edit
+                                    <FontAwesomeIcon icon={faEdit} />
                                 </button>
                                 <button
                                     onClick={() => handleDelete(item._id)}
-                                    className="bg-red-500 hover:bg-red-600 text-white rounded-lg py-2 px-4 transition duration-300 flex items-center"
+                                    className="text-red-500 hover:underline"
                                 >
-                                    <FontAwesomeIcon icon={faTrash} className="mr-1" /> Delete
+                                    <FontAwesomeIcon icon={faTrash} />
                                 </button>
                             </div>
                         </li>
                     ))}
                 </ul>
 
-                {/* Display total amount */}
-                <h4 className="mt-4 text-lg font-semibold text-gray-800">Total Amount: {totalAmount} ₹</h4>
+
+                <div className="mt-6">
+                    <h4 className="font-semibold">Total Amount: ${totalAmount}</h4>
+                </div>
             </div>
         </div>
+
     );
 };
 

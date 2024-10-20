@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext"; // Adjust the import path
 import axios from "axios";
 import toast from "react-hot-toast";
+import { API_URL } from "../../config";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ export default function Login() {
         e.preventDefault();
 
         try {
-            const response = await axios.post("http://localhost:5000/api/login", credentials);
+            const response = await axios.post(`${API_URL}/api/login`, credentials);
             const sessionId = response.data.sessionId;
             toast.success(response.data.msg ?? 'Login successful.')
             const userInfo = response.data.user;

@@ -1,55 +1,68 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react";
+import { API_URL } from "../../config";
 
 const FilterBar = ({ onFilterChange }) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const dropdownRef = useRef(null)
-  const [selectedFilter, setSelectedFilter] = useState("")
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const [selectedFilter, setSelectedFilter] = useState("");
+  const [categories, setCategories] = useState([]); // State to hold unique categories
 
   const toggleDropdown = () => {
-    setIsOpen((prev) => !prev)
-  }
+    setIsOpen((prev) => !prev);
+  };
 
   const handleFilterSelection = (filter) => {
-    setSelectedFilter(filter)
-    onFilterChange(filter) // Call the parent function to change filter
-    setIsOpen(false) // Close dropdown after selection
-  }
+    setSelectedFilter(filter);
+    onFilterChange(filter); // Call the parent function to change filter
+    setIsOpen(false); // Close dropdown after selection
+  };
 
   // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false)
+        setIsOpen(false);
       }
-    }
+    };
 
-    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [dropdownRef])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
+
+  // Fetch items to get unique categories
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/items`);
+        if (!response.ok) throw new Error("Failed to fetch items");
+
+        const items = await response.json();
+        const uniqueCategories = [...new Set(items.map((item) => item.category))]; // Extract unique categories
+        setCategories(uniqueCategories);
+      } catch (error) {
+        console.error("Error fetching items:", error);
+      }
+    };
+
+    fetchItems();
+  }, []);
 
   return (
     <div className="bg-primary-foreground py-4">
       <div className="container mx-auto flex justify-between items-center px-4">
         {/* Dropdown Button for Mobile */}
-        <div className="relative sm:hidden " ref={dropdownRef}>
+        <div className="relative sm:hidden" ref={dropdownRef}>
           <button
-            className="text-secondary hover:text-secondary/80 font-semibold "
+            className="text-secondary hover:text-secondary/80 font-semibold"
             onClick={toggleDropdown}
           >
             Filter by ▼
           </button>
           {isOpen && (
             <div className="absolute z-10 bg-white shadow-lg rounded mt-1">
-              {[
-                "Bestseller",
-                "Drinks",
-                "Food",
-
-                "Coffee At Home",
-
-              ].map((filter) => (
+              {categories.map((filter) => ( // Render unique categories
                 <button
                   key={filter}
                   className="block w-full text-left p-2 hover:bg-gray-100"
@@ -64,16 +77,7 @@ const FilterBar = ({ onFilterChange }) => {
 
         {/* Filter Buttons for Larger Screens */}
         <div className="hidden sm:flex space-x-6">
-          {" "}
-          {/* Only show on larger screens */}
-          {[
-            "Bestseller",
-            "Drinks",
-            "Food",
-
-            "Coffee At Home",
- 
-          ].map((filter) => (
+          {categories.map((filter) => ( // Render unique categories
             <button
               key={filter}
               className="text-secondary hover:text-secondary/80 font-medium"
@@ -85,7 +89,7 @@ const FilterBar = ({ onFilterChange }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default FilterBar
+export default FilterBar;

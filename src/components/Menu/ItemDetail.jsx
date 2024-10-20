@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Navigate  } from "react-router-dom";
 import { useCart } from "../../context/CartContext"; // Import the Cart Context
+import { useUser } from "../../context/UserContext"; // Import the User Context
 import toast from "react-hot-toast";
 
 const ItemDetail = () => {
   const { id } = useParams(); // Get the item ID from the URL
   const [item, setItem] = useState(null);
   const [selectedSize, setSelectedSize] = useState(""); // State to track selected cup size
+  const { user } = useUser(); // Get the user context
   const { addToCart } = useCart(); // Access the addToCart function from context
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
@@ -21,6 +23,7 @@ const ItemDetail = () => {
         }
         const foundItem = await response.json();
         setItem(foundItem);
+        
       } catch (err) {
         setError(err.message); // Set error message if fetch fails
       } finally {
@@ -44,9 +47,15 @@ const ItemDetail = () => {
       console.error("Size not selected"); // Debugging: Ensure a size is selected
       return;
     }
+    if (!user.username) {
+      // Redirect to login if user is not logged in
+      toast.error("Please log in to add items to your cart");
+      return <Navigate to="/login" replace />;
+    }
 
     // Add item to cart with selected size and correct id field
     addToCart({ ...item, id: item._id, size: selectedSize });
+    toast.success("Item added to cart successfully!");
   };
 
   return (
