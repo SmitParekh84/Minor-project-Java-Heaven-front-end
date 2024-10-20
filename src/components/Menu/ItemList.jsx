@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import ItemCard from "./ItemCard"
 import FilterBar from "./FilterBar"
 import toast from "react-hot-toast"
+import { API_URL } from "../../config"; // Ensure this path is correct and the config file exports API_URL
 
 const ItemList = () => {
   const [items, setItems] = useState([]) // State to hold the fetched items
@@ -14,7 +15,7 @@ const ItemList = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/items`)
+        const response = await fetch(`${API_URL}/api/items`)
         if (!response.ok) {
           toast.error("Network response was not ok")
           return

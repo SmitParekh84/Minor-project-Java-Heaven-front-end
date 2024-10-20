@@ -15,6 +15,7 @@ import {
     Legend,
     ArcElement, // For pie chart
 } from 'chart.js';
+import { API_URL } from '../../config';
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement);
@@ -32,7 +33,7 @@ const AdminDashboard = () => {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard`);
+                const response = await axios.get(`${API_URL}/api/dashboard`);
                 setTotalOrders(response.data.totalOrders);
                 setTotalUsers(response.data.totalUsers);
                 setTotalSales(response.data.totalSales);

@@ -4,6 +4,7 @@ import axios from "axios"; // For API requests
 import PropTypes from "prop-types"; // Import PropTypes
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../../config";
 
 
 
@@ -72,7 +73,7 @@ const Cart = () => {
       console.log("Cart Items:", cartItems);
       console.log("Delivery Option:", deliveryOption);
 
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/orders`, {
+      const response = await axios.post(`${API_URL}/api/orders`, {
         userId: userInfo.username,
         cartItems, // Make sure this is structured correctly
         deliveryOption,

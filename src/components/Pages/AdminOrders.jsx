@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt, faUser, faCheckCircle, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import toast from 'react-hot-toast';
+import { API_URL } from '../../config';
 
 const AdminOrders = () => {
     const [orders, setOrders] = useState([]);
@@ -15,7 +16,7 @@ const AdminOrders = () => {
         const fetchOrders = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/orders`);
+                const response = await axios.get(`${API_URL}/api/admin/orders`);
                 setOrders(response.data.orders);
             } catch (err) {
                 setError(err.message);

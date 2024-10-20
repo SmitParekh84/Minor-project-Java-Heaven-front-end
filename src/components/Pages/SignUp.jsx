@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom" // Import useNavigate for redirection
 import axios from "axios" // Import axios for API requests
+import { API_URL } from "../../config"
 
 export default function SignUp() {
   const navigate = useNavigate() // Hook for navigation
@@ -26,7 +27,7 @@ export default function SignUp() {
     }
 
     try {
-      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/signup`, formData) // Adjust API endpoint as necessary
+      await axios.post(`${API_URL}/api/signup`, formData) // Adjust API endpoint as necessary
       navigate("/login") // Redirect to login page
     } catch (err) {
       setError(err.response.data.msg || "Registration failed")

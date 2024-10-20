@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_URL } from '../../config';
 
 const MyOrders = () => {
     const [orders, setOrders] = useState([]);
@@ -12,7 +13,7 @@ const MyOrders = () => {
 
     const fetchItems = async () => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/items`);
+            const response = await axios.get(`${API_URL}/api/items`);
 
             // Check if the response is an array directly
             if (Array.isArray(response.data)) {
