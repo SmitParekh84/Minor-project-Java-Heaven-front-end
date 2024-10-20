@@ -102,19 +102,24 @@ export default function Navbar() {
         </div>
 
         <div className="hidden lg:flex lg:gap-x-12">
-
-
-          {isLoggedIn && !isAdmin && ( // Show My Orders and Cart only if user is logged in and not an admin
+          {(!isLoggedIn || (isLoggedIn && !isAdmin)) && (
             <>
               <Link key="home" to="/" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
                 Home
               </Link>
-              <Link key="menu" to="/about" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
+              <Link key="about" to="/about" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
                 About
               </Link>
               <Link key="menu" to="/order" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
                 Menu
               </Link>
+            </>
+          )}
+
+
+          {isLoggedIn && !isAdmin && ( // Show My Orders and Cart only if user is logged in and not an admin
+            <>
+
               <Link key="my-orders" to="/my-orders" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
                 My Orders
               </Link>
