@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faEdit, faTrash, faCheck, faCoffee } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faEdit, faTrash, faCheck, faCoffee, faDollar, faRupee, faImage } from '@fortawesome/free-solid-svg-icons';
 
 const AddMenuItem = () => {
     const [name, setName] = useState('');
@@ -13,7 +13,7 @@ const AddMenuItem = () => {
     const [isBestseller, setIsBestseller] = useState(false);
     const [imageUrl, setImageUrl] = useState('');
     const [items, setItems] = useState([]);
-    const [categories, setCategories] = useState(['Drinks', 'Food', 'Coffee At Home']);
+    const [categories, setCategories] = useState([]); // Initially set to an empty array
     const [editId, setEditId] = useState(null);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
@@ -23,6 +23,9 @@ const AddMenuItem = () => {
         try {
             const response = await axios.get('http://localhost:5000/api/items');
             setItems(response.data);
+            // Extract unique categories from the fetched items
+            const uniqueCategories = [...new Set(response.data.map(item => item.category))];
+            setCategories(uniqueCategories);
         } catch (err) {
             console.error('Error fetching items:', err);
             toast.error('Error fetching items');
@@ -138,7 +141,7 @@ const AddMenuItem = () => {
                             />
                         </div>
                         <div className="flex items-center border border-gray-300 rounded-lg">
-                            <FontAwesomeIcon icon={faCheck} className="ml-3" />
+                            <FontAwesomeIcon icon={faEdit} className="ml-3" />
                             <input
                                 type="text"
                                 value={description}
@@ -149,7 +152,7 @@ const AddMenuItem = () => {
                             />
                         </div>
                         <div className="flex items-center border border-gray-300 rounded-lg">
-                            <FontAwesomeIcon icon={faCheck} className="ml-3" />
+                            <FontAwesomeIcon icon={faDollar} className="ml-3" />
                             <input
                                 type="number"
                                 value={price}
@@ -160,19 +163,21 @@ const AddMenuItem = () => {
                             />
                         </div>
                         {/* Category dropdown */}
+
                         <select
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
                             required
                             className="border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200"
                         >
+
                             <option value="" disabled>Select Category</option>
                             {categories.map((cat, index) => (
                                 <option key={index} value={cat}>{cat}</option>
                             ))}
                         </select>
                         <div className="flex items-center border border-gray-300 rounded-lg">
-                            <FontAwesomeIcon icon={faCheck} className="ml-3" />
+                            <FontAwesomeIcon icon={faImage} className="ml-3" />
                             <input
                                 type="text"
                                 value={imageUrl}
@@ -181,6 +186,18 @@ const AddMenuItem = () => {
                                 className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
                             />
                         </div>
+
+                        {/* Image Preview Section */}
+                        {imageUrl && (
+                            <div className="col-span-2 mt-4 flex justify-center">
+                                <img
+                                    src={imageUrl}
+                                    alt="Preview"
+                                    className="rounded-lg max-w-full h-auto"
+                                />
+                            </div>
+                        )}
+
                         <div className="col-span-2 flex items-center mb-4">
                             <input
                                 type="checkbox"
@@ -196,8 +213,8 @@ const AddMenuItem = () => {
                     <button
                         type="submit"
                         className="mt-6 bg-secondary text-white rounded-lg py-3 px-6 hover:bg-secondary/90 transition duration-300 focus:outline-none"
-                    >
-                        {editId ? 'Save Changes' : 'Add Item'}
+                    ><FontAwesomeIcon icon={faPlus} className="ml-1" />
+                        {editId ? ' Save Changes' : ' Add Item'}
                     </button>
                 </form>
 
@@ -226,12 +243,22 @@ const AddMenuItem = () => {
                 <ul className="list-disc pl-5 space-y-3">
                     {items.map((item) => (
                         <li key={item._id} className="flex justify-between items-center bg-gray-100 p-4 rounded-lg">
-                            <div>
-                                <h4 className="font-bold">{item.name}</h4>
-                                <p>{item.description}</p>
-                                <p className="text-gray-600">Price: ${item.price}</p>
-                                <p className="text-gray-600">Category: {item.category}</p>
-                                <p className="text-gray-600">{item.isBestseller ? 'Bestseller' : ''}</p>
+                            <div className="flex items-center">
+                                {/* Display the image if it exists */}
+                                {item.imageUrl && (
+                                    <img
+                                        src={item.imageUrl}
+                                        alt={item.name}
+                                        className="w-16 h-16 object-cover rounded-lg mr-4"
+                                    />
+                                )}
+                                <div>
+                                    <h4 className="font-bold">{item.name}</h4>
+                                    <p>{item.description}</p>
+                                    <p className="text-gray-600">Price: ${item.price}</p>
+                                    <p className="text-gray-600">Category: {item.category}</p>
+                                    <p className="text-gray-600">{item.isBestseller ? 'Bestseller' : ''}</p>
+                                </div>
                             </div>
                             <div className="flex space-x-2">
                                 <button
@@ -251,11 +278,13 @@ const AddMenuItem = () => {
                     ))}
                 </ul>
 
+
                 <div className="mt-6">
                     <h4 className="font-semibold">Total Amount: ${totalAmount}</h4>
                 </div>
             </div>
         </div>
+
     );
 };
 

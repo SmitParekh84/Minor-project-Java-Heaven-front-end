@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt, faUser, faCheckCircle, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import toast from 'react-hot-toast';
 
 const AdminOrders = () => {
     const [orders, setOrders] = useState([]);
@@ -28,8 +29,12 @@ const AdminOrders = () => {
 
     const handleStatusChange = async (orderId, newStatus) => {
         const order = orders.find(order => order._id === orderId);
-        if (order.status === 'Delivered' && newStatus === 'Pending') {
-            alert("Cannot change status back to 'Pending' after it has been delivered.");
+        if (order.status === 'Delivered' && (newStatus === 'Pending' || newStatus === 'Cancelled')) {
+            toast.error("Cannot change status back to 'Pending' or 'Cancelled' after it has been delivered.");
+            return;
+        }
+        if (order.status === 'Cancelled' && (newStatus === 'Pending' || newStatus === 'Delivered')) {
+            toast.error("Cannot change status back to 'Pending' or 'Delivered' after it has been delivered.");
             return;
         }
 
@@ -53,6 +58,7 @@ const AdminOrders = () => {
     const filteredOrders = orders.filter(order => {
         if (activeTab === 'pending') return order.status === 'Pending';
         if (activeTab === 'delivered') return order.status === 'Delivered';
+        if (activeTab === 'cancelled') return order.status === 'Cancelled';
         return true; // For 'all' tab
     }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -82,7 +88,7 @@ const AdminOrders = () => {
 
             {/* Tab Navigation */}
             <div className="flex space-x-4 mb-4">
-                {['pending', 'delivered', 'all'].map(tab => (
+                {['pending', 'delivered', 'cancelled', 'all'].map(tab => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 // Create the UserContext
 const UserContext = createContext();
@@ -6,12 +6,16 @@ const UserContext = createContext();
 // Create the UserProvider component
 export const UserProvider = ({ children }) => {
     // Initialize user state with properties for username, email, and userId
-    const [user, setUser] = useState({
-        username: "", // Initialize username
-        email: "",    // Initialize email
-        id: "",       // Initialize user ID
-        mobno: "",    // Initialize mobile number
+    const [user, setUser] = useState(() => {
+        // Retrieve user data from local storage if available
+        const savedUser = localStorage.getItem("user");
+        return savedUser ? JSON.parse(savedUser) : { username: "", email: "", id: "", mobno: "" };
     });
+
+    // Effect to update local storage whenever the user state changes
+    useEffect(() => {
+        localStorage.setItem("user", JSON.stringify(user));
+    }, [user]);
 
     return (
         <UserContext.Provider value={{ user, setUser }}>
