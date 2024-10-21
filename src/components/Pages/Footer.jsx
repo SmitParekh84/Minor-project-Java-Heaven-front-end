@@ -149,8 +149,8 @@ export default function Footer() {
       </div>
       <div className="text-center mt-10 text-sm text-muted-foreground bottom-0">
         <p>Web Accessibility | Privacy Statement | Terms of Use | Contact Us</p>
-        <p>© 2024 Java Heaven Coffee Company. All rights reserved.</p>
-      </div>
+        <p>© 2024 Java Heaven Coffee Company. All rights reserved. Developed by Smit Parekh and Preet Patel.</p>
+        </div>
     </footer>
   )
 }

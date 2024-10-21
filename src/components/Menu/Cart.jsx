@@ -4,6 +4,7 @@ import axios from "axios"; // For API requests
 import PropTypes from "prop-types"; // Import PropTypes
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../../config";
 
 
 
@@ -72,7 +73,7 @@ const Cart = () => {
       console.log("Cart Items:", cartItems);
       console.log("Delivery Option:", deliveryOption);
 
-      const response = await axios.post("http://localhost:5000/api/orders", {
+      const response = await axios.post(`${API_URL}/api/orders`, {
         userId: userInfo.username,
         cartItems, // Make sure this is structured correctly
         deliveryOption,
@@ -106,50 +107,50 @@ const Cart = () => {
 
   return (
     <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
-      <div className="container mx-auto p-4">
-        <h2 className="text-3xl font-bold mb-6 text-center">
+      <div className="container mx-auto p-4 mt-2">
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
           Your Shopping Cart
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cartItems.map((item, index) => (
             <div
               key={index}
-              className="flex flex-col justify-between p-4 bg-white shadow-lg rounded-lg"
+              className="flex flex-col justify-between p-4 bg-white shadow-lg rounded-lg transition-transform transform hover:scale-105"
             >
               <div>
                 <img
                   src={item.imageUrl}
                   alt={item.name}
-                  className="h-40 w-full object-cover mb-4 rounded-lg"
+                  className="h-40 w-full object-cover mb-4 rounded-lg shadow-md"
                 />
-                <h3 className="font-semibold text-lg">{item.name}</h3>
-                <p className="text-gray-500 mt-1">
-                  Price: ₹ {item.price.toFixed(2)}
+                <h3 className="font-semibold text-lg text-gray-900">{item.name}</h3>
+                <p className="text-gray-600 mt-1">
+                  Price: <span className="font-semibold">₹ {item.price.toFixed(2)}</span>
                 </p>
-                <p className="text-gray-500 mt-1">Size: {item.size}</p>
+                <p className="text-gray-600 mt-1">Size: <span className="font-semibold">{item.size}</span></p>
                 <p className="text-gray-700 mt-2 font-semibold">
-                  Subtotal: ₹ {(item.price * item.quantity).toFixed(2)}
+                  Subtotal: <span className="text-blue-600">₹ {(item.price * item.quantity).toFixed(2)}</span>
                 </p>
               </div>
               <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center">
                   <button
                     onClick={() => handleDecreaseQuantity(item.id, item.size)}
-                    className="bg-gray-200 text-gray-800 px-2 py-1 rounded-lg"
+                    className="bg-gray-200 text-gray-800 px-2 py-1 rounded-lg transition duration-200 hover:bg-gray-300"
                   >
                     -
                   </button>
                   <span className="mx-2 text-lg font-semibold">{item.quantity}</span>
                   <button
                     onClick={() => handleIncreaseQuantity(item.id, item.size)}
-                    className="bg-gray-200 text-gray-800 px-2 py-1 rounded-lg"
+                    className="bg-gray-200 text-gray-800 px-2 py-1 rounded-lg transition duration-200 hover:bg-gray-300"
                   >
                     +
                   </button>
                 </div>
                 <button
                   onClick={() => removeFromCart(item.id, item.size)}
-                  className="text-red-500 hover:text-red-700"
+                  className="text-red-500 hover:text-red-700 transition duration-200"
                 >
                   Remove
                 </button>
@@ -158,86 +159,49 @@ const Cart = () => {
           ))}
         </div>
 
-        <div className="mt-8 text-center">
-          <h3 className="text-2xl font-bold">
-            Total: ₹ {totalAmount.toFixed(2)}
-          </h3>
-          <button
-            onClick={clearCart}
-            className="bg-red-500 text-white py-2 px-6 rounded-lg mt-4 hover:bg-red-600 transition"
-          >
-            Clear Cart
-          </button>
-        </div>
 
+        {/* Summary of Cart Items */}
+        <div className="mt-10">
+          <h3 className="text-2xl font-bold mb-4 text-gray-800">Order Summary</h3>
+          <div className="flex flex-col bg-white shadow-lg rounded-lg p-4">
+            {cartItems.map((item, index) => (
+              <div key={index} className="flex justify-between mb-2">
+                <span>{item.name} (x{item.quantity})</span>
+                <span>₹ {(item.price * item.quantity).toFixed(2)}</span>
+              </div>
+            ))}
+            <div className="border-t mt-2 pt-2 flex justify-between">
+              <span className="font-bold">Total Amount</span>
+              <span className="font-bold">₹ {totalAmount.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
         {/* Checkout Form */}
         <form onSubmit={handleCheckout} className="mt-8">
-          <h3 className="text-xl font-bold mb-4">Checkout</h3>
+          <h3 className="text-xl font-bold mb-4 text-gray-800">Checkout</h3>
 
           {/* Radio buttons for delivery option */}
           <div className="flex items-center mb-4">
-            <input
-              type="radio"
-              id="hand"
-              name="deliveryOption"
-              value="hand"
-              checked={deliveryOption === "hand"}
-              onChange={() => setDeliveryOption("hand")}
-              className="mr-2"
-            />
-            <label htmlFor="hand">Hand to Hand</label>
+            <input type="radio" id="hand" name="deliveryOption" value="hand" checked={deliveryOption === "hand"} onChange={() => setDeliveryOption("hand")} className="mr-2" />
+            <label htmlFor="hand" className="text-gray-700">Hand to Hand</label>
           </div>
           <div className="flex items-center mb-4">
-            <input
-              type="radio"
-              id="home"
-              name="deliveryOption"
-              value="home"
-              checked={deliveryOption === "home"}
-              onChange={() => setDeliveryOption("home")}
-              className="mr-2"
-            />
-            <label htmlFor="home">Home Delivery</label>
+            <input type="radio" id="home" name="deliveryOption" value="home" checked={deliveryOption === "home"} onChange={() => setDeliveryOption("home")} className="mr-2" />
+            <label htmlFor="home" className="text-gray-700">Home Delivery</label>
           </div>
 
-          <input
-            type="text"
-            name="username"
-            placeholder="Name"
-            value={userInfo.username} // This should be filled with username
-            onChange={handleChange}
-            required
-            className="border border-gray-300 p-2 w-full mb-4"
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={userInfo.email} // This should be filled with email
-            onChange={handleChange}
-            required
-            className="border border-gray-300 p-2 w-full mb-4"
-          />
+          {/* <input type="text" name="username" placeholder="Name" value={userInfo.username} onChange={handleChange} required className="border border-gray-300 p-2 w-full mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
+          <input type="email" name="email" placeholder="Email" value={userInfo.email} onChange={handleChange} required className="border border-gray-300 p-2 w-full mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" /> */}
           {deliveryOption === "home" && (
-            <input
-              type="text"
-              name="address"
-              placeholder="Address"
-              value={userInfo.address}
-              onChange={handleChange}
-              required
-              className="border border-gray-300 p-2 w-full mb-4"
-            />
+            <input type="text" name="address" placeholder="Address" value={userInfo.address} onChange={handleChange} required className="border border-gray-300 p-2 w-full mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
           )}
-          <button
-            type="submit"
-            className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
-          >
-            Place Order
-          </button>
+          <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">Place Order</button>
         </form>
+
+
       </div>
     </div>
+
   );
 };
 

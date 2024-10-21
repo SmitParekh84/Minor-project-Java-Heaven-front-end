@@ -21,6 +21,7 @@ import AddMenuItem from "./components/Pages/AddMenuItem"; // Import AddMenuItem 
 import AdminOrders from "./components/Pages/AdminOrders";
 import BestSellingItem from "./components/Pages/BestSellingItem";
 import About from "./components/Pages/About";
+import ProtectedRoute from "./components/Pages/ProtectedRoute"; // Ensure the path is correct
 // ProfileRoute component to handle user context for profile
 const ProfileRoute = () => {
   const { user } = useUser(); // Access user from UserContext
@@ -30,38 +31,65 @@ const ProfileRoute = () => {
 export default function App() {
   return (
     <>
-
-      <Toaster
-        position="top-center"
-        reverseOrder={false}
-      />
+      <Toaster position="top-center" reverseOrder={false} />
 
       <CartProvider>
-        <UserProvider> {/* Wrap your application with UserProvider */}
+        <UserProvider>
           <Router>
-            <Navbar /> {/* Include the Navbar, user prop is now handled in context */}
+            <Navbar />
             <Routes>
               <Route path="/" element={<Hero />} />
-              <Route path="/order" element={<ItemList />} />
+              <Route path="/menu" element={<ItemList />} />
               <Route path="/get-help" element={<GetHelp />} />
-              <Route
-                path="/login"
-                element={<Login />} // No need to pass setUser here, handle it within Login
-              />
-
+              <Route path="/login" element={<Login />} />
               <Route path="/about" element={<About />} />
               <Route path="/sign-up" element={<SignUp />} />
               <Route path="/item/:id" element={<ItemDetail />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/my-orders" element={<MyOrders />} />
-              <Route path="/profile" element={<ProfileRoute />} /> {/* Use ProfileRoute to manage user context */}
-              {/* New route for Admin Dashboard */}
               <Route path="/admin" element={<AdminLogin />} />
-              <Route path="/admin-dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/edit" element={<AdminEdit />} />
-              <Route path="/admin/add-menu-item" element={<AddMenuItem />} />
-              <Route path="/admin/orders" element={<AdminOrders />} />
-              <Route path="/admin/best-selling" element={<BestSellingItem />} />
+
+              {/* Protect routes that require user authentication */}
+              <Route path="/cart" element={
+                <ProtectedRoute>
+                  <Cart />
+                </ProtectedRoute>
+              } />
+              <Route path="/my-orders" element={
+                <ProtectedRoute>
+                  <MyOrders />
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              } />
+
+              {/* Admin routes with protection */}
+              <Route path="/admin-dashboard" element={
+                <ProtectedRoute adminOnly>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/edit" element={
+                <ProtectedRoute adminOnly>
+                  <AdminEdit />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/add-menu-item" element={
+                <ProtectedRoute adminOnly>
+                  <AddMenuItem />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/orders" element={
+                <ProtectedRoute adminOnly>
+                  <AdminOrders />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/best-selling" element={
+                <ProtectedRoute adminOnly>
+                  <BestSellingItem />
+                </ProtectedRoute>
+              } />
             </Routes>
             <Footer />
           </Router>

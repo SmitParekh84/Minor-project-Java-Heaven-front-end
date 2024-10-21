@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt, faUser, faCheckCircle, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import toast from 'react-hot-toast';
+import { API_URL } from '../../config';
 
 const AdminOrders = () => {
     const [orders, setOrders] = useState([]);
@@ -14,7 +16,7 @@ const AdminOrders = () => {
         const fetchOrders = async () => {
             setLoading(true);
             try {
-                const response = await axios.get('http://localhost:5000/api/admin/orders');
+                const response = await axios.get(`${API_URL}/api/admin/orders`);
                 setOrders(response.data.orders);
             } catch (err) {
                 setError(err.message);
@@ -28,13 +30,17 @@ const AdminOrders = () => {
 
     const handleStatusChange = async (orderId, newStatus) => {
         const order = orders.find(order => order._id === orderId);
-        if (order.status === 'Delivered' && newStatus === 'Pending') {
-            alert("Cannot change status back to 'Pending' after it has been delivered.");
+        if (order.status === 'Delivered' && (newStatus === 'Pending' || newStatus === 'Cancelled')) {
+            toast.error("Cannot change status back to 'Pending' or 'Cancelled' after it has been delivered.");
+            return;
+        }
+        if (order.status === 'Cancelled' && (newStatus === 'Pending' || newStatus === 'Delivered')) {
+            toast.error("Cannot change status back to 'Pending' or 'Delivered' after it has been delivered.");
             return;
         }
 
         try {
-            await axios.put(`http://localhost:5000/api/orders/${orderId}/status`, { status: newStatus });
+            await axios.put(`${API_URL}/api/orders/${orderId}/status`, { status: newStatus });
             setOrders(prevOrders =>
                 prevOrders.map(order =>
                     order._id === orderId ? { ...order, status: newStatus } : order
@@ -53,6 +59,7 @@ const AdminOrders = () => {
     const filteredOrders = orders.filter(order => {
         if (activeTab === 'pending') return order.status === 'Pending';
         if (activeTab === 'delivered') return order.status === 'Delivered';
+        if (activeTab === 'cancelled') return order.status === 'Cancelled';
         return true; // For 'all' tab
     }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -72,9 +79,9 @@ const AdminOrders = () => {
 
     return (
         <div className="rounded-lg p-8 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
-            <h1 className="text-2xl font-bold mb-6 flex justify-between items-center">
+            <h1 className="text-2xl font-bold mb-6 mt-12 flex justify-between items-center">
                 Admin Dashboard - Orders
-                <button onClick={handleRefresh} className="flex items-center bg-secondary text-white px-4 py-2 rounded-md transition duration-300 hover:bg-blue-700">
+                <button onClick={handleRefresh} className="flex items-center bg-secondary text-white px-4 py-2 rounded-md transition duration-300 hover:brightness-150">
                     <FontAwesomeIcon icon={faSyncAlt} className="mr-2" />
                     Refresh
                 </button>
@@ -82,7 +89,7 @@ const AdminOrders = () => {
 
             {/* Tab Navigation */}
             <div className="flex space-x-4 mb-4">
-                {['pending', 'delivered', 'all'].map(tab => (
+                {['pending', 'delivered', 'cancelled', 'all'].map(tab => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}

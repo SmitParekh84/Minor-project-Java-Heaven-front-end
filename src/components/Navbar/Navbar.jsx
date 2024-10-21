@@ -110,7 +110,7 @@ export default function Navbar() {
               <Link key="about" to="/about" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
                 About
               </Link>
-              <Link key="menu" to="/order" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
+              <Link key="menu" to="/menu" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
                 Menu
               </Link>
             </>
@@ -199,7 +199,7 @@ export default function Navbar() {
                     <Link key="home" to="/" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
                       Home
                     </Link>
-                    <Link key="menu" to="/order" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
+                    <Link key="menu" to="/menu" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
                       Menu
                     </Link>
                     <Link key="my-orders" to="/my-orders" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
