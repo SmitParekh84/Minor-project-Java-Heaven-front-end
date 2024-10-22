@@ -3,19 +3,19 @@ import { Link } from "react-router-dom"; // Import Link if using React Router
 
 export default function Footer() {
   return (
-  <footer className="bg-secondary text-foreground px-auto bottom-0 z-50">
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center py-10 lg:px-20">
+    <footer className="bg-secondary text-foreground px-auto bottom-0 z-50">
+      <div className="container mx-auto flex flex-col md:flex-row justify-between py-10 lg:px-20">
         <div className="flex items-center mb-4 md:mb-0">
           <img
             src="/images/logo-muted-2.png"
             alt="Starbucks Logo"
-            className="max-h-32 max-w-32 sm:max-h-52 sm:max-w-52"
+            className="max-h-32 max-w-32 sm:max-h-52 sm:max-w-52" // Adjust max height and width
           />
         </div>
-        <div className="flex flex-col md:flex-row items-center md:items-start md:space-x-10">
-          <div className="mb-4 md:mb-0">
+        <div className="flex flex-col md:flex-row">
+          <div className="mr-10">
             <h3 className="font-semibold text-primary-foreground mb-2">About Us</h3>
-            <ul className="space-y-1">
+            <ul>
               <li>
                 <Link to="/heritage" className="text-muted-foreground hover:text-primary">
                   Our Heritage
@@ -33,9 +33,9 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-          <div className="mb-4 md:mb-0">
+          <div className="mr-10">
             <h3 className="font-semibold mb-2 text-primary-foreground">Responsibility</h3>
-            <ul className="space-y-1">
+            <ul>
               <li>
                 <Link to="/diversity" className="text-muted-foreground hover:text-primary">
                   Diversity
@@ -63,9 +63,9 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-          <div className="mb-4 md:mb-0">
+          <div>
             <h3 className="font-semibold mb-2 text-primary-foreground">Quick Links</h3>
-            <ul className="space-y-1">
+            <ul>
               <li>
                 <Link to="/privacy-policy" className="text-muted-foreground hover:text-primary">
                   Privacy Policy
@@ -89,9 +89,9 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <div className="mt-4 md:mt-0 text-center md:text-left">
+        <div className="mt-4 md:mt-0">
           <h3 className="font-semibold mb-2 text-primary-foreground">Social Media</h3>
-          <div className="flex space-x-4 justify-center md:justify-start">
+          <div className="flex space-x-4">
             <Link to="/instagram" className="text-muted-foreground hover:text-primary">
               Instagram
             </Link>
