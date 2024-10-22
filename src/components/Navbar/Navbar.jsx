@@ -36,7 +36,12 @@ export default function Navbar() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setUser(null);
+     // Clear the user state, but keep other fields if necessary
+     setUser((prevUser) => ({
+      ...prevUser,
+      username: "", // Clear username
+      email: ""     // Clear email
+  }));
     setShowProfileMenu(false);
     localStorage.removeItem('userInfo');
     localStorage.removeItem('user');
@@ -44,6 +49,10 @@ export default function Navbar() {
     toast.success("Logout Successfully");
     setMobileMenuOpen(false);
     navigate('/');
+    // Force a page reload to reset everything
+    setTimeout(() => {
+      window.location.reload(); // This will refresh the page and reset the state
+  }, 500); // A short delay before reloading
   };
 
   const isAdmin = user?.role === 'admin'; // Check if the logged-in user is an admin
