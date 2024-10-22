@@ -101,7 +101,9 @@ const BestSellingItem = () => {
     }, []);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className="flex items-center justify-center h-screen">
+        <div className="loader">Loading...</div>
+    </div>;
     }
 
     if (error) {
