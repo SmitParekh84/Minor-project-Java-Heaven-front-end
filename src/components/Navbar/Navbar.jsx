@@ -15,6 +15,7 @@ const adminNavigation = [
 ];
 
 export default function Navbar() {
+  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { cartItems } = useCart();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -39,10 +40,15 @@ export default function Navbar() {
     setShowProfileMenu(false);
     localStorage.removeItem('userInfo');
     toast.success("Logout Successfully");
+    setMobileMenuOpen(false);
     navigate('/');
   };
 
   const isAdmin = user?.role === 'admin'; // Check if the logged-in user is an admin
+  const handleLinkClick = (path) => {
+    setMobileMenuOpen(false); // Close the mobile menu
+    navigate(path); // Navigate to the specified path
+  };
 
   return (
     <header className="absolute inset-x-0 top-0 z-50">
@@ -189,30 +195,77 @@ export default function Navbar() {
             </button>
           </div>
 
-          <div className="mt-6 flow-root">
+           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500">
               <div className="space-y-2 py-6">
-
-
-                {isLoggedIn && !isAdmin && ( // Show My Orders and Cart links only for logged in non-admin users
+              {(!isLoggedIn || (isLoggedIn && !isAdmin)) && ( // Show My Orders and Cart links only for logged in non-admin users
                   <>
-                    <Link key="home" to="/" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
+                    <Link
+                      key="home"
+                      to="/"
+                      onClick={() => handleLinkClick('/')}
+                      className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+                    >
                       Home
                     </Link>
-                    <Link key="menu" to="/menu" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
+                    <Link
+                      key="menu"
+                      to="/menu"
+                      onClick={() => handleLinkClick('/menu')}
+                      className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+                    >
                       Menu
                     </Link>
-                    <Link key="my-orders" to="/my-orders" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
+                    <Link
+                      key="about"
+                      to="/about"
+                      onClick={() => handleLinkClick('/about')}
+                      className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+                    >
+                      About
+                    </Link>
+                    
+                  </>
+                )}
+
+                {isLoggedIn && isAdmin && adminNavigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => handleLinkClick(item.href)}
+                    className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+                {isLoggedIn && !isAdmin && ( // Show My Orders and Cart links only for logged in non-admin users
+                  <>
+                    
+                    <Link
+                      key="my-orders"
+                      to="/my-orders"
+                      onClick={() => handleLinkClick('/my-orders')}
+                      className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+                    >
                       My Orders
                     </Link>
-                    <Link to="/cart" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
+                    <Link
+                      to="/cart"
+                      onClick={() => handleLinkClick('/cart')}
+                      className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+                    >
                       Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
                     </Link>
                   </>
                 )}
 
                 {isLoggedIn && isAdmin && adminNavigation.map((item) => (
-                  <Link key={item.name} to={item.href} className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => handleLinkClick(item.href)}
+                    className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+                  >
                     {item.name}
                   </Link>
                 ))}
@@ -226,7 +279,11 @@ export default function Navbar() {
                     Logout
                   </button>
                 ) : (
-                  <Link to="/login" className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
+                  <Link
+                    to="/login"
+                    onClick={() => handleLinkClick('/login')}
+                    className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+                  >
                     Log in
                   </Link>
                 )}

@@ -35,7 +35,9 @@ const ItemDetail = () => {
     fetchItem();
   }, [id]);
 
-  if (loading) return <div>Loading...</div>; // Loading state
+  if (loading) return <div className="flex items-center justify-center h-screen">
+                <div className="loader">Loading...</div>
+            </div>; // Loading state
   if (error) return <div>Error: {error}</div>; // Error state
   if (!item) return <div>Item not found</div>; // Handle case where item is not found
 

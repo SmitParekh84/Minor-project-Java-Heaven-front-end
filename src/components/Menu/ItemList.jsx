@@ -46,21 +46,23 @@ const ItemList = () => {
     setSelectedFilter(filter) // Update selected filter
   }
 
-  if (loading) return <div>Loading...</div> // Show loading state
+  if (loading) return <div className="flex items-center justify-center h-screen">
+                <div className="loader">Loading...</div>
+            </div> // Show loading state
   if (error) return <div>Error: {error}</div> // Show error message
 
   return (
     <div className="container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
-      {/* Filter Bar */}
-      <div className="relative isolate px-8 lg:px-8 py-16 bg-primary-foreground font-spartan">
-        <FilterBar onFilterChange={handleFilterChange} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredItems.map((item) => (
-            <ItemCard key={item.id} item={item} />
-          ))}
-        </div>
+    {/* Filter Bar */}
+    <div className="relative isolate px-4 sm:px-8 lg:px-8 py-16 bg-primary-foreground font-spartan">
+      <FilterBar onFilterChange={handleFilterChange} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredItems.map((item) => (
+          <ItemCard key={item.id} item={item} />
+        ))}
       </div>
     </div>
+  </div>
   )
 }
 
