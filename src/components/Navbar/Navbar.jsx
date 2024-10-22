@@ -15,7 +15,7 @@ const adminNavigation = [
 ];
 
 export default function Navbar() {
-  
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { cartItems } = useCart();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -39,6 +39,8 @@ export default function Navbar() {
     setUser(null);
     setShowProfileMenu(false);
     localStorage.removeItem('userInfo');
+    localStorage.removeItem('user');
+    localStorage.removeItem('userRole');
     toast.success("Logout Successfully");
     setMobileMenuOpen(false);
     navigate('/');
@@ -195,10 +197,10 @@ export default function Navbar() {
             </button>
           </div>
 
-           <div className="mt-6 flow-root">
+          <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500">
               <div className="space-y-2 py-6">
-              {(!isLoggedIn || (isLoggedIn && !isAdmin)) && ( // Show My Orders and Cart links only for logged in non-admin users
+                {(!isLoggedIn || (isLoggedIn && !isAdmin)) && ( // Show My Orders and Cart links only for logged in non-admin users
                   <>
                     <Link
                       key="home"
@@ -224,7 +226,7 @@ export default function Navbar() {
                     >
                       About
                     </Link>
-                    
+
                   </>
                 )}
 
@@ -240,7 +242,7 @@ export default function Navbar() {
                 ))}
                 {isLoggedIn && !isAdmin && ( // Show My Orders and Cart links only for logged in non-admin users
                   <>
-                    
+
                     <Link
                       key="my-orders"
                       to="/my-orders"
