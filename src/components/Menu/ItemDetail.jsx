@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext"; // Import the Cart Context
 import { useUser } from "../../context/UserContext"; // Import the User Context
 import toast from "react-hot-toast";
 import { API_URL } from "../../config";
 
 const ItemDetail = () => {
+  const navigate = useNavigate();
   const { id } = useParams(); // Get the item ID from the URL
   const [item, setItem] = useState(null);
   const [selectedSize, setSelectedSize] = useState(""); // State to track selected cup size
@@ -36,8 +37,8 @@ const ItemDetail = () => {
   }, [id]);
 
   if (loading) return <div className="flex items-center justify-center h-screen">
-                <div className="loader">Loading...</div>
-            </div>; // Loading state
+    <div className="loader">Loading...</div>
+  </div>; // Loading state
   if (error) return <div>Error: {error}</div>; // Error state
   if (!item) return <div>Item not found</div>; // Handle case where item is not found
 
@@ -53,7 +54,8 @@ const ItemDetail = () => {
     if (!user.username) {
       // Redirect to login if user is not logged in
       toast.error("Please log in to add items to your cart");
-      return <Navigate to="/login" replace />;
+      navigate("/login"); // Use navigate for redirection
+      return;
     }
 
     // Add item to cart with selected size and correct id field
