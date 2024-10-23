@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import toast from "react-hot-toast";
 import { API_URL } from "../../config";
 
-
 export default function GetHelp() {
+  const navigate = useNavigate(); // Create navigate function
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -130,7 +131,7 @@ export default function GetHelp() {
               : "Back to login?"}
             <span
               className="text-primary cursor-pointer hover:underline"
-              onClick={() => setStep(1)}
+              onClick={() => navigate('/login')} // Use navigate to redirect to /login
             >
               {step === 1 ? " Log in" : " Go back"}
             </span>
