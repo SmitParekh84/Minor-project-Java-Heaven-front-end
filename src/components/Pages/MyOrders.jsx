@@ -132,7 +132,10 @@ const MyOrders = () => {
                         <div key={order._id} className="border border-gray-200 shadow-md p-8 mb-8 rounded-xl bg-white hover:shadow-lg transition-shadow duration-300">
                             <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-xl font-semibold">Total Amount: ₹{order.totalAmount}</h2>
-                                <span className={`text-sm font-medium py-1 px-3 rounded-full ${order.status === 'Delivered' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'}`}>
+                                <span className={`text-sm font-medium py-1 px-3 rounded-full 
+                                    ${order.status === 'Delivered' ? 'bg-green-100 text-green-600' : 
+                                    order.status === 'Cancelled' ? 'bg-orange-100 text-orange-600' : 
+                                    'bg-yellow-100 text-yellow-600'}`}>
                                     {order.status}
                                 </span>
                             </div>
