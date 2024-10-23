@@ -80,7 +80,9 @@ const MyOrders = () => {
     }
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return (<div className="flex items-center justify-center h-screen">
+                <div className="loader">Loading Error: {error}</div>
+                </div>);
     }
 
     // Filter orders based on the active tab

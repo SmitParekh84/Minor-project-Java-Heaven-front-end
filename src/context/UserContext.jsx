@@ -35,3 +35,41 @@ export const useUser = () => {
 
     return context;
 };
+
+
+// Inside your component where logout functionality is used:
+const NavBar = () => {
+    const { user, setUser } = useUser();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user) {
+            setIsLoggedIn(!!user.username); // Check if the user is logged in based on username
+        }
+    }, [user]);
+
+    const handleLogout = () => {
+        setIsLoggedIn(false);
+        setUser((prevUser) => ({
+            ...prevUser,
+            username: "", // Clear only username
+            email: ""     // Clear only email
+        }));
+        localStorage.removeItem('userRole'); // Optionally clear specific local storage items
+        toast.success("Logout Successfully");
+        navigate('/'); // Redirect to home or login page
+    };
+
+    return (
+        <nav>
+            {/* Your navigation bar content */}
+            {isLoggedIn && (
+                <>
+                    <span>{user.username || "Guest"}</span>
+                    <button onClick={handleLogout}>Logout</button>
+                </>
+            )}
+        </nav>
+    );
+};

@@ -13,6 +13,7 @@ export default function Login() {
         password: "",
     });
     const [error, setError] = useState("");
+    const [showPassword, setShowPassword] = useState(false); // State to manage password visibility
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -35,11 +36,9 @@ export default function Login() {
             setUser(userInfo); // Set user information in context
             navigate("/"); // Redirect to home page
         } catch (err) {
-
             toast.error(err.response?.data?.msg || "Login failed. Please try again.");
         }
     };
-
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-background">
@@ -64,12 +63,12 @@ export default function Login() {
                             required
                         />
                     </div>
-                    <div className="mb-4">
+                    <div className="mb-4 relative"> {/* Added relative positioning */}
                         <label className="block text-muted-foreground" htmlFor="password">
                             PASSWORD
                         </label>
                         <input
-                            type="password"
+                            type={showPassword ? "text" : "password"} // Toggle input type
                             id="password"
                             name="password"
                             placeholder="Enter Password *"
@@ -78,6 +77,13 @@ export default function Login() {
                             onChange={handleChange}
                             required
                         />
+                        <button
+                            type="button"
+                            className="absolute right-2 top-9 text-secondary hover:brightness-150"
+                            onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
+                        >
+                            <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                        </button>
                     </div>
                     <p className="mb-4 text-muted-foreground">
                         Don't have an account?{" "}
