@@ -10,7 +10,6 @@ const MyOrders = () => {
     const loggedInUser = localStorage.getItem('userInfo'); // Use the correct key
     const [items, setItems] = useState([]);
 
-
     const fetchItems = async () => {
         try {
             const response = await axios.get(`${API_URL}/api/items`);
@@ -26,12 +25,13 @@ const MyOrders = () => {
             console.error('Error fetching items:', err); // Log the error for debugging
         }
     };
+
     useEffect(() => {
         // Check if user is logged in by using localStorage or authentication state
         if (loggedInUser) {
             const foundUser = JSON.parse(loggedInUser);
             fetchOrders(foundUser?.username ?? '');
-            fetchItems();// Fetch items on mount
+            fetchItems(); // Fetch items on mount
             // Set up polling to refresh orders every 5 seconds
             const interval = setInterval(() => {
                 fetchOrders(foundUser?.username ?? '');
@@ -40,7 +40,6 @@ const MyOrders = () => {
             // Clean up the interval on component unmount
             return () => clearInterval(interval);
         }
-
     }, [loggedInUser]);
 
     const fetchOrders = async (userId) => {
@@ -53,18 +52,14 @@ const MyOrders = () => {
             setLoading(false);
         }
     };
+
     const getItemImageUrl = (itemName) => {
         if (!items || items.length === 0) return '';
 
-
         const item = items.find(i => i.name.toLowerCase() === itemName.toLowerCase());
-
-
 
         return item ? item.imageUrl : '';
     };
-
-
 
     if (loading) {
         return (
@@ -80,9 +75,11 @@ const MyOrders = () => {
     }
 
     if (error) {
-        return (<div className="flex items-center justify-center h-screen">
+        return (
+            <div className="flex items-center justify-center h-screen">
                 <div className="loader">Loading Error: {error}</div>
-                </div>);
+            </div>
+        );
     }
 
     // Filter orders based on the active tab
@@ -96,9 +93,6 @@ const MyOrders = () => {
 
     // Sort orders by creation date (newest first)
     filteredOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-
-
 
     return (
         <div className="rounded-lg w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
@@ -127,7 +121,7 @@ const MyOrders = () => {
                     </button>
                     <button
                         onClick={() => setActiveTab('cancelled')}
-                        className={`px-4 py-2 rounded-md ${activeTab === 'delivered' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                        className={`px-4 py-2 rounded-md ${activeTab === 'cancelled' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
                     >
                         Cancelled
                     </button>
@@ -186,7 +180,6 @@ const MyOrders = () => {
                 )}
             </div>
         </div>
-
     );
 };
 
