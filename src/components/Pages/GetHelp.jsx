@@ -2,15 +2,17 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { API_URL } from "../../config";
 
-
 export default function GetHelp() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false); // Loading state
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading to true
+
     if (step === 1) {
       try {
         const response = await fetch(`${API_URL}/api/forgot-password`, {
@@ -25,11 +27,11 @@ export default function GetHelp() {
           toast.success("OTP sent to your email");
           setStep(2);
         } else {
-          toast.error(data.message);
+          toast.error(data.message || "Failed to send OTP. Please try again.");
         }
       } catch (error) {
         console.error("Error:", error);
-        toast.error("An error occurred. Please try again.");
+        toast.error("An error occurred. Please check your connection.");
       }
     } else if (step === 2) {
       try {
@@ -48,13 +50,15 @@ export default function GetHelp() {
           setOtp("");
           setNewPassword("");
         } else {
-          toast.error(data.message);
+          toast.error(data.message || "Failed to reset password. Please try again.");
         }
       } catch (error) {
         console.error("Error:", error);
-        toast.error("An error occurred. Please try again.");
+        toast.error("An error occurred. Please check your connection.");
       }
     }
+
+    setLoading(false); // Set loading to false
   };
 
   return (
@@ -118,9 +122,10 @@ export default function GetHelp() {
           )}
           <button
             type="submit"
-            className="bg-primary-foreground text-secondary hover:bg-primary/80 w-full font-medium p-2 rounded-full transition duration-200"
+            className={`bg-primary-foreground text-secondary hover:bg-primary/80 w-full font-medium p-2 rounded-full transition duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={loading} // Disable button when loading
           >
-            {step === 1 ? "Send OTP" : "Reset Password"}
+            {loading ? "Processing..." : step === 1 ? "Send OTP" : "Reset Password"}
           </button>
         </form>
         <div className="mt-4 text-center text-sm text-muted-foreground">

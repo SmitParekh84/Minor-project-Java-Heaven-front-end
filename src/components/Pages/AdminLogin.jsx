@@ -13,6 +13,7 @@ export default function AdminLogin() {
         password: "",
     });
     const [error, setError] = useState("");
+    const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -27,10 +28,6 @@ export default function AdminLogin() {
             const userInfo = response.data.admin; // Admin information
             const sessionId = response.data.sessionId; // Ensure this is correctly accessed
 
-            // Log the userInfo to check if it contains role
-            console.log("User Info:", userInfo); // This will show user info including role
-            console.log("Session ID:", sessionId); // Check if sessionId is received correctly
-
             // Ensure userInfo and sessionId are not undefined
             if (userInfo && sessionId) {
                 toast.success(response.data.msg ?? 'Admin login successful.');
@@ -43,12 +40,13 @@ export default function AdminLogin() {
 
                 navigate("/admin-dashboard"); // Redirect to admin dashboard
             } else {
-                console.error("SessionId or userInfo is undefined"); // Debugging
+                setError("Login failed. Please try again."); // Set error for UI
                 toast.error("Login failed. Please try again.");
             }
         } catch (err) {
             console.error("Login error:", err); // Log the error for debugging
-            toast.error(err.response?.data?.msg || "Admin login failed. Please try again.");
+            setError(err.response?.data?.msg || "Admin login failed. Please try again."); // Set error for UI
+            toast.error(error); // Show toast with error message
         }
     };
 
@@ -79,17 +77,27 @@ export default function AdminLogin() {
                         <label className="block text-muted-foreground" htmlFor="password">
                             PASSWORD
                         </label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Enter Password *"
-                            className="mt-1 block w-full border border-border rounded-md p-2 focus:outline-none focus:ring focus:ring-ring"
-                            value={credentials.password}
-                            onChange={handleChange}
-                            required
-                        />
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"} // Toggle password visibility
+                                id="password"
+                                name="password"
+                                placeholder="Enter Password *"
+                                className="mt-1 block w-full border border-border rounded-md p-2 focus:outline-none focus:ring focus:ring-ring"
+                                value={credentials.password}
+                                onChange={handleChange}
+                                required
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(prev => !prev)} // Toggle password visibility
+                                className="absolute right-2 top-2 text-gray-500 focus:outline-none"
+                            >
+                                {showPassword ? "Hide" : "Show"}
+                            </button>
+                        </div>
                     </div>
+                    {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
                     <button
                         type="submit"
                         className="w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold"

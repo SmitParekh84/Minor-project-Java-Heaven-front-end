@@ -14,6 +14,7 @@ export default function Login() {
     });
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false); // State to manage password visibility
+    const [loading, setLoading] = useState(false); // Loading state
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -22,11 +23,12 @@ export default function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true); // Set loading to true
 
         try {
             const response = await axios.post(`${API_URL}/api/login`, credentials);
             const sessionId = response.data.sessionId;
-            toast.success(response.data.msg ?? 'Login successful.')
+            toast.success(response.data.msg ?? 'Login successful.');
             const userInfo = response.data.user;
 
             localStorage.setItem("sessionId", sessionId);
@@ -37,6 +39,8 @@ export default function Login() {
             navigate("/"); // Redirect to home page
         } catch (err) {
             toast.error(err.response?.data?.msg || "Login failed. Please try again.");
+        } finally {
+            setLoading(false); // Set loading to false
         }
     };
 
@@ -79,6 +83,7 @@ export default function Login() {
                         />
                         <button
                             type="button"
+                            aria-label={showPassword ? "Hide password" : "Show password"}
                             className="absolute right-2 top-9 text-secondary hover:brightness-150"
                             onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
                         >
@@ -93,9 +98,10 @@ export default function Login() {
                     </p>
                     <button
                         type="submit"
-                        className="w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold"
+                        className={`w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        disabled={loading} // Disable button when loading
                     >
-                        Login
+                        {loading ? "Logging in..." : "Login"}
                     </button>
                 </form>
 

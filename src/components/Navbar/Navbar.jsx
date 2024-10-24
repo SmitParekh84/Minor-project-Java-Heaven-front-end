@@ -1,4 +1,312 @@
-import React, { useState, useEffect, useMemo } from 'react';
+// import React, { useState, useEffect, useMemo } from 'react';
+// import { Dialog, DialogPanel } from '@headlessui/react';
+// import { Bars3Icon, XMarkIcon, ShoppingCartIcon, UserIcon } from '@heroicons/react/24/outline';
+// import { Link, useNavigate } from 'react-router-dom';
+// import { useCart } from '../../context/CartContext';
+// import toast from 'react-hot-toast';
+
+// const adminNavigation = [
+//   { name: 'Dashboard', href: '/admin-dashboard' },
+//   { name: 'Orders', href: 'admin/orders' },
+//   { name: 'Admin Edit', href: '/admin/edit' },
+//   { name: 'Revenue', href: '/revenue' },
+//   { name: 'Add Menu Item', href: '/admin/add-menu-item' },
+//   { name: 'Best Selling Item', href: 'admin/best-selling' },
+// ];
+
+// export default function Navbar() {
+
+//   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+//   const { cartItems } = useCart();
+//   const [isLoggedIn, setIsLoggedIn] = useState(false);
+//   const [user, setUser] = useState(null);
+//   const [showProfileMenu, setShowProfileMenu] = useState(false);
+//   const navigate = useNavigate();
+
+//   const totalItemsInCart = useMemo(() => cartItems.reduce((total, item) => total + item.quantity, 0), [cartItems]);
+//   const loggedInUser = localStorage.getItem('userInfo');
+
+//   useEffect(() => {
+//     if (loggedInUser) {
+//       const foundUser = JSON.parse(loggedInUser);
+//       setUser(foundUser);
+//       setIsLoggedIn(true);
+//     }
+//   }, [loggedInUser]);
+
+//   const handleLogout = () => {
+//     setIsLoggedIn(false);
+//      // Clear the user state, but keep other fields if necessary
+//      setUser((prevUser) => ({
+//       ...prevUser,
+//       username: "", // Clear username
+//       email: ""     // Clear email
+//   }));
+//     setShowProfileMenu(false);
+//     localStorage.removeItem('userInfo');
+//     localStorage.removeItem('user');
+//     localStorage.removeItem('userRole');
+//     toast.success("Logout Successfully");
+//     setMobileMenuOpen(false);
+//     navigate('/');
+//     // Force a page reload to reset everything
+//     setTimeout(() => {
+//       window.location.reload(); // This will refresh the page and reset the state
+//   }, 500); // A short delay before reloading
+//   };
+
+//   const isAdmin = user?.role === 'admin'; // Check if the logged-in user is an admin
+//   const handleLinkClick = (path) => {
+//     setMobileMenuOpen(false); // Close the mobile menu
+//     navigate(path); // Navigate to the specified path
+//   };
+
+//   return (
+//     <header className="absolute inset-x-0 top-0 z-50">
+//       <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-10">
+//         <div className="flex lg:flex-1">
+//           <Link to="/" className="-m-1.5 p-1.5">
+//             <span className="sr-only">Java Heaven</span>
+//             <img alt="Company-Logo" src="/images/logo-3.png" className="h-16 w-auto" />
+//           </Link>
+//         </div>
+
+//         <div className="flex items-center lg:hidden">
+//           {isLoggedIn && !isAdmin && ( // Show cart link only if user is logged in and not an admin
+//             <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4">
+//               <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
+//               Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
+//             </Link>
+//           )}
+
+//           {isLoggedIn ? (
+//             <div className="relative">
+//               <button
+//                 onClick={() => setShowProfileMenu(!showProfileMenu)}
+//                 className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4"
+//                 aria-haspopup="true"
+//                 aria-expanded={showProfileMenu}
+//               >
+//                 <UserIcon className="h-5 w-5 mr-1" aria-hidden="true" />
+//               </button>
+//               {showProfileMenu && (
+//                 <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-50">
+//                   <div className="px-4 py-2 text-gray-800">{user.username}</div>
+//                   <div className="px-4 py-2 text-gray-800">{user.email}</div>
+//                   <div className="border-t border-gray-300"></div>
+//                   <button
+//                     onClick={handleLogout}
+//                     className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-200"
+//                   >
+//                     Logout
+//                   </button>
+//                 </div>
+//               )}
+//             </div>
+//           ) : (
+//             <Link to="/login" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
+//               Log in <span aria-hidden="true">&rarr;</span>
+//             </Link>
+//           )}
+//           <button
+//             type="button"
+//             onClick={() => setMobileMenuOpen(true)}
+//             className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+//           >
+//             <span className="sr-only">Open main menu</span>
+//             <Bars3Icon aria-hidden="true" className="h-6 w-6" />
+//           </button>
+//         </div>
+
+//         <div className="hidden lg:flex lg:gap-x-12">
+//           {(!isLoggedIn || (isLoggedIn && !isAdmin)) && (
+//             <>
+//               <Link key="home" to="/" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
+//                 Home
+//               </Link>
+//               <Link key="about" to="/about" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
+//                 About
+//               </Link>
+//               <Link key="menu" to="/menu" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
+//                 Menu
+//               </Link>
+//             </>
+//           )}
+
+
+//           {isLoggedIn && !isAdmin && ( // Show My Orders and Cart only if user is logged in and not an admin
+//             <>
+
+//               <Link key="my-orders" to="/my-orders" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
+//                 My Orders
+//               </Link>
+//               <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4">
+//                 <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
+//                 Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
+//               </Link>
+//             </>
+//           )}
+
+//           {isLoggedIn && isAdmin && adminNavigation.map((item) => (
+//             <Link key={item.name} to={item.href} className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
+//               {item.name}
+//             </Link>
+//           ))}
+//         </div>
+
+//         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+//           {isLoggedIn ? (
+//             <div className="relative">
+//               <button
+//                 onClick={() => setShowProfileMenu(!showProfileMenu)}
+//                 className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary"
+//                 aria-haspopup="true"
+//                 aria-expanded={showProfileMenu}
+//               >
+//                 <UserIcon className="h-5 w-5 mr-1" aria-hidden="true" />
+//                 {user.username}
+//               </button>
+//               {showProfileMenu && (
+//                 <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-50">
+//                   <div className="px-4 py-2 text-gray-800">{user.email}</div>
+//                   <div className="border-t border-gray-300"></div>
+//                   <button
+//                     onClick={handleLogout}
+//                     className="block w-full text-left px-4 py-2 text-center text-sm text-red-600 hover:bg-gray-200"
+//                   >
+//                     Logout
+//                   </button>
+//                 </div>
+//               )}
+//             </div>
+//           ) : (
+//             <Link to="/login" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
+//               Log in <span aria-hidden="true">&rarr;</span>
+//             </Link>
+//           )}
+//         </div>
+//       </nav>
+
+//       <Dialog open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} className="lg:hidden">
+//         <div className="fixed inset-0 z-50" />
+//         <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-primary-foreground px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+//           <div className="flex items-center justify-between">
+//             <Link to="/" className="-m-1.5 p-1.5">
+//               <span className="sr-only">Your Company</span>
+//               <img alt="" src="/images/logo-3.png" className="h-16 w-auto" />
+//             </Link>
+
+//             <button
+//               type="button"
+//               onClick={() => setMobileMenuOpen(false)}
+//               className="-m-2.5 rounded-md p-2.5 text-gray-700"
+//             >
+//               <span className="sr-only">Close menu</span>
+//               <XMarkIcon aria-hidden="true" className="h-6 w-6" />
+//             </button>
+//           </div>
+
+//           <div className="mt-6 flow-root">
+//             <div className="-my-6 divide-y divide-gray-500">
+//               <div className="space-y-2 py-6">
+//                 {(!isLoggedIn || (isLoggedIn && !isAdmin)) && ( // Show My Orders and Cart links only for logged in non-admin users
+//                   <>
+//                     <Link
+//                       key="home"
+//                       to="/"
+//                       onClick={() => handleLinkClick('/')}
+//                       className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+//                     >
+//                       Home
+//                     </Link>
+//                     <Link
+//                       key="menu"
+//                       to="/menu"
+//                       onClick={() => handleLinkClick('/menu')}
+//                       className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+//                     >
+//                       Menu
+//                     </Link>
+//                     <Link
+//                       key="about"
+//                       to="/about"
+//                       onClick={() => handleLinkClick('/about')}
+//                       className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+//                     >
+//                       About
+//                     </Link>
+
+//                   </>
+//                 )}
+
+//                 {isLoggedIn && isAdmin && adminNavigation.map((item) => (
+//                   <Link
+//                     key={item.name}
+//                     to={item.href}
+//                     onClick={() => handleLinkClick(item.href)}
+//                     className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+//                   >
+//                     {item.name}
+//                   </Link>
+//                 ))}
+//                 {isLoggedIn && !isAdmin && ( // Show My Orders and Cart links only for logged in non-admin users
+//                   <>
+
+//                     <Link
+//                       key="my-orders"
+//                       to="/my-orders"
+//                       onClick={() => handleLinkClick('/my-orders')}
+//                       className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+//                     >
+//                       My Orders
+//                     </Link>
+//                     <Link
+//                       to="/cart"
+//                       onClick={() => handleLinkClick('/cart')}
+//                       className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+//                     >
+//                       Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
+//                     </Link>
+//                   </>
+//                 )}
+
+//                 {isLoggedIn && isAdmin && adminNavigation.map((item) => (
+//                   <Link
+//                     key={item.name}
+//                     to={item.href}
+//                     onClick={() => handleLinkClick(item.href)}
+//                     className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+//                   >
+//                     {item.name}
+//                   </Link>
+//                 ))}
+//               </div>
+//               <div className="py-6">
+//                 {isLoggedIn ? (
+//                   <button
+//                     onClick={handleLogout}
+//                     className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-red-600 hover:bg-gray-200"
+//                   >
+//                     Logout
+//                   </button>
+//                 ) : (
+//                   <Link
+//                     to="/login"
+//                     onClick={() => handleLinkClick('/login')}
+//                     className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+//                   >
+//                     Log in
+//                   </Link>
+//                 )}
+//               </div>
+//             </div>
+//           </div>
+//         </DialogPanel>
+//       </Dialog>
+//     </header>
+//   );
+// }
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Dialog, DialogPanel } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon, ShoppingCartIcon, UserIcon } from '@heroicons/react/24/outline';
 import { Link, useNavigate } from 'react-router-dom';
@@ -7,15 +315,14 @@ import toast from 'react-hot-toast';
 
 const adminNavigation = [
   { name: 'Dashboard', href: '/admin-dashboard' },
-  { name: 'Orders', href: 'admin/orders' },
+  { name: 'Orders', href: '/admin/orders' },
   { name: 'Admin Edit', href: '/admin/edit' },
   { name: 'Revenue', href: '/revenue' },
   { name: 'Add Menu Item', href: '/admin/add-menu-item' },
-  { name: 'Best Selling Item', href: 'admin/best-selling' },
+  { name: 'Best Selling Item', href: '/admin/best-selling' },
 ];
 
 export default function Navbar() {
-
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { cartItems } = useCart();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -24,24 +331,19 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const totalItemsInCart = useMemo(() => cartItems.reduce((total, item) => total + item.quantity, 0), [cartItems]);
-  const loggedInUser = localStorage.getItem('userInfo');
 
   useEffect(() => {
+    const loggedInUser = localStorage.getItem('userInfo');
     if (loggedInUser) {
       const foundUser = JSON.parse(loggedInUser);
       setUser(foundUser);
       setIsLoggedIn(true);
     }
-  }, [loggedInUser]);
+  }, []);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     setIsLoggedIn(false);
-     // Clear the user state, but keep other fields if necessary
-     setUser((prevUser) => ({
-      ...prevUser,
-      username: "", // Clear username
-      email: ""     // Clear email
-  }));
+    setUser(null); // Clear user state
     setShowProfileMenu(false);
     localStorage.removeItem('userInfo');
     localStorage.removeItem('user');
@@ -49,17 +351,41 @@ export default function Navbar() {
     toast.success("Logout Successfully");
     setMobileMenuOpen(false);
     navigate('/');
-    // Force a page reload to reset everything
-    setTimeout(() => {
-      window.location.reload(); // This will refresh the page and reset the state
-  }, 500); // A short delay before reloading
-  };
+    setTimeout(() => window.location.reload(), 500);
+  }, [navigate]);
 
-  const isAdmin = user?.role === 'admin'; // Check if the logged-in user is an admin
-  const handleLinkClick = (path) => {
-    setMobileMenuOpen(false); // Close the mobile menu
-    navigate(path); // Navigate to the specified path
-  };
+  const isAdmin = user?.role === 'admin';
+
+  const handleLinkClick = useCallback((path) => {
+    setMobileMenuOpen(false);
+    navigate(path);
+  }, [navigate]);
+
+  const renderUserInfo = () => (
+    <div className="relative">
+      <button
+        onClick={() => setShowProfileMenu(!showProfileMenu)}
+        className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary"
+        aria-haspopup="true"
+        aria-expanded={showProfileMenu}
+      >
+        <UserIcon className="h-5 w-5 mr-1" aria-hidden="true" />
+        {user.username}
+      </button>
+      {showProfileMenu && (
+        <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-50">
+          <div className="px-4 py-2 text-gray-800">{user.email}</div>
+          <div className="border-t border-gray-300"></div>
+          <button
+            onClick={handleLogout}
+            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-200"
+          >
+            Logout
+          </button>
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <header className="absolute inset-x-0 top-0 z-50">
@@ -72,38 +398,14 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center lg:hidden">
-          {isLoggedIn && !isAdmin && ( // Show cart link only if user is logged in and not an admin
+          {isLoggedIn && !isAdmin && (
             <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4">
               <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
               Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
             </Link>
           )}
 
-          {isLoggedIn ? (
-            <div className="relative">
-              <button
-                onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4"
-                aria-haspopup="true"
-                aria-expanded={showProfileMenu}
-              >
-                <UserIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-              </button>
-              {showProfileMenu && (
-                <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-50">
-                  <div className="px-4 py-2 text-gray-800">{user.username}</div>
-                  <div className="px-4 py-2 text-gray-800">{user.email}</div>
-                  <div className="border-t border-gray-300"></div>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-200"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
+          {isLoggedIn ? renderUserInfo() : (
             <Link to="/login" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
               Log in <span aria-hidden="true">&rarr;</span>
             </Link>
@@ -121,25 +423,15 @@ export default function Navbar() {
         <div className="hidden lg:flex lg:gap-x-12">
           {(!isLoggedIn || (isLoggedIn && !isAdmin)) && (
             <>
-              <Link key="home" to="/" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
-                Home
-              </Link>
-              <Link key="about" to="/about" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
-                About
-              </Link>
-              <Link key="menu" to="/menu" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
-                Menu
-              </Link>
+              <Link key="home" to="/" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">Home</Link>
+              <Link key="about" to="/about" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">About</Link>
+              <Link key="menu" to="/menu" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">Menu</Link>
             </>
           )}
 
-
-          {isLoggedIn && !isAdmin && ( // Show My Orders and Cart only if user is logged in and not an admin
+          {isLoggedIn && !isAdmin && (
             <>
-
-              <Link key="my-orders" to="/my-orders" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
-                My Orders
-              </Link>
+              <Link key="my-orders" to="/my-orders" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">My Orders</Link>
               <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4">
                 <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
                 Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
@@ -155,31 +447,7 @@ export default function Navbar() {
         </div>
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          {isLoggedIn ? (
-            <div className="relative">
-              <button
-                onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary"
-                aria-haspopup="true"
-                aria-expanded={showProfileMenu}
-              >
-                <UserIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-                {user.username}
-              </button>
-              {showProfileMenu && (
-                <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-50">
-                  <div className="px-4 py-2 text-gray-800">{user.email}</div>
-                  <div className="border-t border-gray-300"></div>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-center text-sm text-red-600 hover:bg-gray-200"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
+          {isLoggedIn ? renderUserInfo() : (
             <Link to="/login" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
               Log in <span aria-hidden="true">&rarr;</span>
             </Link>
@@ -199,104 +467,39 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(false)}
-              className="-m-2.5 rounded-md p-2.5 text-gray-700"
+              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
             >
               <span className="sr-only">Close menu</span>
-              <XMarkIcon aria-hidden="true" className="h-6 w-6" />
+              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
             </button>
           </div>
 
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500">
               <div className="space-y-2 py-6">
-                {(!isLoggedIn || (isLoggedIn && !isAdmin)) && ( // Show My Orders and Cart links only for logged in non-admin users
+                {(!isLoggedIn || (isLoggedIn && !isAdmin)) && (
                   <>
-                    <Link
-                      key="home"
-                      to="/"
-                      onClick={() => handleLinkClick('/')}
-                      className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
-                    >
-                      Home
-                    </Link>
-                    <Link
-                      key="menu"
-                      to="/menu"
-                      onClick={() => handleLinkClick('/menu')}
-                      className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
-                    >
-                      Menu
-                    </Link>
-                    <Link
-                      key="about"
-                      to="/about"
-                      onClick={() => handleLinkClick('/about')}
-                      className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
-                    >
-                      About
-                    </Link>
+                    <Link to="/" onClick={() => handleLinkClick('/')} className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">Home</Link>
+                    <Link to="/about" onClick={() => handleLinkClick('/about')} className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">About</Link>
+                    <Link to="/menu" onClick={() => handleLinkClick('/menu')} className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">Menu</Link>
+                  </>
+                )}
 
+                {isLoggedIn && !isAdmin && (
+                  <>
+                    <Link to="/my-orders" onClick={() => handleLinkClick('/my-orders')} className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">My Orders</Link>
+                    <Link to="/cart" onClick={() => handleLinkClick('/cart')} className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">Cart ({totalItemsInCart})</Link>
                   </>
                 )}
 
                 {isLoggedIn && isAdmin && adminNavigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    onClick={() => handleLinkClick(item.href)}
-                    className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
-                  >
-                    {item.name}
-                  </Link>
+                  <Link key={item.name} to={item.href} onClick={() => handleLinkClick(item.href)} className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">{item.name}</Link>
                 ))}
-                {isLoggedIn && !isAdmin && ( // Show My Orders and Cart links only for logged in non-admin users
-                  <>
 
-                    <Link
-                      key="my-orders"
-                      to="/my-orders"
-                      onClick={() => handleLinkClick('/my-orders')}
-                      className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
-                    >
-                      My Orders
-                    </Link>
-                    <Link
-                      to="/cart"
-                      onClick={() => handleLinkClick('/cart')}
-                      className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
-                    >
-                      Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
-                    </Link>
-                  </>
-                )}
-
-                {isLoggedIn && isAdmin && adminNavigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    onClick={() => handleLinkClick(item.href)}
-                    className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
-              <div className="py-6">
                 {isLoggedIn ? (
-                  <button
-                    onClick={handleLogout}
-                    className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-red-600 hover:bg-gray-200"
-                  >
-                    Logout
-                  </button>
+                  <button onClick={handleLogout} className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-red-600 hover:bg-gray-200">Logout</button>
                 ) : (
-                  <Link
-                    to="/login"
-                    onClick={() => handleLinkClick('/login')}
-                    className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
-                  >
-                    Log in
-                  </Link>
+                  <Link to="/login" onClick={() => handleLinkClick('/login')} className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">Login</Link>
                 )}
               </div>
             </div>
@@ -306,3 +509,4 @@ export default function Navbar() {
     </header>
   );
 }
+

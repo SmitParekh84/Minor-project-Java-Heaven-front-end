@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faEdit, faTrash, faCheck, faCoffee, faDollar, faRupee, faImage } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faEdit, faTrash, faCoffee, faDollar, faImage } from '@fortawesome/free-solid-svg-icons';
 import { API_URL } from '../../config';
 
 const AddMenuItem = () => {
@@ -14,17 +14,16 @@ const AddMenuItem = () => {
     const [isBestseller, setIsBestseller] = useState(false);
     const [imageUrl, setImageUrl] = useState('');
     const [items, setItems] = useState([]);
-    const [categories, setCategories] = useState([]); // Initially set to an empty array
+    const [categories, setCategories] = useState([]);
     const [editId, setEditId] = useState(null);
     const [error, setError] = useState(null);
-    const [successMessage, setSuccessMessage] = useState('');
+    const [imageError, setImageError] = useState(null); // New state for image validation error
 
     // Fetch existing items from the API
     const fetchItems = async () => {
         try {
             const response = await axios.get(`${API_URL}/api/items`);
             setItems(response.data);
-            // Extract unique categories from the fetched items
             const uniqueCategories = [...new Set(response.data.map(item => item.category))];
             setCategories(uniqueCategories);
         } catch (err) {
@@ -37,46 +36,42 @@ const AddMenuItem = () => {
         fetchItems();
     }, []);
 
-    // Handle form submission for adding or editing items
+    const validateImageUrl = (url) => {
+        // Basic regex to check for common image formats
+        const pattern = /\.(jpg|jpeg|png|gif|bmp|webp)$/i;
+        return pattern.test(url);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
-        setSuccessMessage('');
+        setImageError(null); // Reset image error
+
+        if (price < 0) {
+            setError('Price cannot be negative');
+            return;
+        }
+
+        if (imageUrl && !validateImageUrl(imageUrl)) {
+            setImageError('Invalid image URL. Please enter a valid URL ending with .jpg, .jpeg, .png, .gif, .bmp, or .webp');
+            return;
+        }
 
         try {
             if (editId) {
-                // Edit existing item
-                await axios.put(`${API_URL}/api/items/${editId}`, {
-                    name,
-                    description,
-                    price,
-                    category,
-                    isBestseller,
-                    imageUrl,
-                });
+                await axios.put(`${API_URL}/api/items/${editId}`, { name, description, price, category, isBestseller, imageUrl });
                 toast.success('Item updated successfully!');
             } else {
-                // Add new item
-                await axios.post(`${API_URL}/api/items`, {
-                    name,
-                    description,
-                    price,
-                    category,
-                    isBestseller,
-                    imageUrl,
-                });
+                await axios.post(`${API_URL}/api/items`, { name, description, price, category, isBestseller, imageUrl });
                 toast.success('Item added successfully!');
             }
-
-            // Clear form fields and fetch updated items
             resetForm();
-            fetchItems(); // Fetch items again to get the updated list
+            fetchItems();
         } catch (err) {
             setError(err.response?.data?.errors?.[0]?.msg || 'Error saving item');
         }
     };
 
-    // Function to reset form fields
     const resetForm = () => {
         setName('');
         setDescription('');
@@ -85,9 +80,9 @@ const AddMenuItem = () => {
         setIsBestseller(false);
         setImageUrl('');
         setEditId(null);
+        setImageError(null); // Reset image error on form reset
     };
 
-    // Set form fields for editing an existing item
     const handleEdit = (item) => {
         setName(item.name);
         setDescription(item.description);
@@ -96,20 +91,19 @@ const AddMenuItem = () => {
         setIsBestseller(item.isBestseller);
         setImageUrl(item.imageUrl);
         setEditId(item._id);
+        setImageError(null); // Reset image error when editing an item
     };
 
-    // Handle deletion of an item
     const handleDelete = async (id) => {
         try {
             await axios.delete(`${API_URL}/api/items/${id}`);
             toast.success('Item deleted successfully!');
-            fetchItems(); // Fetch items again to get the updated list
+            fetchItems();
         } catch (err) {
             toast.error('Error deleting item');
         }
     };
 
-    // Handle category submission
     const handleAddCategory = (e) => {
         e.preventDefault();
         if (newCategory && !categories.includes(newCategory)) {
@@ -121,7 +115,6 @@ const AddMenuItem = () => {
         }
     };
 
-    // Calculate total amount of all items
     const totalAmount = items.reduce((total, item) => total + Number(item.price), 0).toFixed(2);
 
     return (
@@ -158,20 +151,17 @@ const AddMenuItem = () => {
                                 type="number"
                                 value={price}
                                 onChange={(e) => setPrice(e.target.value)}
-                                placeholder="Price"
+                                placeholder="Price in ₹"
                                 required
                                 className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
                             />
                         </div>
-                        {/* Category dropdown */}
-
                         <select
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
                             required
                             className="border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200"
                         >
-
                             <option value="" disabled>Select Category</option>
                             {categories.map((cat, index) => (
                                 <option key={index} value={cat}>{cat}</option>
@@ -187,8 +177,7 @@ const AddMenuItem = () => {
                                 className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
                             />
                         </div>
-
-                        {/* Image Preview Section */}
+                        {imageError && <p className="text-red-500 mt-2">{imageError}</p>} {/* Display image error */}
                         {imageUrl && (
                             <div className="col-span-2 mt-4 flex justify-center">
                                 <img
@@ -198,7 +187,6 @@ const AddMenuItem = () => {
                                 />
                             </div>
                         )}
-
                         <div className="col-span-2 flex items-center mb-4">
                             <input
                                 type="checkbox"
@@ -210,82 +198,48 @@ const AddMenuItem = () => {
                         </div>
                     </div>
                     {error && <p className="text-red-500 mt-2">{error}</p>}
-                    {successMessage && <p className="text-green-500 mt-2">{successMessage}</p>}
                     <button
                         type="submit"
                         className="mt-6 bg-secondary text-white rounded-lg py-3 px-6 hover:bg-secondary/90 transition duration-300 focus:outline-none"
-                    ><FontAwesomeIcon icon={faPlus} className="ml-1" />
+                    >
+                        <FontAwesomeIcon icon={faPlus} className="ml-1" />
                         {editId ? ' Save Changes' : ' Add Item'}
                     </button>
                 </form>
-
-                {/* Category Addition Form */}
-                <h3 className="text-xl font-semibold mb-4 text-gray-800">Add New Category</h3>
-                <form onSubmit={handleAddCategory} className="mb-6">
-                    <div className="flex items-center border border-gray-300 rounded-lg">
-                        <input
-                            type="text"
-                            value={newCategory}
-                            onChange={(e) => setNewCategory(e.target.value)}
-                            placeholder="New Category Name"
-                            required
-                            className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
-                        />
-                        <button
-                            type="submit"
-                            className="ml-3 bg-secondary text-white rounded-lg py-2 px-4 hover:bg-secondary/90 transition duration-300 flex items-center"
-                        >
-                            <FontAwesomeIcon icon={faPlus} className="mr-1" /> Add
-                        </button>
-                    </div>
-                </form>
-
-                <h3 className="text-xl font-semibold mb-4 text-gray-800">Existing Menu Items</h3>
-                <ul className="list-disc pl-5 space-y-3">
+                <h3 className="text-xl font-semibold mb-4 text-gray-800">Current Menu Items</h3>
+                <ul className="list-none">
                     {items.map((item) => (
-                        <li key={item._id} className="flex justify-between items-center bg-gray-100 p-4 rounded-lg">
-                            <div className="flex items-center">
-                                {/* Display the image if it exists */}
-                                {item.imageUrl && (
-                                    <img
-                                        src={item.imageUrl}
-                                        alt={item.name}
-                                        className="w-16 h-16 object-cover rounded-lg mr-4"
-                                    />
-                                )}
-                                <div>
-                                    <h4 className="font-bold">{item.name}</h4>
-                                    <p>{item.description}</p>
-                                    <p className="text-gray-600">Price: ${item.price}</p>
-                                    <p className="text-gray-600">Category: {item.category}</p>
-                                    <p className="text-gray-600">{item.isBestseller ? 'Bestseller' : ''}</p>
-                                </div>
+                        <li key={item._id} className="flex justify-between items-center py-2 border-b border-gray-300">
+                            <div>
+                                <h4 className="text-lg font-semibold">{item.name}</h4>
+                                <p>{item.description}</p>
+                                <p>₹{item.price.toFixed(2)}</p> {/* Change to display in rupees */}
+                                <p>Category: {item.category}</p>
+                                {item.isBestseller && <span className="text-green-500">Bestseller</span>}
                             </div>
-                            <div className="flex space-x-2">
-                                <button
-                                    onClick={() => handleEdit(item)}
-                                    className="text-blue-500 hover:underline"
-                                >
-                                    <FontAwesomeIcon icon={faEdit} />
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(item._id)}
-                                    className="text-red-500 hover:underline"
-                                >
-                                    <FontAwesomeIcon icon={faTrash} />
-                                </button>
+                            <div>
+                                <button onClick={() => handleEdit(item)} className="mr-2 text-blue-600 hover:underline">Edit</button>
+                                <button onClick={() => handleDelete(item._id)} className="text-red-600 hover:underline">Delete</button>
                             </div>
                         </li>
                     ))}
                 </ul>
-
-
-                <div className="mt-6">
-                    <h4 className="font-semibold">Total Amount: ${totalAmount}</h4>
-                </div>
+                <h4 className="mt-4 font-semibold">Total Amount: ₹{totalAmount}</h4> {/* Change to display in rupees */}
+            </div>
+            <div className="bg-gray-100 p-6 rounded-lg mt-6">
+                <h3 className="text-xl font-semibold mb-4">Add New Category</h3>
+                <form onSubmit={handleAddCategory}>
+                    <input
+                        type="text"
+                        value={newCategory}
+                        onChange={(e) => setNewCategory(e.target.value)}
+                        placeholder="New Category Name"
+                        className="border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200"
+                    />
+                    <button type="submit" className="ml-3 bg-secondary text-white rounded-lg py-3 px-4 hover:bg-secondary/90 transition duration-300">Add</button>
+                </form>
             </div>
         </div>
-
     );
 };
 

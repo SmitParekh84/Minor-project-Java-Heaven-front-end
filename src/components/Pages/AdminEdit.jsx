@@ -12,6 +12,7 @@ const AdminEdit = () => {
     const [mobno, setMobno] = useState('');
     const [editingAdminId, setEditingAdminId] = useState(null);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchAdmins = async () => {
@@ -47,6 +48,7 @@ const AdminEdit = () => {
 
     const handleSave = async (e) => {
         e.preventDefault();
+        setLoading(true); // Start loading
         try {
             if (editingAdminId) {
                 await axios.put(`${API_URL}/api/admin/edit/${editingAdminId}`, {
@@ -75,6 +77,8 @@ const AdminEdit = () => {
         } catch (err) {
             console.error(err);
             setError(err.response?.data?.msg || "Error saving admin");
+        } finally {
+            setLoading(false); // End loading
         }
     };
 
@@ -119,9 +123,10 @@ const AdminEdit = () => {
                     {error && <p className="text-red-500 mt-2">{error}</p>}
                     <button
                         type="submit"
-                        className="mt-4 bg-secondary text-white rounded-lg py-2 px-4 hover:brightness-150 transition duration-300 flex items-center"
+                        disabled={loading}
+                        className={`mt-4 ${loading ? 'bg-gray-400' : 'bg-secondary'} text-white rounded-lg py-2 px-4 hover:brightness-150 transition duration-300 flex items-center`}
                     >
-                        <FontAwesomeIcon icon={faPlus} className="mr-2" />
+                        {loading ? <div className="loader">Loading...</div> : <FontAwesomeIcon icon={faPlus} className="mr-2" />}
                         {editingAdminId ? 'Save Changes' : 'Add Admin'}
                     </button>
                 </form>

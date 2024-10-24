@@ -20,12 +20,10 @@ const ItemDetail = () => {
       try {
         const response = await fetch(`${API_URL}/api/items/${id}`);
         if (!response.ok) {
-          toast.error("Failed to fetch item");
-          return
+          throw new Error("Failed to fetch item");
         }
         const foundItem = await response.json();
         setItem(foundItem);
-
       } catch (err) {
         setError(err.message); // Set error message if fetch fails
       } finally {
@@ -36,10 +34,9 @@ const ItemDetail = () => {
     fetchItem();
   }, [id]);
 
-  if (loading) return <div className="flex items-center justify-center h-screen">
-    <div className="loader">Loading...</div>
-  </div>; // Loading state
-  if (error) return <div>Error: {error}</div>; // Error state
+  // Loading, error, or item not found states
+  if (loading) return <LoadingIndicator />;
+  if (error) return <ErrorMessage error={error} />;
   if (!item) return <div>Item not found</div>; // Handle case where item is not found
 
   const handleSizeSelection = (size) => {
@@ -48,11 +45,10 @@ const ItemDetail = () => {
 
   const handleAddToCart = () => {
     if (!selectedSize) {
-      console.error("Size not selected"); // Debugging: Ensure a size is selected
+      toast.error("Please select a cup size"); // Notify user to select a size
       return;
     }
     if (!user.username) {
-      // Redirect to login if user is not logged in
       toast.error("Please log in to add items to your cart");
       navigate("/login"); // Use navigate for redirection
       return;
@@ -64,9 +60,8 @@ const ItemDetail = () => {
   };
 
   return (
-    <div className="rounded-lg p-10 w-full h-screen flex items-center justify-center ">
+    <div className="rounded-lg p-10 w-full h-screen flex items-center justify-center">
       <div className="rounded-lg w-full p-10 flex flex-col md:flex-row items-start bg-gray-100 shadow-lg">
-
         <div className="flex-shrink-0">
           {/* Image Section */}
           <img
@@ -87,28 +82,17 @@ const ItemDetail = () => {
           </div>
 
           {/* Options for cup sizes */}
-          <div className="mt-4">
-            <h3 className="text-lg font-semibold">Select Cup Size:</h3>
-            <div className="flex space-x-4 mt-2">
-              {["Small", "Medium", "Large"].map((size) => (
-                <button
-                  key={size}
-                  className={`border rounded py-1 px-2 transition duration-300 ${selectedSize === size
-                    ? "bg-secondary text-primary-foreground font-semibold"
-                    : "bg-gray-200 hover:bg-gray-300"
-                    }`}
-                  onClick={() => handleSizeSelection(size)} // Handle size selection
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
-          </div>
+          <CupSizeSelector
+            selectedSize={selectedSize}
+            onSizeSelect={handleSizeSelection}
+          />
 
           {/* Add item button */}
           <div className="flex items-center mt-4">
             <button
-              className={`bg-secondary text-primary-foreground py-2 px-4 rounded transition duration-300 ${!selectedSize ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`bg-secondary text-primary-foreground py-2 px-4 rounded transition duration-300 ${
+                !selectedSize ? "opacity-50 cursor-not-allowed" : ""
+              }`}
               disabled={!selectedSize} // Disable button if no size selected
               onClick={handleAddToCart} // Call add to cart on button click
             >
@@ -118,13 +102,43 @@ const ItemDetail = () => {
         </div>
       </div>
     </div>
-
-
-
-
-
-
   );
 };
+
+// Loading Indicator Component
+const LoadingIndicator = () => (
+  <div className="flex items-center justify-center h-screen">
+    <div className="loader">Loading...</div>
+  </div>
+);
+
+// Error Message Component
+const ErrorMessage = ({ error }) => (
+  <div className="flex items-center justify-center h-screen">
+    <p>Error: {error}</p>
+  </div>
+);
+
+// Cup Size Selector Component
+const CupSizeSelector = ({ selectedSize, onSizeSelect }) => (
+  <div className="mt-4">
+    <h3 className="text-lg font-semibold">Select Cup Size:</h3>
+    <div className="flex space-x-4 mt-2">
+      {["Small", "Medium", "Large"].map((size) => (
+        <button
+          key={size}
+          className={`border rounded py-1 px-2 transition duration-300 ${
+            selectedSize === size
+              ? "bg-secondary text-primary-foreground font-semibold"
+              : "bg-gray-200 hover:bg-gray-300"
+          }`}
+          onClick={() => onSizeSelect(size)} // Handle size selection
+        >
+          {size}
+        </button>
+      ))}
+    </div>
+  </div>
+);
 
 export default ItemDetail;

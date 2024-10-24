@@ -9,15 +9,7 @@ const items = [
   { src: "https://www.starbucks.in/assets/icon/Merchandise.webp", alt: "Merchandise", label: "Merchandise" },
   { src: "https://www.starbucks.in/assets/icon/CoffeeAtHome.webp", alt: "Coffee At Home", label: "Coffee At Home" },
   { src: "https://www.starbucks.in/assets/icon/ReadyToEat.webp", alt: "Ready to Eat", label: "Ready to Eat" },
-  { src: "https://www.starbucks.in/assets/icon/Bestseller.webp", alt: "Bestseller", label: "Bestseller" },
-  { src: "https://www.starbucks.in/assets/icon/Bestseller.webp", alt: "Drinks", label: "Drinks" },
-  { src: "https://placehold.co/100x100?text=Food", alt: "Food", label: "Food" },
-  { src: "https://placehold.co/100x100?text=Merchandise", alt: "Merchandise", label: "Merchandise" },
-  { src: "https://placehold.co/100x100?text=Coffee+At+Home", alt: "Coffee At Home", label: "Coffee At Home" },
-  { src: "https://placehold.co/100x100?text=Ready+to+Eat", alt: "Ready to Eat", label: "Ready to Eat" },
-
 ];
-
 
 export default function TypeMenu() {
   const settings = {
@@ -34,7 +26,7 @@ export default function TypeMenu() {
           slidesToShow: 6,
           slidesToScroll: 6,
           infinite: false,
-          dots: true
+          dots: true,
         }
       },
       {
@@ -42,15 +34,13 @@ export default function TypeMenu() {
         settings: {
           slidesToShow: 3,
           slidesToScroll: 3,
-
         }
       },
       {
         breakpoint: 480,
         settings: {
-          slidesToShow: 4,
-          slidesToScroll: 4,
-
+          slidesToShow: 2,
+          slidesToScroll: 2,
         }
       }
     ]
@@ -59,10 +49,15 @@ export default function TypeMenu() {
   return (
     <div className="mx-auto max-w-7xl pt-8 sm:py-18 lg:pt-20">
       <h2 className="text-left text-2xl font-bold text-foreground mb-8">Handcrafted Curations</h2>
-      <Slider {...settings} className="flex justify-center ">
+      <Slider {...settings} className="flex justify-center">
         {items.map((item, index) => (
           <div key={index} className="text-center px-2">
-            <img className="lg:w-24 w-14 max-w-24 max-h-24 rounded-full mx-auto " src={item.src} alt={item.alt} />
+            <img 
+              className="lg:w-24 w-14 max-w-24 max-h-24 rounded-full mx-auto"
+              src={item.src} 
+              alt={item.alt} 
+              loading="lazy" // Lazy loading for better performance
+            />
             <p className="mt-2 text-sm text-foreground">{item.label}</p>
           </div>
         ))}
