@@ -134,11 +134,11 @@ export default function Navbar() {
           )}
 
 
-          {isLoggedIn && !isAdmin && ( // Show My Orders and Cart only if user is logged in and not an admin
+          {isLoggedIn && !isAdmin && ( // Show My Orders1 and Cart only if user is logged in and not an admin
             <>
 
               <Link key="my-orders" to="/my-orders" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
-                My Orders
+                My Orders1
               </Link>
               <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4">
                 <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
@@ -209,7 +209,7 @@ export default function Navbar() {
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500">
               <div className="space-y-2 py-6">
-                {(!isLoggedIn || (isLoggedIn && !isAdmin)) && ( // Show My Orders and Cart links only for logged in non-admin users
+                {(!isLoggedIn || (isLoggedIn && !isAdmin)) && ( // Show My Orders1 and Cart links only for logged in non-admin users
                   <>
                     <Link
                       key="home"
@@ -249,7 +249,7 @@ export default function Navbar() {
                     {item.name}
                   </Link>
                 ))}
-                {isLoggedIn && !isAdmin && ( // Show My Orders and Cart links only for logged in non-admin users
+                {isLoggedIn && !isAdmin && ( // Show My Orders1 and Cart links only for logged in non-admin users
                   <>
 
                     <Link
@@ -258,7 +258,7 @@ export default function Navbar() {
                       onClick={() => handleLinkClick('/my-orders')}
                       className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
                     >
-                      My Orders
+                      My Orders1
                     </Link>
                     <Link
                       to="/cart"
