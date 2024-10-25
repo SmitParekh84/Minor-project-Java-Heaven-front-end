@@ -113,7 +113,7 @@ export default function Login() {
                 </form>
 
                 <p className="mt-2 text-muted-foreground">
-                    Facing trouble logging in?{" "}
+                    Forgot Password ?{" "}
                     <a href="/get-help" className="text-primary-foreground">
                         Get Help
                     </a>
