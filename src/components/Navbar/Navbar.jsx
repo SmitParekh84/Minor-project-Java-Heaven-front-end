@@ -127,16 +127,16 @@ export default function Navbar() {
           )}
           {isLoggedIn && !isAdmin && (
             <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
-             <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-             Cart ({totalItemsInCart})
+              <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
+              Cart ({totalItemsInCart})
             </Link>
           )}
 
           {isLoggedIn ? (
             renderUserInfo()
           ) : (
-            <Link to="/login" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
-              Sign in
+            <Link to="/login" className="text-sm font-semibold leading-6 text-white bg-secondary hover:bg-gray-700 py-2 px-4 rounded">
+              Log in
             </Link>
           )}
         </div>
@@ -202,9 +202,9 @@ export default function Navbar() {
             <div className="border-t border-gray-300 py-6">
               <Link
                 to="/login"
-                className="block w-full text-left px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-100"
+                className="block w-full text-left px-3 py-2 text-sm font-semibold text-white bg-secondary hover:bg-gray-700"
               >
-                Sign in
+                Log in
               </Link>
             </div>
           )}

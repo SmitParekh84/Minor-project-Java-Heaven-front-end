@@ -5,6 +5,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faEdit, faTrash, faCoffee, faDollar, faImage } from '@fortawesome/free-solid-svg-icons';
 import { API_URL } from '../../config';
 
+// Spinner component
+const Spinner = ({ message }) => (
+    <div className="flex flex-col items-center justify-center">
+        <div className="animate-spin h-12 w-12 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+        <p className="mt-2 text-gray-600">{message}</p>
+    </div>
+);
+
 const AddMenuItem = () => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -17,10 +25,12 @@ const AddMenuItem = () => {
     const [categories, setCategories] = useState([]);
     const [editId, setEditId] = useState(null);
     const [error, setError] = useState(null);
-    const [imageError, setImageError] = useState(null); // New state for image validation error
+    const [imageError, setImageError] = useState(null);
+    const [loading, setLoading] = useState(false); // Loading state
 
     // Fetch existing items from the API
     const fetchItems = async () => {
+        setLoading(true);
         try {
             const response = await axios.get(`${API_URL}/api/items`);
             setItems(response.data);
@@ -29,6 +39,8 @@ const AddMenuItem = () => {
         } catch (err) {
             console.error('Error fetching items:', err);
             toast.error('Error fetching items');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -37,7 +49,6 @@ const AddMenuItem = () => {
     }, []);
 
     const validateImageUrl = (url) => {
-        // Basic regex to check for common image formats
         const pattern = /\.(jpg|jpeg|png|gif|bmp|webp)$/i;
         return pattern.test(url);
     };
@@ -45,10 +56,10 @@ const AddMenuItem = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
-        setImageError(null); // Reset image error
+        setImageError(null);
 
-        if (price < 0) {
-            setError('Price cannot be negative');
+        if (price <= 0) {
+            setError('Price must be a positive number');
             return;
         }
 
@@ -57,6 +68,7 @@ const AddMenuItem = () => {
             return;
         }
 
+        setLoading(true); // Start loading state
         try {
             if (editId) {
                 await axios.put(`${API_URL}/api/items/${editId}`, { name, description, price, category, isBestseller, imageUrl });
@@ -69,6 +81,9 @@ const AddMenuItem = () => {
             fetchItems();
         } catch (err) {
             setError(err.response?.data?.errors?.[0]?.msg || 'Error saving item');
+            toast.error('Error saving item');
+        } finally {
+            setLoading(false); // End loading state
         }
     };
 
@@ -80,7 +95,7 @@ const AddMenuItem = () => {
         setIsBestseller(false);
         setImageUrl('');
         setEditId(null);
-        setImageError(null); // Reset image error on form reset
+        setImageError(null);
     };
 
     const handleEdit = (item) => {
@@ -91,16 +106,19 @@ const AddMenuItem = () => {
         setIsBestseller(item.isBestseller);
         setImageUrl(item.imageUrl);
         setEditId(item._id);
-        setImageError(null); // Reset image error when editing an item
+        setImageError(null);
     };
 
     const handleDelete = async (id) => {
+        setLoading(true);
         try {
             await axios.delete(`${API_URL}/api/items/${id}`);
             toast.success('Item deleted successfully!');
             fetchItems();
         } catch (err) {
             toast.error('Error deleting item');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -121,124 +139,135 @@ const AddMenuItem = () => {
         <div className="rounded-lg p-8 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
             <div className="rounded-lg p-6 w-full bg-white shadow-lg mt-6">
                 <h2 className="text-2xl font-bold mb-6 text-gray-800">{editId ? 'Edit Menu Item' : 'Add New Menu Item'}</h2>
-                <form onSubmit={handleSubmit} className="mb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="flex items-center border border-gray-300 rounded-lg">
-                            <FontAwesomeIcon icon={faCoffee} className="ml-3" />
-                            <input
-                                type="text"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                placeholder="Item Name"
-                                required
-                                className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
-                            />
-                        </div>
-                        <div className="flex items-center border border-gray-300 rounded-lg">
-                            <FontAwesomeIcon icon={faEdit} className="ml-3" />
-                            <input
-                                type="text"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                placeholder="Description"
-                                required
-                                className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
-                            />
-                        </div>
-                        <div className="flex items-center border border-gray-300 rounded-lg">
-                            <FontAwesomeIcon icon={faDollar} className="ml-3" />
-                            <input
-                                type="number"
-                                value={price}
-                                onChange={(e) => setPrice(e.target.value)}
-                                placeholder="Price in ₹"
-                                required
-                                className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
-                            />
-                        </div>
-                        <select
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                            required
-                            className="border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200"
-                        >
-                            <option value="" disabled>Select Category</option>
-                            {categories.map((cat, index) => (
-                                <option key={index} value={cat}>{cat}</option>
-                            ))}
-                        </select>
-                        <div className="flex items-center border border-gray-300 rounded-lg">
-                            <FontAwesomeIcon icon={faImage} className="ml-3" />
-                            <input
-                                type="text"
-                                value={imageUrl}
-                                onChange={(e) => setImageUrl(e.target.value)}
-                                placeholder="Image URL"
-                                className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
-                            />
-                        </div>
-                        {imageError && <p className="text-red-500 mt-2">{imageError}</p>} {/* Display image error */}
-                        {imageUrl && (
-                            <div className="col-span-2 mt-4 flex justify-center">
-                                <img
-                                    src={imageUrl}
-                                    alt="Preview"
-                                    className="rounded-lg max-w-full h-auto"
+
+                {/* Loading Spinner and Text */}
+                {loading ? (
+                    <Spinner message="Please wait, loading..." />
+                ) : (
+                    <form onSubmit={handleSubmit} className="mb-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="flex items-center border border-gray-300 rounded-lg">
+                                <FontAwesomeIcon icon={faCoffee} className="ml-3" />
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    placeholder="Item Name"
+                                    required
+                                    className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
                                 />
                             </div>
-                        )}
-                        <div className="col-span-2 flex items-center mb-4">
-                            <input
-                                type="checkbox"
-                                checked={isBestseller}
-                                onChange={(e) => setIsBestseller(e.target.checked)}
-                                className="mr-3 rounded-lg"
-                            />
-                            <label className="text-gray-700">Is Bestseller</label>
-                        </div>
-                    </div>
-                    {error && <p className="text-red-500 mt-2">{error}</p>}
-                    <button
-                        type="submit"
-                        className="mt-6 bg-secondary text-white rounded-lg py-3 px-6 hover:bg-secondary/90 transition duration-300 focus:outline-none"
-                    >
-                        <FontAwesomeIcon icon={faPlus} className="ml-1" />
-                        {editId ? ' Save Changes' : ' Add Item'}
-                    </button>
-                </form>
-                <h3 className="text-xl font-semibold mb-4 text-gray-800">Current Menu Items</h3>
-                <ul className="list-none">
-                    {items.map((item) => (
-                        <li key={item._id} className="flex justify-between items-center py-2 border-b border-gray-300">
-                            <div>
-                                <h4 className="text-lg font-semibold">{item.name}</h4>
-                                <p>{item.description}</p>
-                                <p>₹{item.price.toFixed(2)}</p> {/* Change to display in rupees */}
-                                <p>Category: {item.category}</p>
-                                {item.isBestseller && <span className="text-green-500">Bestseller</span>}
+                            <div className="flex items-center border border-gray-300 rounded-lg">
+                                <FontAwesomeIcon icon={faEdit} className="ml-3" />
+                                <input
+                                    type="text"
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    placeholder="Description"
+                                    required
+                                    className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
+                                />
                             </div>
-                            <div>
-                                <button onClick={() => handleEdit(item)} className="mr-2 text-blue-600 hover:underline">Edit</button>
-                                <button onClick={() => handleDelete(item._id)} className="text-red-600 hover:underline">Delete</button>
+                            <div className="flex items-center border border-gray-300 rounded-lg">
+                                <FontAwesomeIcon icon={faDollar} className="ml-3" />
+                                <input
+                                    type="number"
+                                    value={price}
+                                    onChange={(e) => setPrice(e.target.value)}
+                                    placeholder="Price in ₹"
+                                    required
+                                    className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
+                                />
+                            </div>
+                            <select
+                                value={category}
+                                onChange={(e) => setCategory(e.target.value)}
+                                required
+                                className="border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200"
+                            >
+                                <option value="" disabled>Select Category</option>
+                                {categories.map((cat, index) => (
+                                    <option key={index} value={cat}>{cat}</option>
+                                ))}
+                            </select>
+                            <div className="flex items-center border border-gray-300 rounded-lg">
+                                <FontAwesomeIcon icon={faImage} className="ml-3" />
+                                <input
+                                    type="text"
+                                    value={imageUrl}
+                                    onChange={(e) => setImageUrl(e.target.value)}
+                                    placeholder="Image URL"
+                                    className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
+                                />
+                            </div>
+                            {imageError && <p className="text-red-500 mt-2">{imageError}</p>}
+                            {imageUrl && (
+                                <div className="col-span-2 mt-4 flex justify-center">
+                                    <img
+                                        src={imageUrl}
+                                        alt="Preview"
+                                        className="rounded-lg max-w-full h-auto"
+                                    />
+                                </div>
+                            )}
+                            <div className="col-span-2 flex items-center mb-4">
+                                <input
+                                    type="checkbox"
+                                    checked={isBestseller}
+                                    onChange={(e) => setIsBestseller(e.target.checked)}
+                                    className="mr-2"
+                                />
+                                <label className="text-gray-600">Bestseller</label>
+                            </div>
+                        </div>
+                        {error && <p className="text-red-500 mt-2">{error}</p>}
+                        <div className="flex justify-between items-center">
+                            <button
+                                type="submit"
+                                className="bg-secondary text-white p-3 rounded-lg flex items-center"
+                            >
+                                <FontAwesomeIcon icon={faPlus} className="mr-2" />
+                                {editId ? 'Update Item' : 'Add Item'}
+                            </button>
+                            <div className="text-gray-600">Total Amount: ₹ {totalAmount}</div>
+                        </div>
+                    </form>
+                )}
+            </div>
+
+            {/* Menu Items List */}
+            <h2 className="text-2xl font-bold mb-4 text-gray-800 mt-10">Menu Items</h2>
+            {loading ? (
+                <Spinner message="Loading menu items..." />
+            ) : (
+                <ul className="space-y-4">
+                    {items.map((item) => (
+                        <li key={item._id} className="flex justify-between items-center p-4 border border-gray-300 rounded-lg bg-white shadow-sm">
+                            <div className="flex items-center">
+                                <img
+                                    src={item.imageUrl}
+                                    alt={item.name}
+                                    className="w-16 h-16 rounded-lg mr-4"
+                                />
+                                <div>
+                                    <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
+                                    <p className="text-gray-600">{item.description}</p>
+                                    <p className="text-gray-600">Price: ₹ {item.price}</p>
+                                    <p className="text-gray-600">{item.isBestseller && 'Bestseller'}</p>
+                                </div>
+                            </div>
+                            <div className="flex space-x-2">
+                                <button onClick={() => handleEdit(item)} className="text-blue-500">
+                                    Edit
+                                </button>
+                                <button onClick={() => handleDelete(item._id)} className="text-red-500">
+                                    Delete
+                                </button>
                             </div>
                         </li>
                     ))}
                 </ul>
-                <h4 className="mt-4 font-semibold">Total Amount: ₹{totalAmount}</h4> {/* Change to display in rupees */}
-            </div>
-            <div className="bg-gray-100 p-6 rounded-lg mt-6">
-                <h3 className="text-xl font-semibold mb-4">Add New Category</h3>
-                <form onSubmit={handleAddCategory}>
-                    <input
-                        type="text"
-                        value={newCategory}
-                        onChange={(e) => setNewCategory(e.target.value)}
-                        placeholder="New Category Name"
-                        className="border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200"
-                    />
-                    <button type="submit" className="ml-3 bg-secondary text-white rounded-lg py-3 px-4 hover:bg-secondary/90 transition duration-300">Add</button>
-                </form>
-            </div>
+            )}
         </div>
     );
 };

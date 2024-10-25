@@ -1,9 +1,8 @@
-// src/AdminDashboard.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faUsers, faDollarSign, faChartLine } from '@fortawesome/free-solid-svg-icons';
-import { Bar, Pie } from 'react-chartjs-2'; // Change Line to Bar
+import { Bar, Pie } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -36,15 +35,13 @@ const AdminDashboard = () => {
                 console.log("API Response:", response.data); // Log the full response
 
                 if (response.data && response.data.status === 'success') {
-                    const data = response.data.data; // Accessing data correctly
+                    const data = response.data.data;
 
-                    // Update state with the correct data
                     setTotalOrders(data.totalOrders || 0);
                     setTotalUsers(data.totalUsers || 0);
                     setTotalSales(data.totalSales || 0);
-                    setBestSellingItems(data.bestSellingItems || []); // Ensure it's an array
+                    setBestSellingItems(data.bestSellingItems || []);
 
-                    // Log state updates
                     console.log('Setting State:', {
                         totalOrders: data.totalOrders,
                         totalUsers: data.totalUsers,
@@ -52,7 +49,6 @@ const AdminDashboard = () => {
                         bestSellingItems: data.bestSellingItems,
                     });
 
-                    // Prepare the pie chart data
                     const labels = data.bestSellingItems?.map(item => item.name) || [];
                     const pieData = data.bestSellingItems?.map(item => item.totalSold) || [];
                     setPieChartData({
@@ -72,23 +68,22 @@ const AdminDashboard = () => {
                         ],
                     });
 
-                    // Prepare the bar chart data
                     setChartData({
-                        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'], // Example labels
+                        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
                         datasets: [
                             {
                                 label: 'Total Orders',
-                                data: [65, 59, 80, 81, 56, 55, 40], // Example data points
+                                data: [65, 59, 80, 81, 56, 55, 40],
                                 backgroundColor: 'rgba(75, 192, 192, 1)',
                             },
                             {
                                 label: 'Total Users',
-                                data: [30, 40, 45, 35, 50, 70, 80], // Example data points
+                                data: [30, 40, 45, 35, 50, 70, 80],
                                 backgroundColor: 'rgba(153, 102, 255, 1)',
                             },
                             {
                                 label: 'Total Sales',
-                                data: [2000, 1900, 2200, 2100, 2400, 3000, 2800], // Example data points
+                                data: [2000, 1900, 2200, 2100, 2400, 3000, 2800],
                                 backgroundColor: 'rgba(255, 159, 64, 1)',
                             },
                         ],
@@ -111,10 +106,40 @@ const AdminDashboard = () => {
         fetchDashboardData(); // Retry fetching data
     };
 
+    const SkeletonLoader = () => (
+        <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
+            <h1 className="text-2xl font-bold mb-6 h-8 bg-gray-300 rounded w-1/4 animate-pulse"></h1>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                {[...Array(4)].map((_, index) => (
+                    <div key={index} className="border p-4 rounded-lg shadow-lg bg-white flex items-center animate-pulse">
+                        <div className="h-16 w-16 bg-gray-300 rounded-full mr-4"></div>
+                        <div className="flex flex-col justify-between w-full">
+                            <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                            <div className="h-8 bg-gray-300 rounded w-full"></div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+    
+            {/* Bar Chart Skeleton */}
+            <div className="mt-6 animate-pulse">
+                <h2 className="text-xl font-semibold mb-4 h-6 bg-gray-300 rounded w-1/3"></h2>
+                <div className="h-60 bg-gray-300 rounded"></div>
+            </div>
+    
+            {/* Pie Chart Skeleton */}
+            <div className="mt-6 animate-pulse">
+                <h2 className="text-xl font-semibold mb-4 h-6 bg-gray-300 rounded w-1/3"></h2>
+                <div className="h-60 bg-gray-300 rounded"></div>
+            </div>
+        </div>
+    );
+    
+
     if (loading) {
         return (
             <div className="flex items-center justify-center h-screen">
-                <div className="loader">Loading...</div>
+                <SkeletonLoader />
             </div>
         );
     }
@@ -128,7 +153,6 @@ const AdminDashboard = () => {
         );
     }
 
-    // Log the rendering values
     console.log('Rendering:', {
         totalOrders,
         totalUsers,
@@ -208,7 +232,7 @@ const AdminDashboard = () => {
                         data={pieChartData} 
                         options={{
                             responsive: true,
-                            maintainAspectRatio: false, // Allows the chart to resize based on parent dimensions
+                            maintainAspectRatio: false,
                             plugins: {
                                 legend: {
                                     position: 'top',

@@ -6,6 +6,8 @@ const FilterBar = ({ onFilterChange }) => {
   const dropdownRef = useRef(null);
   const [selectedFilter, setSelectedFilter] = useState("");
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
@@ -14,7 +16,7 @@ const FilterBar = ({ onFilterChange }) => {
   const handleFilterSelection = (filter) => {
     setSelectedFilter(filter);
     onFilterChange(filter);
-    setIsOpen(false); // Close dropdown after selection
+    setIsOpen(false);
   };
 
   // Close dropdown on outside click
@@ -34,6 +36,8 @@ const FilterBar = ({ onFilterChange }) => {
   // Fetch unique categories from items
   useEffect(() => {
     const fetchCategories = async () => {
+      setLoading(true);
+      setError("");
       try {
         const response = await fetch(`${API_URL}/api/items`);
         if (!response.ok) throw new Error("Failed to fetch items");
@@ -43,6 +47,9 @@ const FilterBar = ({ onFilterChange }) => {
         setCategories(uniqueCategories);
       } catch (error) {
         console.error("Error fetching items:", error);
+        setError("There was a problem loading categories. Please try again.");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -57,35 +64,68 @@ const FilterBar = ({ onFilterChange }) => {
           <button
             className="text-secondary hover:text-secondary/80 font-semibold"
             onClick={toggleDropdown}
+            aria-haspopup="true"
+            aria-expanded={isOpen}
           >
             Filter by ▼
           </button>
           {isOpen && (
             <div className="absolute z-10 bg-white shadow-lg rounded mt-1">
-              {categories.map((filter) => (
-                <button
-                  key={filter}
-                  className="block w-full text-left p-2 hover:bg-gray-100"
-                  onClick={() => handleFilterSelection(filter)}
-                >
-                  {filter}
-                </button>
-              ))}
+              {loading ? (
+                <div className="flex items-center p-2">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500 mr-2"></div>
+                  Loading categories...
+                </div>
+              ) : error ? (
+                <div className="p-2 text-red-600">{error}</div>
+              ) : (
+                categories.map((filter) => (
+                  <button
+                    key={filter}
+                    className="block w-full text-left p-2 hover:bg-gray-100"
+                    onClick={() => handleFilterSelection(filter)}
+                  >
+                    {filter}
+                  </button>
+                ))
+              )}
             </div>
           )}
         </div>
 
         {/* Filter Buttons for Larger Screens */}
         <div className="hidden sm:flex space-x-6">
-          {categories.map((filter) => (
+          {loading ? (
+            <span className="flex items-center">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500 mr-2"></div>
+              Loading categories...
+            </span>
+          ) : error ? (
+            <span className="text-red-600">{error}</span>
+          ) : (
+            categories.map((filter) => (
+              <button
+                key={filter}
+                className={`text-secondary hover:text-secondary/80 font-medium ${
+                  selectedFilter === filter ? "font-bold" : ""
+                }`}
+                onClick={() => handleFilterSelection(filter)}
+              >
+                {filter}
+              </button>
+            ))
+          )}
+          {selectedFilter && (
             <button
-              key={filter}
-              className={`text-secondary hover:text-secondary/80 font-medium ${selectedFilter === filter ? "font-bold" : ""}`} // Highlight selected filter
-              onClick={() => handleFilterSelection(filter)}
+              className="text-red-500 hover:text-red-700"
+              onClick={() => {
+                setSelectedFilter("");
+                onFilterChange(""); // Clear the filter
+              }}
             >
-              {filter}
+              Clear Filter
             </button>
-          ))}
+          )}
         </div>
       </div>
     </div>

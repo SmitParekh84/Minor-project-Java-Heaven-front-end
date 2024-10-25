@@ -12,7 +12,7 @@ const ItemCard = ({ item }) => {
     <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 flex transition-transform transform hover:scale-105">
       <img
         src={item.imageUrl}
-        alt={item.name}
+        alt={item.name} // Use item name as alt text for better accessibility
         className="rounded-full mb-4 mr-4 sm:mr-6 w-24 h-24 sm:w-32 sm:h-32 object-cover shadow-md" // Maintain aspect ratio
       />
       <div className="flex flex-col justify-between w-full">
@@ -27,6 +27,7 @@ const ItemCard = ({ item }) => {
           <button
             className="bg-secondary text-white hover:bg-secondary/90 transition duration-300 rounded-full p-2 sm:p-3 flex items-center"
             onClick={handleAddItem} // Use the handler here
+            aria-label={`View details for ${item.name}`} // Add aria-label for accessibility
           >
             <span className="mr-2 text-sm sm:text-base">View Details</span>
             <svg

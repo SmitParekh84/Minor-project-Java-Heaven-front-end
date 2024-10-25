@@ -22,42 +22,43 @@ const RevenuePage = () => {
     const [error, setError] = useState(null);
     const [chartData, setChartData] = useState({});
 
-    useEffect(() => {
-        const fetchRevenueData = async () => {
-            try {
-                const response = await axios.get(`${API_URL}/api/revenue`);
-                console.log("Revenue API Response:", response.data); // Log the full response
+    // Function to fetch revenue data
+    const fetchRevenueData = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/api/revenue`);
+            console.log("Revenue API Response:", response.data); // Log the full response
 
-                if (response.data && response.data.status === 'success') {
-                    const data = response.data.data; // Accessing data correctly
+            if (response.data && response.data.status === 'success') {
+                const data = response.data.data; // Accessing data correctly
 
-                    // Set total revenue
-                    setTotalRevenue(data.totalRevenue || 0);
+                // Set total revenue
+                setTotalRevenue(data.totalRevenue || 0);
 
-                    // Prepare the bar chart data
-                    const labels = data.revenueData?.map(item => item.month) || [];
-                    const revenueAmounts = data.revenueData?.map(item => item.totalSales) || [];
+                // Prepare the bar chart data
+                const labels = data.revenueData?.map(item => item.month) || [];
+                const revenueAmounts = data.revenueData?.map(item => item.totalSales) || [];
 
-                    setChartData({
-                        labels: labels,
-                        datasets: [
-                            {
-                                label: 'Revenue Over Time',
-                                data: revenueAmounts,
-                                backgroundColor: 'rgba(75, 192, 192, 1)',
-                            },
-                        ],
-                    });
-                }
-            } catch (err) {
-                setError(err.message);
-                console.error("Error fetching revenue data: ", err);
-            } finally {
-                setLoading(false);
+                setChartData({
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Revenue Over Time',
+                            data: revenueAmounts,
+                            backgroundColor: 'rgba(75, 192, 192, 1)',
+                        },
+                    ],
+                });
             }
-        };
+        } catch (err) {
+            setError(err.message);
+            console.error("Error fetching revenue data: ", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        fetchRevenueData();
+    useEffect(() => {
+        fetchRevenueData(); // Fetch data on component mount
     }, []);
 
     const handleRetry = () => {
@@ -66,12 +67,27 @@ const RevenuePage = () => {
         fetchRevenueData(); // Retry fetching data
     };
 
+    // Enhanced Skeleton Loader
+    const SkeletonLoader = () => (
+        <div className="animate-pulse space-y-4">
+            {/* Total Revenue Skeleton */}
+            <div className="h-8 bg-gray-300 rounded w-1/4"></div>
+            <div className="h-6 bg-gray-300 rounded w-1/3"></div>
+
+            {/* Bar Chart Skeleton */}
+            <div className="h-48 bg-gray-300 rounded mt-6"></div>
+        </div>
+    );
+
+    // Spinner component
+    const Spinner = () => (
+        <div className="flex justify-center items-center h-screen">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        </div>
+    );
+
     if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <div className="loader">Loading...</div>
-            </div>
-        );
+        return <Spinner />; // Show spinner while loading
     }
 
     if (error) {

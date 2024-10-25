@@ -1,8 +1,15 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { API_URL } from '../../config';
+
+// Spinner Component
+const Spinner = () => (
+    <div className="flex justify-center">
+        <FontAwesomeIcon icon={faSpinner} className="animate-spin h-5 w-5 text-blue-500" />
+    </div>
+);
 
 const AdminEdit = () => {
     const [admins, setAdmins] = useState([]);
@@ -16,12 +23,16 @@ const AdminEdit = () => {
 
     useEffect(() => {
         const fetchAdmins = async () => {
+            setLoading(true);
             try {
                 const response = await axios.get(`${API_URL}/api/admin/list`);
                 setAdmins(response.data.admins);
+                setError(null);
             } catch (err) {
                 console.error(err);
                 setError(err.message);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -37,18 +48,24 @@ const AdminEdit = () => {
     };
 
     const handleDelete = async (adminId) => {
-        try {
-            await axios.delete(`${API_URL}/api/admin/delete/${adminId}`);
-            setAdmins(prevAdmins => prevAdmins.filter(admin => admin._id !== adminId));
-        } catch (err) {
-            console.error(err);
-            setError(err.response?.data?.msg || "Error deleting admin");
+        if (window.confirm("Are you sure you want to delete this admin?")) {
+            setLoading(true);
+            try {
+                await axios.delete(`${API_URL}/api/admin/delete/${adminId}`);
+                setAdmins(prevAdmins => prevAdmins.filter(admin => admin._id !== adminId));
+                setError(null);
+            } catch (err) {
+                console.error(err);
+                setError(err.response?.data?.msg || "Error deleting admin");
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
     const handleSave = async (e) => {
         e.preventDefault();
-        setLoading(true); // Start loading
+        setLoading(true);
         try {
             if (editingAdminId) {
                 await axios.put(`${API_URL}/api/admin/edit/${editingAdminId}`, {
@@ -57,28 +74,27 @@ const AdminEdit = () => {
                     mobno,
                     password,
                 });
-                setEditingAdminId(null); // Reset editing state
+                setAdmins(prev => prev.map(admin => (admin._id === editingAdminId ? { ...admin, username, email, mobno } : admin)));
+                setEditingAdminId(null);
             } else {
-                await axios.post(`${API_URL}/api/admin/add`, {
+                const response = await axios.post(`${API_URL}/api/admin/add`, {
                     username,
                     password,
                     mobno,
                     email,
                 });
+                setAdmins(prev => [...prev, response.data.admin]);
             }
             // Reset fields
             setUsername('');
             setEmail('');
             setMobno('');
             setPassword('');
-            // Optionally fetch updated admin list
-            const response = await axios.get(`${API_URL}/api/admin/list`);
-            setAdmins(response.data.admins);
         } catch (err) {
             console.error(err);
             setError(err.response?.data?.msg || "Error saving admin");
         } finally {
-            setLoading(false); // End loading
+            setLoading(false);
         }
     };
 
@@ -126,7 +142,7 @@ const AdminEdit = () => {
                         disabled={loading}
                         className={`mt-4 ${loading ? 'bg-gray-400' : 'bg-secondary'} text-white rounded-lg py-2 px-4 hover:brightness-150 transition duration-300 flex items-center`}
                     >
-                        {loading ? <div className="loader">Loading...</div> : <FontAwesomeIcon icon={faPlus} className="mr-2" />}
+                        {loading ? <Spinner /> : <FontAwesomeIcon icon={faPlus} className="mr-2" />}
                         {editingAdminId ? 'Save Changes' : 'Add Admin'}
                     </button>
                 </form>
@@ -144,12 +160,14 @@ const AdminEdit = () => {
                                     <button
                                         className="bg-secondary text-white rounded-lg py-1 px-2 hover:brightness-150 transition duration-300"
                                         onClick={() => handleEdit(admin)}
+                                        disabled={loading}
                                     >
                                         Edit
                                     </button>
                                     <button
                                         className="bg-red-600 text-white rounded-lg py-1 px-2 hover:bg-red-700 transition duration-300"
                                         onClick={() => handleDelete(admin._id)}
+                                        disabled={loading}
                                     >
                                         <FontAwesomeIcon icon={faTrash} className="mr-1" />
                                         Delete

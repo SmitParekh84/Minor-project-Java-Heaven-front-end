@@ -1,94 +1,104 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useCart } from "../../context/CartContext"; // Adjust path if necessary
-import axios from "axios"; // For API requests
+import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config";
 
 const Cart = () => {
   const navigate = useNavigate();
-  
-  // State for user information
+  const { cartItems, updateCartItemQuantity, removeFromCart, clearCart } = useCart();
+
   const [userInfo, setUserInfo] = useState({
     username: "",
     email: "",
     address: "",
   });
+  const [deliveryOption, setDeliveryOption] = useState("hand");
+  const [loading, setLoading] = useState(false); // Add loading state
 
-  const loggedInUser = localStorage.getItem('userInfo'); // Use the correct key
-  useEffect(() => {
-    // Check if user is logged in by using localStorage
-    if (loggedInUser) {
-      const foundUser = JSON.parse(loggedInUser);
-      setUserInfo({
-        username: foundUser.username,
-        email: foundUser.email,
-        address: userInfo.address, // Retain the address state
-      });
-    }
-  }, [loggedInUser]);
-
-  const { cartItems, updateCartItemQuantity, removeFromCart, clearCart } = useCart();
-
-  const totalAmount = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
+  // Calculate total amount in cart
+  const totalAmount = useMemo(
+    () => cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
+    [cartItems]
   );
 
-  const handleDecreaseQuantity = (item) => {
-    if (item.quantity > 1) {
-      updateCartItemQuantity(item.id, item.size, item.quantity - 1);
-    } else {
-      removeFromCart(item.id, item.size);
+  // Load user info on component mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("userInfo");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUserInfo((prev) => ({
+        ...prev,
+        username: parsedUser.username,
+        email: parsedUser.email,
+      }));
     }
-  };
+  }, []);
 
-  const handleIncreaseQuantity = (item) => {
-    updateCartItemQuantity(item.id, item.size, item.quantity + 1);
-  };
+  const handleQuantityChange = useCallback(
+    (item, change) => {
+      const newQuantity = item.quantity + change;
+      if (newQuantity < 1) {
+        removeFromCart(item.id, item.size);
+      } else {
+        updateCartItemQuantity(item.id, item.size, newQuantity);
+      }
+    },
+    [removeFromCart, updateCartItemQuantity]
+  );
 
-  const [deliveryOption, setDeliveryOption] = useState("hand"); // State for delivery option
-
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserInfo((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleCheckout = async (e) => {
-    e.preventDefault(); // Prevent the default form submission behavior
+    e.preventDefault();
+    setLoading(true); // Start loading
+
+    if (!userInfo.username) {
+      toast.error("User not logged in. Please log in to place an order.");
+      setLoading(false); // Stop loading
+      return;
+    }
+
+    if (deliveryOption === "home" && !userInfo.address.trim()) {
+      toast.error("Address is required for home delivery.");
+      setLoading(false); // Stop loading
+      return;
+    }
+
     try {
-      if (!userInfo.username) {
-        toast.error("User ID not found. Please log in.");
-        return;
-      }
-
-      if (deliveryOption === "home" && !userInfo.address) {
-        toast.error("Address is required for home delivery.");
-        return;
-      }
-
-      console.log("User ID:", userInfo.username);
-      console.log("Cart Items:", cartItems);
-      console.log("Delivery Option:", deliveryOption);
-
       const response = await axios.post(`${API_URL}/api/orders`, {
         userId: userInfo.username,
         cartItems,
         deliveryOption,
-        address: deliveryOption === "home" ? userInfo.address : "", // Include address only for home delivery
+        address: deliveryOption === "home" ? userInfo.address : "",
       });
 
-      console.log("Order response:", response.data);
       toast.success("Order placed successfully!");
-      navigate("/my-orders"); // Redirect to my orders page
-      clearCart(); // Clear the cart after successful order
+      navigate("/my-orders");
+      clearCart();
     } catch (error) {
       console.error("Error during checkout:", error);
-      toast.error("Checkout failed. Please try again. " + (error.response?.data?.message || ""));
+      const errorMessage = error.response?.data?.message || "Checkout failed. Please try again.";
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false); // Stop loading after checkout
     }
   };
 
-  if (cartItems.length === 0) {
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <div className="w-16 h-16 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-4 text-gray-700">Placing your order...</p>
+      </div>
+    );
+  }
+
+  if (!cartItems.length) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
@@ -107,20 +117,11 @@ const Cart = () => {
         <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Your Shopping Cart</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cartItems.map((item, index) => (
-            <div
-              key={index}
-              className="flex flex-col justify-between p-4 bg-white shadow-lg rounded-lg transition-transform transform hover:scale-105"
-            >
+            <div key={index} className="flex flex-col justify-between p-4 bg-white shadow-lg rounded-lg transition-transform transform hover:scale-105">
               <div>
-                <img
-                  src={item.imageUrl}
-                  alt={item.name}
-                  className="h-40 w-full object-cover mb-4 rounded-lg shadow-md"
-                />
+                <img src={item.imageUrl} alt={item.name} className="h-40 w-full object-cover mb-4 rounded-lg shadow-md" />
                 <h3 className="font-semibold text-lg text-gray-900">{item.name}</h3>
-                <p className="text-gray-600 mt-1">
-                  Price: <span className="font-semibold">₹ {item.price.toFixed(2)}</span>
-                </p>
+                <p className="text-gray-600 mt-1">Price: <span className="font-semibold">₹ {item.price.toFixed(2)}</span></p>
                 <p className="text-gray-600 mt-1">Size: <span className="font-semibold">{item.size}</span></p>
                 <p className="text-gray-700 mt-2 font-semibold">
                   Subtotal: <span className="text-blue-600">₹ {(item.price * item.quantity).toFixed(2)}</span>
@@ -128,29 +129,14 @@ const Cart = () => {
               </div>
               <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center">
-                  <button
-                    onClick={() => handleDecreaseQuantity(item)}
-                    className="bg-gray-200 text-gray-800 px-2 py-1 rounded-lg transition duration-200 hover:bg-gray-300"
-                  >
-                    -
-                  </button>
+                  <button onClick={() => handleQuantityChange(item, -1)} className="bg-gray-200 text-gray-800 px-2 py-1 rounded-lg transition duration-200 hover:bg-gray-300">-</button>
                   <span className="mx-2 text-lg font-semibold">{item.quantity}</span>
-                  <button
-                    onClick={() => handleIncreaseQuantity(item)}
-                    className="bg-gray-200 text-gray-800 px-2 py-1 rounded-lg transition duration-200 hover:bg-gray-300"
-                  >
-                    +
-                  </button>
+                  <button onClick={() => handleQuantityChange(item, 1)} className="bg-gray-200 text-gray-800 px-2 py-1 rounded-lg transition duration-200 hover:bg-gray-300">+</button>
                 </div>
-                <button
-                  onClick={() => removeFromCart(item.id, item.size)}
-                  className="text-red-500 hover:text-red-700 transition duration-200"
-                >
-                  Remove
-                </button>
+                <button onClick={() => removeFromCart(item.id, item.size)} className="text-red-500 hover:text-red-700 transition duration-200">Remove</button>
               </div>
             </div>
-          ))}
+          ))} 
         </div>
 
         {/* Summary of Cart Items */}
@@ -169,34 +155,18 @@ const Cart = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Checkout Form */}
         <form onSubmit={handleCheckout} className="mt-8">
           <h3 className="text-xl font-bold mb-4 text-gray-800">Checkout</h3>
 
           {/* Radio buttons for delivery option */}
           <div className="flex items-center mb-4">
-            <input 
-              type="radio" 
-              id="hand" 
-              name="deliveryOption" 
-              value="hand" 
-              checked={deliveryOption === "hand"} 
-              onChange={() => setDeliveryOption("hand")} 
-              className="mr-2" 
-            />
+            <input type="radio" id="hand" name="deliveryOption" value="hand" checked={deliveryOption === "hand"} onChange={() => setDeliveryOption("hand")} className="mr-2" />
             <label htmlFor="hand" className="text-gray-700">Hand to Hand</label>
           </div>
           <div className="flex items-center mb-4">
-            <input 
-              type="radio" 
-              id="home" 
-              name="deliveryOption" 
-              value="home" 
-              checked={deliveryOption === "home"} 
-              onChange={() => setDeliveryOption("home")} 
-              className="mr-2" 
-            />
+            <input type="radio" id="home" name="deliveryOption" value="home" checked={deliveryOption === "home"} onChange={() => setDeliveryOption("home")} className="mr-2" />
             <label htmlFor="home" className="text-gray-700">Home Delivery</label>
           </div>
 
@@ -206,15 +176,12 @@ const Cart = () => {
               name="address" 
               placeholder="Address" 
               value={userInfo.address} 
-              onChange={handleChange} 
+              onChange={handleInputChange} 
               required 
               className="border border-gray-300 p-2 w-full mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" 
             />
           )}
-          <button 
-            type="submit" 
-            className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200"
-          >
+          <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">
             Place Order
           </button>
         </form>
