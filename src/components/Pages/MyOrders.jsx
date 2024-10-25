@@ -61,7 +61,7 @@ const MyOrders = () => {
                 <div
                     className="w-16 h-16 border-4 border-brown-400 border-t-transparent rounded-full animate-spin"
                     style={{ borderTopColor: '#7B3F00' }} // Custom brown color for the spinner
-                ></div>
+                ></div>Loading..
             </div>
         );
     }
