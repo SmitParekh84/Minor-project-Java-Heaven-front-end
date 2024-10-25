@@ -33,22 +33,15 @@ const AdminDashboard = () => {
             try {
                 const response = await axios.get(`${API_URL}/api/dashboard`);
                 console.log("API Response:", response.data); // Log the full response
-
+    
                 if (response.data && response.data.status === 'success') {
                     const data = response.data.data;
-
+    
                     setTotalOrders(data.totalOrders || 0);
                     setTotalUsers(data.totalUsers || 0);
                     setTotalSales(data.totalSales || 0);
                     setBestSellingItems(data.bestSellingItems || []);
-
-                    console.log('Setting State:', {
-                        totalOrders: data.totalOrders,
-                        totalUsers: data.totalUsers,
-                        totalSales: data.totalSales,
-                        bestSellingItems: data.bestSellingItems,
-                    });
-
+    
                     const labels = data.bestSellingItems?.map(item => item.name) || [];
                     const pieData = data.bestSellingItems?.map(item => item.totalSold) || [];
                     setPieChartData({
@@ -67,23 +60,24 @@ const AdminDashboard = () => {
                             },
                         ],
                     });
-
+    
+                    // Set the chart data for orders, sales, and users
                     setChartData({
-                        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                        labels: data.monthlyData.map(month => month.month),
                         datasets: [
                             {
                                 label: 'Total Orders',
-                                data: [65, 59, 80, 81, 56, 55, 40],
+                                data: data.monthlyData.map(month => month.totalOrders || 0),
                                 backgroundColor: 'rgba(75, 192, 192, 1)',
                             },
                             {
                                 label: 'Total Users',
-                                data: [30, 40, 45, 35, 50, 70, 80],
+                                data: data.monthlyData.map(month => month.totalUsers || 0), // Set total users data here
                                 backgroundColor: 'rgba(153, 102, 255, 1)',
                             },
                             {
                                 label: 'Total Sales',
-                                data: [2000, 1900, 2200, 2100, 2400, 3000, 2800],
+                                data: data.monthlyData.map(month => month.totalSales || 0),
                                 backgroundColor: 'rgba(255, 159, 64, 1)',
                             },
                         ],
@@ -96,9 +90,10 @@ const AdminDashboard = () => {
                 setLoading(false);
             }
         };
-
+    
         fetchDashboardData();
     }, []);
+    
 
     const handleRetry = () => {
         setLoading(true);
