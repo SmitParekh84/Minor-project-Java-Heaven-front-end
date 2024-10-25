@@ -36,12 +36,12 @@ export default function Navbar() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-     // Clear the user state, but keep other fields if necessary
-     setUser((prevUser) => ({
+    // Clear the user state, but keep other fields if necessary
+    setUser((prevUser) => ({
       ...prevUser,
       username: "", // Clear username
       email: ""     // Clear email
-  }));
+    }));
     setShowProfileMenu(false);
     localStorage.removeItem('userInfo');
     localStorage.removeItem('user');
@@ -52,7 +52,7 @@ export default function Navbar() {
     // Force a page reload to reset everything
     setTimeout(() => {
       window.location.reload(); // This will refresh the page and reset the state
-  }, 500); // A short delay before reloading
+    }, 500); // A short delay before reloading
   };
 
   const isAdmin = user?.role === 'admin'; // Check if the logged-in user is an admin
@@ -209,7 +209,7 @@ export default function Navbar() {
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500">
               <div className="space-y-2 py-6">
-                {(!isLoggedIn || (isLoggedIn && !isAdmin)) && ( // Show My Orders and Cart links only for logged in non-admin users
+                {(!isLoggedIn || (isLoggedIn && !isAdmin)) && (
                   <>
                     <Link
                       key="home"
@@ -235,11 +235,11 @@ export default function Navbar() {
                     >
                       About
                     </Link>
-
                   </>
                 )}
 
-                {isLoggedIn && isAdmin && adminNavigation.map((item) => (
+                {/* Display Admin Navigation Links Only Once */}
+                {isLoggedIn && (isAdmin ? adminNavigation : []).map((item) => (
                   <Link
                     key={item.name}
                     to={item.href}
@@ -249,9 +249,9 @@ export default function Navbar() {
                     {item.name}
                   </Link>
                 ))}
-                {isLoggedIn && !isAdmin && ( // Show My Orders and Cart links only for logged in non-admin users
-                  <>
 
+                {isLoggedIn && !isAdmin && (
+                  <>
                     <Link
                       key="my-orders"
                       to="/my-orders"
@@ -269,18 +269,8 @@ export default function Navbar() {
                     </Link>
                   </>
                 )}
-
-                {isLoggedIn && isAdmin && adminNavigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    onClick={() => handleLinkClick(item.href)}
-                    className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
               </div>
+
               <div className="py-6">
                 {isLoggedIn ? (
                   <button
@@ -303,6 +293,7 @@ export default function Navbar() {
           </div>
         </DialogPanel>
       </Dialog>
+
     </header>
   );
 }
