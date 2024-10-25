@@ -6,7 +6,6 @@ const FilterBar = ({ onFilterChange }) => {
   const dropdownRef = useRef(null);
   const [selectedFilter, setSelectedFilter] = useState("");
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const toggleDropdown = () => {
@@ -36,7 +35,6 @@ const FilterBar = ({ onFilterChange }) => {
   // Fetch unique categories from items
   useEffect(() => {
     const fetchCategories = async () => {
-      setLoading(true);
       setError("");
       try {
         const response = await fetch(`${API_URL}/api/items`);
@@ -48,8 +46,6 @@ const FilterBar = ({ onFilterChange }) => {
       } catch (error) {
         console.error("Error fetching items:", error);
         setError("There was a problem loading categories. Please try again.");
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -71,12 +67,7 @@ const FilterBar = ({ onFilterChange }) => {
           </button>
           {isOpen && (
             <div className="absolute z-10 bg-white shadow-lg rounded mt-1">
-              {loading ? (
-                <div className="flex items-center p-2">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500 mr-2"></div>
-                  Loading categories...
-                </div>
-              ) : error ? (
+              {error ? (
                 <div className="p-2 text-red-600">{error}</div>
               ) : (
                 categories.map((filter) => (
@@ -95,12 +86,7 @@ const FilterBar = ({ onFilterChange }) => {
 
         {/* Filter Buttons for Larger Screens */}
         <div className="hidden sm:flex space-x-6">
-          {loading ? (
-            <span className="flex items-center">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500 mr-2"></div>
-              Loading categories...
-            </span>
-          ) : error ? (
+          {error ? (
             <span className="text-red-600">{error}</span>
           ) : (
             categories.map((filter) => (
