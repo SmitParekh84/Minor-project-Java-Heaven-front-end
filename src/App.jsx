@@ -27,6 +27,24 @@ const BestSellingItem = React.lazy(() => import("./components/Pages/BestSellingI
 const About = React.lazy(() => import("./components/Pages/About"));
 const RevenuePage = React.lazy(() => import("./components/Pages/RevenuePage")); // Import RevenuePage
 
+// Loading fallback component
+// Loading fallback component
+function LoadingFallback() {
+  return (
+    <div className="flex flex-col justify-center items-center h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-secondary"></div> {/* Change border color to brown */}
+      <span className="mt-4 text-lg text-gray-700">Loading...</span>
+      {/* Alternatively, for a skeleton loader, you can uncomment the following: */}
+      <div className="animate-pulse space-y-4">
+        <div className="h-8 bg-gray-300 rounded w-1/4"></div>
+        <div className="h-6 bg-gray-300 rounded w-1/3"></div>
+        <div className="h-48 bg-gray-300 rounded mt-6"></div>
+      </div>
+    </div>
+  );
+}
+
+
 export default function App() {
   return (
     <>
