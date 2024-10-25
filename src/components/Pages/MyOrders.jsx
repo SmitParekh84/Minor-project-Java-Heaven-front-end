@@ -59,12 +59,13 @@ const MyOrders = () => {
         return (
             <div className="flex flex-col items-center justify-center h-screen">
                 <div
-                    className="w-16 h-16 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"
-                    style={{ borderTopColor: '#3498db' }} // Inline style to customize the spinner color
+                    className="w-16 h-16 border-4 border-brown-400 border-t-transparent rounded-full animate-spin"
+                    style={{ borderTopColor: '#7B3F00' }} // Custom brown color for the spinner
                 ></div>
             </div>
         );
     }
+    
 
     if (error) {
         return (
@@ -163,7 +164,7 @@ const MyOrders = () => {
                     ))
                 ) : (
                     <div className="text-center text-gray-500 py-20">
-                        No orders found. <a href="/menu" className="text-blue-500 underline">Browse Products</a>
+                        No orders found. <a href="/me" className="text-blue-500 underline">Browse Products</a>
                     </div>
                 )}
             </div>
