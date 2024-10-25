@@ -132,13 +132,17 @@ export default function Navbar() {
             </Link>
           )}
 
-          {isLoggedIn ? (
-            renderUserInfo()
-          ) : (
-            <Link to="/login" className="text-sm font-semibold leading-6 text-white bg-secondary hover:bg-gray-700 py-2 px-4 rounded">
-              Log in
-            </Link>
-          )}
+{isLoggedIn ? (
+  renderUserInfo()
+) : (
+  <a
+    className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105"
+    href="/login"
+  >
+    Log in <span aria-hidden="true">→</span>
+  </a>
+)}
+
         </div>
       </nav>
 
