@@ -93,25 +93,25 @@ const MyOrders = () => {
                 <div className="flex space-x-4 mb-4">
                     <button
                         onClick={() => setActiveTab('myOrders')}
-                        className={`px-4 py-2 rounded-md ${activeTab === 'myOrders' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                        className={`px-4 py-2 rounded-md ${activeTab === 'myOrders' ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
                     >
                         My Orders
                     </button>
                     <button
                         onClick={() => setActiveTab('pending')}
-                        className={`px-4 py-2 rounded-md ${activeTab === 'pending' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                        className={`px-4 py-2 rounded-md ${activeTab === 'pending' ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
                     >
                         Pending
                     </button>
                     <button
                         onClick={() => setActiveTab('delivered')}
-                        className={`px-4 py-2 rounded-md ${activeTab === 'delivered' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                        className={`px-4 py-2 rounded-md ${activeTab === 'delivered' ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
                     >
                         Delivered
                     </button>
                     <button
                         onClick={() => setActiveTab('cancelled')}
-                        className={`px-4 py-2 rounded-md ${activeTab === 'cancelled' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                        className={`px-4 py-2 rounded-md ${activeTab === 'cancelled' ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
                     >
                         Cancelled
                     </button>
