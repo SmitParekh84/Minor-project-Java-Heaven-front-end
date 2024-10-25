@@ -1,7 +1,7 @@
 // src/components/Pages/RevenuePage.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Bar } from 'react-chartjs-2'; // Import Bar chart
+import { Bar } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -11,9 +11,8 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
-import { API_URL } from '../../config'; // Adjust the path based on your config location
+import { API_URL } from '../../config';
 
-// Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const RevenuePage = () => {
@@ -22,21 +21,21 @@ const RevenuePage = () => {
     const [error, setError] = useState(null);
     const [chartData, setChartData] = useState({});
 
-    // Function to fetch revenue data
+    // Function to fetch revenue data from dashboard endpoint
     const fetchRevenueData = async () => {
         try {
-            const response = await axios.get(`${API_URL}/api/revenue`);
-            console.log("Revenue API Response:", response.data); // Log the full response
+            const response = await axios.get(`${API_URL}/api/dashboard`);
+            console.log("Dashboard API Response:", response.data); // Log the full response
 
             if (response.data && response.data.status === 'success') {
-                const data = response.data.data; // Accessing data correctly
+                const data = response.data.data;
 
-                // Set total revenue
-                setTotalRevenue(data.totalRevenue || 0);
+                // Set total revenue from the dashboard
+                setTotalRevenue(data.totalSales || 0);
 
-                // Prepare the bar chart data
-                const labels = data.revenueData?.map(item => item.month) || [];
-                const revenueAmounts = data.revenueData?.map(item => item.totalSales) || [];
+                // Prepare the bar chart data based on monthly data
+                const labels = data.monthlyData?.map(item => item.month) || [];
+                const revenueAmounts = data.monthlyData?.map(item => item.totalSales) || [];
 
                 setChartData({
                     labels: labels,
@@ -67,17 +66,6 @@ const RevenuePage = () => {
         fetchRevenueData(); // Retry fetching data
     };
 
-    // Enhanced Skeleton Loader
-    const SkeletonLoader = () => (
-        <div className="animate-pulse space-y-4">
-            {/* Total Revenue Skeleton */}
-            <div className="h-8 bg-gray-300 rounded w-1/4"></div>
-            <div className="h-6 bg-gray-300 rounded w-1/3"></div>
-
-            {/* Bar Chart Skeleton */}
-            <div className="h-48 bg-gray-300 rounded mt-6"></div>
-        </div>
-    );
     if (loading) {
         return (
             <div className="flex items-center justify-center h-screen flex-col">
