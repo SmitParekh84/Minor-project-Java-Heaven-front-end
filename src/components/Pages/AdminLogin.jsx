@@ -90,10 +90,11 @@ export default function AdminLogin() {
                             />
                             <button
                                 type="button"
-                                onClick={() => setShowPassword(prev => !prev)} // Toggle password visibility
-                                className="absolute right-2 top-2 text-gray-500 focus:outline-none"
+                                aria-label={showPassword ? "Hide password" : "Show password"}
+                                className="absolute right-2 top-2 text-secondary hover:brightness-150"
+                                onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
                             >
-                                {showPassword ? "Hide" : "Show"}
+                                <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
                             </button>
                         </div>
                     </div>
