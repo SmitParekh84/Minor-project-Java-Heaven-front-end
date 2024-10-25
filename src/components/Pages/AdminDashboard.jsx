@@ -136,13 +136,7 @@ const AdminDashboard = () => {
     );
     
 
-    // if (loading) {
-    //     return (
-    //         <div className="flex items-center justify-center h-screen">
-    //             <SkeletonLoader />
-    //         </div>
-    //     );
-    // }
+    
     if (loading) {
         return (
             <div className="flex items-center justify-center h-screen flex-col">
