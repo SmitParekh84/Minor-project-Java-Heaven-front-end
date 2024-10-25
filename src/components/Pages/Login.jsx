@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext"; // Adjust the import path
 import axios from "axios";
@@ -44,6 +44,13 @@ export default function Login() {
         }
     };
 
+    useEffect(() => {
+        const storedUser = localStorage.getItem("userInfo");
+        if (storedUser) {
+            setUser(JSON.parse(storedUser)); // Set user from local storage after login
+        }
+    }, [setUser]);
+
     return (
         <div className="flex items-center justify-center min-h-screen bg-background">
             <div className="bg-secondary rounded-lg shadow-lg m-5 p-11 max-w-sm w-full">
@@ -67,12 +74,12 @@ export default function Login() {
                             required
                         />
                     </div>
-                    <div className="mb-4 relative"> {/* Added relative positioning */}
+                    <div className="mb-4 relative">
                         <label className="block text-muted-foreground" htmlFor="password">
                             PASSWORD
                         </label>
                         <input
-                            type={showPassword ? "text" : "password"} // Toggle input type
+                            type={showPassword ? "text" : "password"}
                             id="password"
                             name="password"
                             placeholder="Enter Password *"
@@ -85,7 +92,7 @@ export default function Login() {
                             type="button"
                             aria-label={showPassword ? "Hide password" : "Show password"}
                             className="absolute right-2 top-9 text-secondary hover:brightness-150"
-                            onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
+                            onClick={() => setShowPassword(!showPassword)}
                         >
                             <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
                         </button>
@@ -99,7 +106,7 @@ export default function Login() {
                     <button
                         type="submit"
                         className={`w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        disabled={loading} // Disable button when loading
+                        disabled={loading}
                     >
                         {loading ? "Logging in..." : "Login"}
                     </button>
