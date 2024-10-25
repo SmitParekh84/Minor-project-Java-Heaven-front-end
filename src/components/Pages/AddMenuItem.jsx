@@ -5,6 +5,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faEdit, faTrash, faCoffee, faDollar, faImage } from '@fortawesome/free-solid-svg-icons';
 import { API_URL } from '../../config';
 
+// Spinner component
+// Spinner component
+const Spinner = ({ message }) => (
+    <div className="flex flex-col items-center justify-center">
+        <div
+            className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
+            style={{ borderColor: '#8B4513' }} // Set your desired brown color here
+        ></div>
+        <p className="mt-2 text-gray-600">{message}</p>
+    </div>
+);
 
 
 const AddMenuItem = () => {
@@ -23,17 +34,7 @@ const AddMenuItem = () => {
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5; // Number of items per page
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen flex-col">
-                <div
-                    className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
-                    style={{ borderColor: '#8B4513', borderTopColor: 'transparent' }} // Set the desired brown color
-                ></div>
-                <span className="mt-4 text-lg">Loading...</span>
-            </div>
-        );
-    }
+
     // Fetch existing items from the API
     const fetchItems = async () => {
         setLoading(true);
