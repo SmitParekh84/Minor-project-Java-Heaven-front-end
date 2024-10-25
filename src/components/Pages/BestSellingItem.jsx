@@ -41,7 +41,7 @@ const BestSellingItem = () => {
                     labels: labels,
                     datasets: [
                         {
-                            label: 'Best Selling Items',
+                            label: 'Sold Quantity',
                             data: soldData,
                             backgroundColor: [
                                 'rgba(255, 99, 132, 0.6)',
@@ -82,12 +82,12 @@ const BestSellingItem = () => {
 
     return (
         <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
-            <h1 className="text-2xl font-bold mb-6">Best Selling Items</h1>
+            <h1 className="text-2xl font-bold mb-6">Top 5  Selling Items</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="border p-4 rounded-lg shadow-lg bg-white flex items-center">
                     <FontAwesomeIcon icon={faChartLine} className="text-4xl mr-4 text-purple-500" />
                     <div>
-                        <h2 className="text-xl font-semibold">Best Selling Items</h2>
+                        <h2 className="text-xl font-semibold">Top 5  Selling Items</h2>
                         <ul className="list-disc pl-4">
                             {bestSellingItems.length > 0 ? (
                                 bestSellingItems.map((item) => (
@@ -105,7 +105,7 @@ const BestSellingItem = () => {
 
             {/* Pie Chart Section */}
             <div className="mt-6">
-                <h2 className="text-xl font-semibold mb-4">Best Selling Items Chart</h2>
+                <h2 className="text-xl font-semibold mb-4">Top 5  Selling Items Chart</h2>
                 <div style={{ position: 'relative', width: '100%', height: '400px' }}>
                     <Pie 
                         data={pieChartData} 
