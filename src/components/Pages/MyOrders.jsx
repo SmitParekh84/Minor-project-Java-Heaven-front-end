@@ -43,7 +43,7 @@ const MyOrders = () => {
             const response = await axios.get(`${API_URL}/api/orders/${userId}`);
             setOrders(response.data.orders);
         } catch (err) {
-            setError(err.response?.data?.msg || 'Failed to fetch orders.');
+            setError(err.response?.data?.msg);
         } finally {
             setLoading(false);
         }
@@ -163,7 +163,7 @@ const MyOrders = () => {
                     ))
                 ) : (
                     <div className="text-center text-gray-500 py-20">
-                        No orders found. <a href="/shop" className="text-blue-500 underline">Browse Products</a>
+                        No orders found. <a href="/menu" className="text-blue-500 underline">Browse Products</a>
                     </div>
                 )}
             </div>
