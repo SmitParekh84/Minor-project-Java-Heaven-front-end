@@ -1,4 +1,29 @@
+import React, { useEffect, useState } from 'react';
+
 export default function About() {
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        // Simulate loading time (you can replace this with real data fetching)
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 500);
+
+        return () => clearTimeout(timer); // Clean up the timer
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen flex-col">
+                <div
+                    className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
+                    style={{ borderColor: '#8B4513', borderTopColor: 'transparent' }} // Set the desired brown color
+                ></div>
+                <span className="mt-4 text-lg">Loading...</span>
+            </div>
+        );
+    }
+
     return (
         <div className="container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
             <div className="bg-background mx-auto max-w-7xl pt-10 sm:py-18 p-6 rounded-lg shadow-lg">
