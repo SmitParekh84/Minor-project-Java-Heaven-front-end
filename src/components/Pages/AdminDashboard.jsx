@@ -71,11 +71,6 @@ const AdminDashboard = () => {
                                 backgroundColor: 'rgba(75, 192, 192, 1)',
                             },
                             {
-                                label: 'Total Users',
-                                data: data.monthlyData.map(month => month.totalUsers || 0), // Set total users data here
-                                backgroundColor: 'rgba(153, 102, 255, 1)',
-                            },
-                            {
                                 label: 'Total Sales',
                                 data: data.monthlyData.map(month => month.totalSales || 0),
                                 backgroundColor: 'rgba(255, 159, 64, 1)',
@@ -154,7 +149,6 @@ const AdminDashboard = () => {
 
     console.log('Rendering:', {
         totalOrders,
-        totalUsers,
         totalSales,
         bestSellingItems,
     });
