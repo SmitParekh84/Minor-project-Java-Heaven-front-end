@@ -57,11 +57,12 @@ const MyOrders = () => {
 
     if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center h-screen">
+            <div className="flex items-center justify-center h-screen flex-col">
                 <div
-                    className="w-16 h-16 border-4 border-brown-400 border-t-transparent rounded-full animate-spin"
-                    style={{ borderTopColor: '#7B3F00' }} // Custom brown color for the spinner
-                ></div>Loading..
+                    className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
+                    style={{ borderColor: '#8B4513', borderTopColor: 'transparent' }} // Set the desired brown color
+                ></div>
+                <span className="mt-4 text-lg">Loading...</span>
             </div>
         );
     }

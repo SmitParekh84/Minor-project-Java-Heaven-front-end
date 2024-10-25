@@ -78,18 +78,17 @@ const RevenuePage = () => {
             <div className="h-48 bg-gray-300 rounded mt-6"></div>
         </div>
     );
-
-    // Spinner component
-    const Spinner = () => (
-        <div className="flex justify-center items-center h-screen">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-        </div>
-    );
-
     if (loading) {
-        return <Spinner />; // Show spinner while loading
+        return (
+            <div className="flex items-center justify-center h-screen flex-col">
+                <div
+                    className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
+                    style={{ borderColor: '#8B4513', borderTopColor: 'transparent' }} // Set the desired brown color
+                ></div>
+                <span className="mt-4 text-lg">Loading...</span>
+            </div>
+        );
     }
-
     if (error) {
         return (
             <div className="text-red-600 text-center font-bold">
@@ -107,8 +106,8 @@ const RevenuePage = () => {
             {/* Bar Chart Section */}
             <div className="mt-6">
                 <h2 className="text-xl font-semibold mb-4">Revenue Over Time</h2>
-                <Bar 
-                    data={chartData} 
+                <Bar
+                    data={chartData}
                     options={{
                         responsive: true,
                         plugins: {
@@ -120,7 +119,7 @@ const RevenuePage = () => {
                                 text: 'Revenue Over Time',
                             },
                         },
-                    }} 
+                    }}
                 />
             </div>
         </div>

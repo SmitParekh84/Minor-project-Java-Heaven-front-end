@@ -55,7 +55,17 @@ const ItemList = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
 
-  if (loading) return <LoadingIndicator />; // Show loading state
+  if (loading) {
+    return (
+        <div className="flex items-center justify-center h-screen flex-col">
+            <div
+                className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
+                style={{ borderColor: '#8B4513', borderTopColor: 'transparent' }} // Set the desired brown color
+            ></div>
+            <span className="mt-4 text-lg">Loading...</span>
+        </div>
+    );
+} // Show loading state
   if (error) return <ErrorMessage error={error} onRetry={fetchItems} />; // Show error message with retry option
   if (currentItems.length === 0) return <EmptyState />; // Show empty state if no items
 

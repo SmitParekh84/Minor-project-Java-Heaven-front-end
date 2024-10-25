@@ -41,7 +41,17 @@ const ItemDetail = () => {
   }, [id]);
 
   // Loading, error, or item not found states
-  if (loading) return <LoadingIndicator />;
+  if (loading) {
+    return (
+        <div className="flex items-center justify-center h-screen flex-col">
+            <div
+                className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
+                style={{ borderColor: '#8B4513', borderTopColor: 'transparent' }} // Set the desired brown color
+            ></div>
+            <span className="mt-4 text-lg">Loading...</span>
+        </div>
+    );
+}
   if (error) return <ErrorMessage error={error} />;
   if (!item) return <div>Item not found</div>; 
 
