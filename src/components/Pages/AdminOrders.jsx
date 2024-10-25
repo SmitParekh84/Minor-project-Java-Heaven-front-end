@@ -20,9 +20,8 @@ const AdminOrders = () => {
                 const response = await axios.get(`${API_URL}/api/admin/orders`);
                 setOrders(response.data.orders);
             } catch (err) {
-                const message = err.response?.data?.message || "Failed to load orders. Please try again later.";
-                setError(message);
-                toast.error(message);
+                setError("Failed to load orders. Please try again later.");
+                toast.error(err.message);
             } finally {
                 setLoading(false);
             }
@@ -49,9 +48,8 @@ const AdminOrders = () => {
             );
             toast.success(`Order status updated to '${newStatus}'.`);
         } catch (err) {
-            const message = err.response?.data?.message || "Failed to update order status. Please try again.";
-            setError(message);
-            toast.error(message);
+            setError("Failed to update order status. Please try again.");
+            toast.error(err.message);
         }
     };
 
@@ -76,11 +74,15 @@ const AdminOrders = () => {
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center h-screen">
-                <div className="animate-spin h-12 w-12 border-4 border-blue-500 border-t-transparent rounded-full"></div>
-                <p className="mt-4 text-lg text-blue-500">Loading...</p> {/* Loading text added here */}
+                <div
+                    className="animate-spin h-12 w-12 border-4 border-brown-400 border-t-transparent rounded-full"
+                    style={{ borderTopColor: '#7B3F00' }} // Custom brown color for the spinner
+                ></div>
+                <p className="mt-4 text-lg text-brown-400">Loading...</p> {/* Optional loading text */}
             </div>
         );
     }
+    
 
     if (error) {
         return (
