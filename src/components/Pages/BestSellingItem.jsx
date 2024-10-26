@@ -11,6 +11,7 @@ import {
     Legend,
 } from 'chart.js';
 import { API_URL } from '../../config';
+import LoadingIndicator from '../Menu/LoadingIndicator';
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -63,18 +64,13 @@ const BestSellingItem = () => {
         fetchDashboardData();
     }, []);
 
+
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-screen flex-col">
-                <div
-                    className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
-                    style={{ borderColor: '#8B4513', borderTopColor: 'transparent' }} // Set the desired brown color
-                ></div>
-                <span className="mt-4 text-lg">Loading...</span>
-            </div>
+            <LoadingIndicator />
         );
     }
-    
+
 
     if (error) {
         return <div>Error: {error}</div>;
@@ -107,8 +103,8 @@ const BestSellingItem = () => {
             <div className="mt-6">
                 <h2 className="text-xl font-semibold mb-4">Top 5  Selling Items Chart</h2>
                 <div style={{ position: 'relative', width: '100%', height: '400px' }}>
-                    <Pie 
-                        data={pieChartData} 
+                    <Pie
+                        data={pieChartData}
                         options={{
                             responsive: true,
                             maintainAspectRatio: false, // Allows the chart to resize based on parent dimensions
@@ -121,7 +117,7 @@ const BestSellingItem = () => {
                                     text: 'Best Selling Items Distribution',
                                 },
                             },
-                        }} 
+                        }}
                     />
                 </div>
             </div>

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt, faUser, faCheckCircle, faHandshake, faHome } from '@fortawesome/free-solid-svg-icons';
 import toast from 'react-hot-toast';
 import { API_URL } from '../../config';
+import LoadingIndicator from '../Menu/LoadingIndicator';
 
 const AdminOrders = () => {
     const [orders, setOrders] = useState([]);
@@ -71,15 +72,10 @@ const AdminOrders = () => {
         }
     }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
+
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-screen flex-col">
-                <div
-                    className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
-                    style={{ borderColor: '#8B4513', borderTopColor: 'transparent' }} // Set the desired brown color
-                ></div>
-                <span className="mt-4 text-lg">Loading...</span>
-            </div>
+            <LoadingIndicator />
         );
     }
 

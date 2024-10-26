@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faEdit, faTrash, faCoffee, faDollar, faImage } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faEdit, faTrash, faCoffee, faDollar, faImage, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { API_URL } from '../../config';
 
 // Spinner component
@@ -33,7 +33,8 @@ const AddMenuItem = () => {
     const [imageError, setImageError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5; // Number of items per page
+    const [itemsPerPage, setItemsPerPage] = useState(5);
+
 
     // Fetch existing items from the API
     const fetchItems = async () => {
@@ -299,7 +300,7 @@ const AddMenuItem = () => {
                                         <td className="p-3 text-center">₹{item.price}</td>
                                         <td className="p-3 text-center">{item.category}</td>
                                         <td className="p-3 text-center">
-                                            <div className="flex space-x-2">
+                                            <div className="flex space-x-2  justify-center">
                                                 <button onClick={() => handleEdit(item)} className="text-blue-500 hover:underline flex items-center">
                                                     <svg
                                                         aria-hidden="true"
@@ -351,25 +352,41 @@ const AddMenuItem = () => {
                 </div>
 
                 {/* Pagination */}
-                <div className="flex justify-between items-center mt-4">
-                    <p className="text-gray-700">Page {currentPage} of {totalPages}</p>
-                    <div className="flex space-x-2">
+                <div className="flex justify-between items-center mt-8 bg-white p-4 rounded-lg ">
+                    <p className="text-gray-700 font-medium">
+                        Page <span className="font-bold">{currentPage}</span> of <span className="font-bold">{totalPages}</span>
+                    </p>
+                    <div className="flex space-x-4">
+                        <select
+                            value={itemsPerPage}
+                            onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                            className="border border-gray-300 p-2 rounded-lg"
+                        >
+                            <option value={5}>5</option>
+                            <option value={10}>10</option>
+                            <option value={15}>15</option>
+                            <option value={20}>20</option>
+                        </select>
                         <button
                             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                             disabled={currentPage === 1}
-                            className={`bg-blue-500 text-white font-bold py-2 px-4 rounded-lg ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600 transition duration-200'}`}
+                            className={`flex items-center space-x-2 bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'}`}
                         >
-                            Previous
+                            <FontAwesomeIcon icon={faArrowLeft} />
+                            <span>Previous</span>
                         </button>
                         <button
                             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                             disabled={currentPage === totalPages}
-                            className={`bg-blue-500 text-white font-bold py-2 px-4 rounded-lg ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600 transition duration-200'}`}
+                            className={`flex items-center space-x-2 bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'}`}
                         >
-                            Next
+                            <span>Next</span>
+                            <FontAwesomeIcon icon={faArrowRight} />
                         </button>
                     </div>
                 </div>
+
+
             </div>
         </div>
     );

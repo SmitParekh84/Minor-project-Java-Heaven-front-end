@@ -14,6 +14,7 @@ import {
     ArcElement,
 } from 'chart.js';
 import { API_URL } from '../../config';
+import LoadingIndicator from '../Menu/LoadingIndicator';
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
@@ -33,15 +34,15 @@ const AdminDashboard = () => {
             try {
                 const response = await axios.get(`${API_URL}/api/dashboard`);
                 console.log("API Response:", response.data); // Log the full response
-    
+
                 if (response.data && response.data.status === 'success') {
                     const data = response.data.data;
-    
+
                     setTotalOrders(data.totalOrders || 0);
                     setTotalUsers(data.totalUsers || 0);
                     setTotalSales(data.totalSales || 0);
                     setBestSellingItems(data.bestSellingItems || []);
-    
+
                     const labels = data.bestSellingItems?.map(item => item.name) || [];
                     const pieData = data.bestSellingItems?.map(item => item.totalSold) || [];
                     setPieChartData({
@@ -60,7 +61,7 @@ const AdminDashboard = () => {
                             },
                         ],
                     });
-    
+
                     // Set the chart data for orders, sales, and users
                     setChartData({
                         labels: data.monthlyData.map(month => month.month),
@@ -85,10 +86,10 @@ const AdminDashboard = () => {
                 setLoading(false);
             }
         };
-    
+
         fetchDashboardData();
     }, []);
-    
+
 
     const handleRetry = () => {
         setLoading(true);
@@ -110,13 +111,13 @@ const AdminDashboard = () => {
                     </div>
                 ))}
             </div>
-    
+
             {/* Bar Chart Skeleton */}
             <div className="mt-6 animate-pulse">
                 <h2 className="text-xl font-semibold mb-4 h-6 bg-gray-300 rounded w-1/3"></h2>
                 <div className="h-60 bg-gray-300 rounded"></div>
             </div>
-    
+
             {/* Pie Chart Skeleton */}
             <div className="mt-6 animate-pulse">
                 <h2 className="text-xl font-semibold mb-4 h-6 bg-gray-300 rounded w-1/3"></h2>
@@ -124,18 +125,13 @@ const AdminDashboard = () => {
             </div>
         </div>
     );
-    
 
-    
+
+
+
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-screen flex-col">
-                <div
-                    className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
-                    style={{ borderColor: '#8B4513', borderTopColor: 'transparent' }} // Set the desired brown color
-                ></div>
-                <span className="mt-4 text-lg">Loading...</span>
-            </div>
+            <LoadingIndicator />
         );
     }
     if (error) {
@@ -200,8 +196,8 @@ const AdminDashboard = () => {
             {/* Bar Chart Section */}
             <div className="mt-6">
                 <h2 className="text-xl font-semibold mb-4">Overview</h2>
-                <Bar 
-                    data={chartData} 
+                <Bar
+                    data={chartData}
                     options={{
                         responsive: true,
                         plugins: {
@@ -213,7 +209,7 @@ const AdminDashboard = () => {
                                 text: 'Total Overview',
                             },
                         },
-                    }} 
+                    }}
                 />
             </div>
 
@@ -221,8 +217,8 @@ const AdminDashboard = () => {
             <div className="mt-6">
                 <h2 className="text-xl font-semibold mb-4">Best Selling Items Chart</h2>
                 <div className="relative" style={{ width: '100%', height: '400px' }}>
-                    <Pie 
-                        data={pieChartData} 
+                    <Pie
+                        data={pieChartData}
                         options={{
                             responsive: true,
                             maintainAspectRatio: false,
@@ -235,7 +231,7 @@ const AdminDashboard = () => {
                                     text: 'Best Selling Items Distribution',
                                 },
                             },
-                        }} 
+                        }}
                     />
                 </div>
             </div>
