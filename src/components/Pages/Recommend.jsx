@@ -1,7 +1,7 @@
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
 const items = [
   {
@@ -71,7 +71,7 @@ export default function Widget() {
       <Slider {...settings} className="flex">
         {items.map((item) => (
           <div key={item._id} className="px-2">
-            <div className="bg-muted-foreground rounded-lg shadow-md flex flex-col p-4 relative min-w-7 md:min-w-8">
+            <div className="bg-white rounded-lg shadow-md flex flex-col p-4 relative min-w-7 md:min-w-8">
               <img
                 src={item.imageUrl}
                 alt={item.title}

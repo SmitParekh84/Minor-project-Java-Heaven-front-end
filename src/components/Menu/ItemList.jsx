@@ -57,15 +57,15 @@ const ItemList = () => {
 
   if (loading) {
     return (
-        <div className="flex items-center justify-center h-screen flex-col">
-            <div
-                className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
-                style={{ borderColor: '#8B4513', borderTopColor: 'transparent' }} // Set the desired brown color
-            ></div>
-            <span className="mt-4 text-lg">Loading...</span>
-        </div>
+      <div className="flex items-center justify-center h-screen flex-col">
+        <div
+          className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
+          style={{ borderColor: '#8B4513', borderTopColor: 'transparent' }} // Set the desired brown color
+        ></div>
+        <span className="mt-4 text-lg">Loading...</span>
+      </div>
     );
-} // Show loading state
+  } // Show loading state
   if (error) return <ErrorMessage error={error} onRetry={fetchItems} />; // Show error message with retry option
   if (currentItems.length === 0) return <EmptyState />; // Show empty state if no items
 
@@ -130,11 +130,10 @@ const Pagination = ({ itemsPerPage, totalItems, currentPage, onPageChange }) => 
         {pageNumbers.map((number) => (
           <li key={number}>
             <button
-              className={`px-4 py-2 rounded-lg transition duration-300 ${
-                currentPage === number
-                  ? "bg-secondary text-primary-foreground"
-                  : "bg-gray-200 hover:bg-gray-300"
-              }`}
+              className={`px-4 py-2 rounded-lg transition duration-300 ${currentPage === number
+                ? "bg-secondary text-primary-foreground"
+                : "bg-gray-200 hover:bg-gray-300"
+                }`}
               onClick={() => onPageChange(number)}
             >
               {number}
