@@ -1,7 +1,9 @@
 // src/components/Pages/RevenuePage.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Pie } from 'react-chartjs-2';
+
+
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -10,16 +12,17 @@ import {
     Title,
     Tooltip,
     Legend,
+    ArcElement,
 } from 'chart.js';
 import { API_URL } from '../../config';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 const RevenuePage = () => {
     const [totalRevenue, setTotalRevenue] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [chartData, setChartData] = useState({});
+    const [deliveryChartData, setDeliveryChartData] = useState({});
 
     // Function to fetch revenue data from dashboard endpoint
     const fetchRevenueData = async () => {
@@ -44,6 +47,21 @@ const RevenuePage = () => {
                             label: 'Revenue Over Time',
                             data: revenueAmounts,
                             backgroundColor: 'rgba(75, 192, 192, 1)',
+                        },
+                    ],
+                });
+
+                // Prepare the pie chart data based on deliveryOptionData
+                const deliveryOptions = data.deliveryOptionData?.map(item => item.deliveryOption) || [];
+                const deliverySales = data.deliveryOptionData?.map(item => item.totalSales) || [];
+
+                setDeliveryChartData({
+                    labels: deliveryOptions,
+                    datasets: [
+                        {
+                            label: 'Sales by Delivery Option',
+                            data: deliverySales,
+                            backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)'], // Custom colors for the Pie chart
                         },
                     ],
                 });
@@ -90,7 +108,6 @@ const RevenuePage = () => {
         <div className="rounded-lg  p-8 w-full mt-10 container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16 ">
             <h1 className="text-3xl font-bold text-gray-800 mb-6">Revenue Page</h1>
             <h2 className="text-2xl font-semibold text-gray-600 mb-4">Total Revenue: <span className="text-green-600">₹{totalRevenue}</span></h2>
-
             {/* Bar Chart Section */}
             <div className="mt-6">
                 <h2 className="text-2xl font-semibold text-gray-700 mb-4">Revenue Over Time</h2>
@@ -132,8 +149,36 @@ const RevenuePage = () => {
                     }}
                 />
             </div>
-        </div>
 
+            {/* Pie Chart Section */}
+            <div className="mt-6">
+                <h2 className="text-2xl font-semibold text-gray-700 mb-4">Sales by Delivery Option</h2>
+                <div className="relative" style={{ width: '100%', height: '400px' }}>
+                    <Pie
+                        data={deliveryChartData}
+                        options={{
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                    labels: {
+                                        color: 'gray',
+                                    },
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Sales by Delivery Option',
+                                    color: 'gray',
+                                    font: {
+                                        size: 20,
+                                    },
+                                },
+                            },
+                        }}
+                    />
+                </div>
+            </div>
+        </div >
     );
 };
 
