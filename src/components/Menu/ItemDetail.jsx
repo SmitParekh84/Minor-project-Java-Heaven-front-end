@@ -7,15 +7,15 @@ import { API_URL } from "../../config";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/swiper-bundle.css'; // or 'swiper/swiper.css' for older versions
 import ItemCard from './ItemCard'; // Adjust the import path based on your project structure
+
 const ItemDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [item, setItem] = useState(null);
   const [selectedSize, setSelectedSize] = useState("");
-  const [customInstructions, setCustomInstructions] = useState("");
   const { user } = useUser();
   const { addToCart } = useCart();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Loading state for button
   const [error, setError] = useState(null);
   const [similarItems, setSimilarItems] = useState([]);
 
@@ -34,34 +34,13 @@ const ItemDetail = () => {
         setSimilarItems(similarItemsData.filter(i => i._id !== id));
       } catch (err) {
         setError(err.message);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchItem();
   }, [id]);
 
-  // Loading, error, or item not found states
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen flex-col">
-        <div
-          className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
-          style={{ borderColor: '#8B4513', borderTopColor: 'transparent' }} // Set the desired brown color
-        ></div>
-        <span className="mt-4 text-lg">Loading...</span>
-      </div>
-    );
-  }
-  if (error) return <ErrorMessage error={error} />;
-  if (!item) return <div>Item not found</div>;
-
-  const handleSizeSelection = (size) => {
-    setSelectedSize(size);
-  };
-
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!selectedSize) {
       toast.error("Please select a cup size");
       return;
@@ -72,15 +51,25 @@ const ItemDetail = () => {
       return;
     }
 
-    addToCart({ ...item, id: item._id, size: selectedSize, customInstructions });
-    toast.success("Item added to cart successfully!");
+    setLoading(true); // Set loading to true when adding to cart
+
+    try {
+      await addToCart({ ...item, id: item._id, size: selectedSize });
+      toast.success("Item added to cart successfully!");
+    } catch (err) {
+      toast.error("Failed to add item to cart.");
+    } finally {
+      setLoading(false); // Reset loading state
+    }
   };
+
+  // Loading, error, or item not found states
+  if (!item) return <div>Item not found</div>;
+  if (error) return <ErrorMessage error={error} />;
 
   return (
     <div className="rounded-lg p-8 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
-
-
-      <div className="rounded-lg w-full p-10 flex flex-col md:flex-row items-start  ">
+      <div className="rounded-lg w-full p-10 flex flex-col md:flex-row items-start">
         <div className="flex-shrink-0">
           <ImageCarousel images={item.images || [item.imageUrl]} />
         </div>
@@ -92,22 +81,15 @@ const ItemDetail = () => {
             <p className="text-xl font-semibold mt-4 text-gray-900">Price: ₹ {item.price.toFixed(2)}</p>
           </div>
 
-          <CupSizeSelector selectedSize={selectedSize} onSizeSelect={handleSizeSelection} />
-
-          <textarea
-            className="mt-4 p-2 border rounded w-full shadow-sm focus:ring focus:ring-secondary transition duration-200"
-            placeholder="Add any special instructions..."
-            value={customInstructions}
-            onChange={(e) => setCustomInstructions(e.target.value)}
-          />
+          <CupSizeSelector selectedSize={selectedSize} onSizeSelect={setSelectedSize} />
 
           <div className="flex items-center mt-4">
             <button
               className={`bg-secondary text-primary-foreground py-2 px-4 rounded transition duration-300 ${!selectedSize ? "opacity-50 cursor-not-allowed" : "hover:bg-secondary-dark"}`}
-              disabled={!selectedSize}
+              disabled={!selectedSize || loading} // Disable button if loading or no size selected
               onClick={handleAddToCart}
             >
-              Add to Cart
+              {loading ? "Adding..." : "Add to Cart"} {/* Change button text when loading */}
             </button>
           </div>
         </div>
@@ -120,7 +102,6 @@ const ItemDetail = () => {
           slidesPerView={3} // Show 3 items at a time
           spaceBetween={20} // Space between slides
           pagination={{ clickable: true }} // Pagination bullets
-          navigation // Navigation arrows
           className="relative" // Add class for relative positioning
           breakpoints={{
             // Responsive breakpoints
@@ -134,30 +115,16 @@ const ItemDetail = () => {
         >
           {similarItems.map((similarItem) => (
             <SwiperSlide key={similarItem.id}>
-              <ItemCard item={similarItem} className="border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300" /> {/* Use the ItemCard component with styling */}
+              <ItemCard item={similarItem} className="border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300" />
             </SwiperSlide>
           ))}
         </Swiper>
+
       </div>
-
     </div>
-
-
-
   );
 };
 
-// Similar Items Section
-const SimilarItemsSection = ({ similarItems }) => (
-  <div className="mt-10">
-    <h3 className="text-lg font-semibold">Similar Items:</h3>
-    <div className="flex flex-wrap mt-4">
-      {similarItems.map((similarItem) => (
-        <SimilarItemCard key={similarItem._id} item={similarItem} />
-      ))}
-    </div>
-  </div>
-);
 
 // Image Carousel Component
 const ImageCarousel = ({ images }) => (
@@ -167,25 +134,6 @@ const ImageCarousel = ({ images }) => (
     ))}
   </div>
 );
-
-// Similar Item Card Component
-const SimilarItemCard = ({ item }) => {
-  const navigate = useNavigate();
-  const handleNavigate = () => {
-    navigate(`/item/${item._id}`);
-  };
-
-  return (
-    <div
-      className="bg-white rounded-lg shadow-md p-4 m-2 cursor-pointer hover:shadow-lg transition-shadow"
-      onClick={handleNavigate}
-    >
-      <img src={item.imageUrl} alt={item.name} className="w-full h-32 object-cover rounded-md" />
-      <h4 className="font-bold text-lg">{item.name}</h4>
-      <p className="text-gray-600">₹ {item.price.toFixed(2)}</p>
-    </div>
-  );
-};
 
 // Loading Indicator Component
 const LoadingIndicator = () => (
