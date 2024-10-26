@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSyncAlt, faUser, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { faSyncAlt, faUser, faCheckCircle, faHandshake, faHome } from '@fortawesome/free-solid-svg-icons';
 import toast from 'react-hot-toast';
 import { API_URL } from '../../config';
 
@@ -43,7 +43,7 @@ const AdminOrders = () => {
 
         try {
             await axios.put(`${API_URL}/api/orders/${orderId}/status`, { status: newStatus });
-            setOrders(prevOrders => 
+            setOrders(prevOrders =>
                 prevOrders.map(order => order._id === orderId ? { ...order, status: newStatus } : order)
             );
             toast.success(`Order status updated to '${newStatus}'.`);
@@ -82,7 +82,7 @@ const AdminOrders = () => {
             </div>
         );
     }
-    
+
 
     if (error) {
         return (
@@ -94,42 +94,65 @@ const AdminOrders = () => {
         <div className="rounded-lg p-8 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
             <h1 className="text-2xl font-bold mb-6 mt-12 flex justify-between items-center">
                 Admin Dashboard - Orders
-                <button onClick={handleRefresh} className="flex items-center bg-secondary text-white px-4 py-2 rounded-md transition duration-300 hover:brightness-150">
+                <button
+                    onClick={handleRefresh}
+                    className="flex items-center bg-secondary text-white px-4 py-2 rounded-md transition duration-300 hover:brightness-150"
+                >
                     <FontAwesomeIcon icon={faSyncAlt} className="mr-2" />
                     Refresh
                 </button>
             </h1>
 
             {/* Tab Navigation */}
-            <div className="flex space-x-4 mb-4">
-                {['pending', 'delivered', 'cancelled', 'all'].map(tab => (
-                    <button
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`px-4 py-2 rounded-md transition duration-300 ${activeTab === tab ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
-                    >
-                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                    </button>
-                ))}
+            <div className="overflow-x-auto mb-4">
+                <div className="flex space-x-4 mb-4">
+                    {['all', 'pending', 'delivered', 'cancelled'].map(tab => (
+                        <button
+                            key={tab}
+                            onClick={() => setActiveTab(tab)}
+                            className={`px-4 py-2 rounded-md transition duration-300 ${activeTab === tab ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
+                        >
+                            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                        </button>
+                    ))}
+                </div>
             </div>
+
 
             {filteredOrders.length > 0 ? (
                 filteredOrders.map(order => (
                     <div key={order._id} className="border p-6 mb-6 rounded-lg shadow-lg bg-white transition transform hover:shadow-2xl">
-                        <div className="flex justify-between items-center mb-4">
-                            <div>
-                                <h2 className="text-xl font-semibold mb-2">
-                                    <FontAwesomeIcon icon={faUser} className="mr-2" />
-                                    Name: {order.userId}
+                        <div className="flex flex-col md:flex-row justify-between items-start mb-4">
+                            <div className="flex-1 mb-4 md:mb-0">
+                                <h2 className="text-2xl font-semibold mb-4 flex items-center">
+                                    <FontAwesomeIcon icon={faUser} className="mr-2 text-blue-600" />
+                                    Name: <span className="text-gray-900">{order.userId}</span>
                                 </h2>
-                                <p className="text-gray-600">Order ID: <span className="font-medium">{order._id}</span></p>
-                                <p className="text-gray-600">Status: <span className={`font-medium ${order.status === 'Delivered' ? 'text-green-500' : order.status === 'Pending' ? 'text-yellow-500' : 'text-red-500'}`}>{order.status}</span></p>
-                                <p className="text-gray-600">Total Amount: <span className="font-medium">₹{order.totalAmount}</span></p>
-                                <p className="text-gray-600">Order Date: <span className="font-medium">{new Date(order.createdAt).toLocaleString()}</span></p>
+                                <p className="text-gray-600 mb-1">Order ID: <span className="font-medium">{order._id}</span></p>
+                                <p className="text-gray-600 mb-1">Status: <span className={`font-medium ${order.status === 'Delivered' ? 'text-green-500' : order.status === 'Pending' ? 'text-yellow-500' : 'text-red-500'}`}>{order.status}</span></p>
+                                <p className="text-gray-600 mb-1">Total Amount: <span className="font-medium">₹{order.totalAmount}</span></p>
+                                <p className="text-gray-600 mb-1">
+                                    Order Type: <span className="font-medium">{order.deliveryOption}</span>
+                                    {order.deliveryOption === "home" && (
+                                        <FontAwesomeIcon icon={faHome} className="ml-2 text-green-600" />
+                                    )}
+                                    {order.deliveryOption === "hand" && (
+                                        <FontAwesomeIcon icon={faHandshake} className="ml-2 text-orange-600" />
+                                    )}
+                                </p>
+
+                                {/* Conditional rendering for address based on order type */}
+                                {order.deliveryOption === "home" ? (
+                                    <p className="text-gray-600 mb-1">Address: <span className="font-medium">{order.address}</span></p>
+                                ) : (
+                                    <p className="text-gray-600 mb-1">Address: <span className="font-medium">Not Applicable (Hand-to-Hand)</span></p>
+                                )}
+
+                                <p className="text-gray-600 mb-1">Order Date: <span className="font-medium">{new Date(order.createdAt).toLocaleString()}</span></p>
                             </div>
 
                             {/* Dropdown to change status, aligned to the right */}
-                            <div className="ml-auto">
+                            <div className="ml-auto w-full md:w-auto">
                                 <select
                                     value={order.status}
                                     onChange={(e) => handleStatusChange(order._id, e.target.value)}
@@ -142,7 +165,7 @@ const AdminOrders = () => {
                             </div>
                         </div>
 
-                        <h3 className="text-lg font-bold mt-4">
+                        <h3 className="text-lg font-bold mt-4 flex items-center">
                             <FontAwesomeIcon icon={faCheckCircle} className="mr-2" />
                             Items:
                         </h3>
@@ -154,11 +177,13 @@ const AdminOrders = () => {
                             ))}
                         </ul>
                     </div>
+
                 ))
             ) : (
                 <div className="text-gray-600 text-center">No orders found.</div>
             )}
         </div>
+
     );
 };
 

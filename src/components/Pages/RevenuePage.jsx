@@ -87,13 +87,13 @@ const RevenuePage = () => {
     }
 
     return (
-        <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
-            <h1 className="text-2xl font-bold mb-6">Revenue Page</h1>
-            <h2 className="text-xl font-semibold mb-4">Total Revenue: ₹{totalRevenue}</h2>
+        <div className="rounded-lg  p-8 w-full mt-10 container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16 ">
+            <h1 className="text-3xl font-bold text-gray-800 mb-6">Revenue Page</h1>
+            <h2 className="text-2xl font-semibold text-gray-600 mb-4">Total Revenue: <span className="text-green-600">₹{totalRevenue}</span></h2>
 
             {/* Bar Chart Section */}
             <div className="mt-6">
-                <h2 className="text-xl font-semibold mb-4">Revenue Over Time</h2>
+                <h2 className="text-2xl font-semibold text-gray-700 mb-4">Revenue Over Time</h2>
                 <Bar
                     data={chartData}
                     options={{
@@ -101,16 +101,39 @@ const RevenuePage = () => {
                         plugins: {
                             legend: {
                                 position: 'top',
+                                labels: {
+                                    color: 'gray',
+                                },
                             },
                             title: {
                                 display: true,
                                 text: 'Revenue Over Time',
+                                color: 'gray',
+                                font: {
+                                    size: 20,
+                                },
+                            },
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color: '#e5e7eb', // Light gray for grid lines
+                                },
+                            },
+                            y: {
+                                grid: {
+                                    color: '#e5e7eb', // Light gray for grid lines
+                                },
+                                ticks: {
+                                    color: 'gray',
+                                },
                             },
                         },
                     }}
                 />
             </div>
         </div>
+
     );
 };
 

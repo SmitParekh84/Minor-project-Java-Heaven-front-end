@@ -73,8 +73,8 @@ const Cart = () => {
       const response = await axios.post(`${API_URL}/api/orders`, {
         userId: userInfo.username,
         cartItems,
-        deliveryOption,
-        address: deliveryOption === "home" ? userInfo.address : "",
+        deliveryOption,  // Add delivery option
+        address: deliveryOption === "home" ? userInfo.address : "",  // Include address if home delivery
       });
 
       toast.success("Order placed successfully!");
@@ -88,6 +88,7 @@ const Cart = () => {
       setLoading(false); // Stop loading after checkout
     }
   };
+
 
   if (loading) {
     return (
@@ -114,51 +115,52 @@ const Cart = () => {
   return (
     <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
       <div className="container mx-auto p-4 mt-2">
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Your Shopping Cart</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <h2 className="text-4xl font-bold mb-8 text-center text-gray-900">Your Shopping Cart</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
           {cartItems.map((item, index) => (
-            <div key={index} className="flex flex-col justify-between p-4 bg-white shadow-lg rounded-lg transition-transform transform hover:scale-105">
+            <div key={index} className="flex flex-col justify-between p-6 bg-white shadow-lg rounded-lg transition-transform transform hover:scale-105">
               <div>
-                <img src={item.imageUrl} alt={item.name} className="h-40 w-full object-cover mb-4 rounded-lg shadow-md" />
-                <h3 className="font-semibold text-lg text-gray-900">{item.name}</h3>
-                <p className="text-gray-600 mt-1">Price: <span className="font-semibold">₹ {item.price.toFixed(2)}</span></p>
-                <p className="text-gray-600 mt-1">Size: <span className="font-semibold">{item.size}</span></p>
-                <p className="text-gray-700 mt-2 font-semibold">
+                <img src={item.imageUrl} alt={item.name} className="h-48 w-full object-cover mb-4 rounded-lg shadow-md" />
+                <h3 className="font-semibold text-xl text-gray-900">{item.name}</h3>
+                <p className="text-gray-700 mt-1">Price: <span className="font-semibold">₹ {item.price.toFixed(2)}</span></p>
+                <p className="text-gray-700 mt-1">Size: <span className="font-semibold">{item.size}</span></p>
+                <p className="text-gray-800 mt-2 font-semibold">
                   Subtotal: <span className="text-blue-600">₹ {(item.price * item.quantity).toFixed(2)}</span>
                 </p>
               </div>
               <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center">
-                  <button onClick={() => handleQuantityChange(item, -1)} className="bg-gray-200 text-gray-800 px-2 py-1 rounded-lg transition duration-200 hover:bg-gray-300">-</button>
-                  <span className="mx-2 text-lg font-semibold">{item.quantity}</span>
-                  <button onClick={() => handleQuantityChange(item, 1)} className="bg-gray-200 text-gray-800 px-2 py-1 rounded-lg transition duration-200 hover:bg-gray-300">+</button>
+                  <button onClick={() => handleQuantityChange(item, -1)} className="bg-gray-200 text-gray-800 px-3 py-1 rounded-lg transition duration-200 hover:bg-gray-300">-</button>
+                  <span className="mx-3 text-lg font-semibold">{item.quantity}</span>
+                  <button onClick={() => handleQuantityChange(item, 1)} className="bg-gray-200 text-gray-800 px-3 py-1 rounded-lg transition duration-200 hover:bg-gray-300">+</button>
                 </div>
                 <button onClick={() => removeFromCart(item.id, item.size)} className="text-red-500 hover:text-red-700 transition duration-200">Remove</button>
               </div>
             </div>
-          ))} 
+          ))}
         </div>
 
         {/* Summary of Cart Items */}
         <div className="mt-10">
-          <h3 className="text-2xl font-bold mb-4 text-gray-800">Order Summary</h3>
-          <div className="flex flex-col bg-white shadow-lg rounded-lg p-4">
+          <h3 className="text-3xl font-bold mb-4 text-gray-900">Order Summary</h3>
+          <div className="flex flex-col bg-white shadow-lg rounded-lg p-6">
             {cartItems.map((item, index) => (
-              <div key={index} className="flex justify-between mb-2">
+              <div key={index} className="flex justify-between mb-2 text-lg text-gray-800">
                 <span>{item.name} (x{item.quantity})</span>
                 <span>₹ {(item.price * item.quantity).toFixed(2)}</span>
               </div>
             ))}
-            <div className="border-t mt-2 pt-2 flex justify-between">
-              <span className="font-bold">Total Amount</span>
-              <span className="font-bold">₹ {totalAmount.toFixed(2)}</span>
+            <div className="border-t mt-2 pt-2 flex justify-between font-bold text-lg text-gray-900">
+              <span>Total Amount</span>
+              <span>₹ {totalAmount.toFixed(2)}</span>
             </div>
           </div>
         </div>
 
         {/* Checkout Form */}
-        <form onSubmit={handleCheckout} className="mt-8">
-          <h3 className="text-xl font-bold mb-4 text-gray-800">Checkout</h3>
+        <form onSubmit={handleCheckout} className="mt-8 bg-white shadow-lg rounded-lg p-6">
+          <h3 className="text-2xl font-bold mb-4 text-gray-900">Checkout</h3>
 
           {/* Radio buttons for delivery option */}
           <div className="flex items-center mb-4">
@@ -171,21 +173,22 @@ const Cart = () => {
           </div>
 
           {deliveryOption === "home" && (
-            <input 
-              type="text" 
-              name="address" 
-              placeholder="Address" 
-              value={userInfo.address} 
-              onChange={handleInputChange} 
-              required 
-              className="border border-gray-300 p-2 w-full mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" 
+            <input
+              type="text"
+              name="address"
+              placeholder="Address"
+              value={userInfo.address}
+              onChange={handleInputChange}
+              required
+              className="border border-gray-300 p-2 w-full mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           )}
-          <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">
+          <button type="submit" className="w-full bg-secondary text-white py-2 rounded-lg hover:brightness-150 transition duration-200">
             Place Order
           </button>
         </form>
       </div>
+
     </div>
   );
 };
