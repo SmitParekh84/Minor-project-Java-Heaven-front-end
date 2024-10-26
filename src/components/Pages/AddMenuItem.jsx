@@ -244,6 +244,26 @@ const AddMenuItem = () => {
 
                     </form>
                 )}
+                {/* Category Addition Form */}
+                <h3 className="text-xl font-semibold mb-4 text-gray-800">Add New Category</h3>
+                <form onSubmit={handleAddCategory} className="mb-6">
+                    <div className="flex items-center border border-gray-300 rounded-lg">
+                        <input
+                            type="text"
+                            value={newCategory}
+                            onChange={(e) => setNewCategory(e.target.value)}
+                            placeholder="New Category Name"
+                            required
+                            className="flex-grow p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition duration-200 rounded-lg"
+                        />
+                        <button
+                            type="submit"
+                            className="ml-3 bg-secondary text-white rounded-lg py-2 px-4 hover:bg-secondary/90 transition duration-300 flex items-center"
+                        >
+                            <FontAwesomeIcon icon={faPlus} className="mr-1" /> Add
+                        </button>
+                    </div>
+                </form>
                 <h2 className="text-2xl font-bold mb-4">Menu Items</h2>
                 <p className="text-gray-700 mb-4">Total Price: ₹{totalAmount}</p>
 
