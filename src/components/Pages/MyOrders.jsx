@@ -4,7 +4,9 @@ import { API_URL } from '../../config';
 
 const MyOrders = () => {
     const [orders, setOrders] = useState([]);
+    const [prevOrders, setPrevOrders] = useState([]); // Track previous orders for comparison
     const [loading, setLoading] = useState(true);
+    const [dataChanged, setDataChanged] = useState(false); // Track if data has changed
     const [error, setError] = useState(null);
     const [activeTab, setActiveTab] = useState('myOrders');
     const loggedInUser = localStorage.getItem('userInfo');
@@ -24,24 +26,19 @@ const MyOrders = () => {
         }
     };
 
-    useEffect(() => {
-        if (loggedInUser) {
-            const foundUser = JSON.parse(loggedInUser);
-            fetchOrders(foundUser?.username ?? '');
-            fetchItems();
-            const interval = setInterval(() => {
-                fetchOrders(foundUser?.username ?? '');
-            }, 5000);
-
-            return () => clearInterval(interval);
-        }
-    }, [loggedInUser]);
-
     const fetchOrders = async (userId) => {
-        setLoading(true);
         try {
             const response = await axios.get(`${API_URL}/api/orders/${userId}`);
-            setOrders(response.data.orders);
+            const fetchedOrders = response.data.orders;
+
+            // Check if fetched orders differ from previous orders
+            if (JSON.stringify(fetchedOrders) !== JSON.stringify(prevOrders)) {
+                setPrevOrders(fetchedOrders);  // Update prevOrders
+                setOrders(fetchedOrders);      // Update orders
+                setDataChanged(true);          // Set dataChanged to true if there is a change
+            } else {
+                setDataChanged(false);         // No change in data
+            }
         } catch (err) {
             setError(err.response?.data?.msg);
         } finally {
@@ -49,32 +46,26 @@ const MyOrders = () => {
         }
     };
 
+    useEffect(() => {
+        if (loggedInUser) {
+            const foundUser = JSON.parse(loggedInUser);
+            fetchOrders(foundUser?.username ?? '');
+            fetchItems();
+
+            const interval = setInterval(() => {
+                setLoading(true);             // Set loading before fetching
+                fetchOrders(foundUser?.username ?? '');
+            }, 5000);
+
+            return () => clearInterval(interval);
+        }
+    }, [loggedInUser, activeTab]);
+
     const getItemImageUrl = (itemName) => {
         if (!items || items.length === 0) return '';
         const item = items.find(i => i.name.toLowerCase() === itemName.toLowerCase());
         return item ? item.imageUrl : '';
     };
-
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen flex-col">
-                <div
-                    className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
-                    style={{ borderColor: '#8B4513', borderTopColor: 'transparent' }} // Set the desired brown color
-                ></div>
-                <span className="mt-4 text-lg">Loading...</span>
-            </div>
-        );
-    }
-
-
-    if (error) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <div className="text-red-500">Loading Error: {error}</div>
-            </div>
-        );
-    }
 
     const filteredOrders = orders.filter(order => {
         if (activeTab === 'pending') return order.status === 'Pending';
@@ -85,33 +76,53 @@ const MyOrders = () => {
 
     filteredOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
+    if (loading && dataChanged) {  // Show loading only if there is a data change
+        return (
+            <div className="flex items-center justify-center h-screen flex-col">
+                <div
+                    className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
+                    style={{ borderColor: '#8B4513', borderTopColor: 'transparent' }}
+                ></div>
+                <span className="mt-4 text-lg">Loading...</span>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <div className="text-red-500">Loading Error: {error}</div>
+            </div>
+        );
+    }
+
     return (
         <div className="rounded-lg w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
             <div className="container mx-auto p-6">
                 <h1 className="text-3xl font-extrabold text-gray-800 mb-8">My Orders</h1>
 
-                <div className="flex space-x-4 mb-4">
+                <div className="flex space-x-2 sm:space-x-4 mb-4 overflow-x-auto">
                     <button
                         onClick={() => setActiveTab('myOrders')}
-                        className={`px-4 py-2 rounded-md ${activeTab === 'myOrders' ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
+                        className={`px-3 sm:px-4 py-2 rounded-md whitespace-nowrap ${activeTab === 'myOrders' ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
                     >
                         My Orders
                     </button>
                     <button
                         onClick={() => setActiveTab('pending')}
-                        className={`px-4 py-2 rounded-md ${activeTab === 'pending' ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
+                        className={`px-3 sm:px-4 py-2 rounded-md whitespace-nowrap ${activeTab === 'pending' ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
                     >
                         Pending
                     </button>
                     <button
                         onClick={() => setActiveTab('delivered')}
-                        className={`px-4 py-2 rounded-md ${activeTab === 'delivered' ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
+                        className={`px-3 sm:px-4 py-2 rounded-md whitespace-nowrap ${activeTab === 'delivered' ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
                     >
                         Delivered
                     </button>
                     <button
                         onClick={() => setActiveTab('cancelled')}
-                        className={`px-4 py-2 rounded-md ${activeTab === 'cancelled' ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
+                        className={`px-3 sm:px-4 py-2 rounded-md whitespace-nowrap ${activeTab === 'cancelled' ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
                     >
                         Cancelled
                     </button>
@@ -123,12 +134,11 @@ const MyOrders = () => {
                             <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-xl font-semibold">Total Amount: ₹{order.totalAmount}</h2>
                                 <span className={`text-sm font-medium py-1 px-3 rounded-full 
-    ${order.status === 'Delivered' ? 'bg-green-100 text-green-600' :
+                                    ${order.status === 'Delivered' ? 'bg-green-100 text-green-600' :
                                         order.status === 'Cancelled' ? 'bg-red-100 text-red-600' :
                                             'bg-yellow-100 text-yellow-600'}`}>
                                     {order.status}
                                 </span>
-
                             </div>
                             <p className="text-gray-500 mb-1">Order Date:
                                 <span className="font-semibold text-gray-800">
@@ -169,7 +179,11 @@ const MyOrders = () => {
                     ))
                 ) : (
                     <div className="text-center text-gray-500 py-20">
-                        No orders found. <a href="/menu" className="text-blue-500 underline">Browse Products</a>
+                        {activeTab === 'pending' && "No pending orders found."}
+                        {activeTab === 'delivered' && "No delivered orders found."}
+                        {activeTab === 'cancelled' && "No cancelled orders found."}
+                        {activeTab === 'myOrders' && "No orders found. "}
+                        <a href="/menu" className="text-blue-500 underline">Browse Products</a>
                     </div>
                 )}
             </div>
