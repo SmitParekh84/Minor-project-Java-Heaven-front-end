@@ -272,6 +272,7 @@ const AddMenuItem = () => {
                     <table className="min-w-full">
                         <thead>
                             <tr>
+                                <th className=" p-3">Image</th>
                                 <th className=" p-3">Name</th>
                                 <th className=" p-3">Description</th>
                                 <th className=" p-3">Price</th>
@@ -282,8 +283,8 @@ const AddMenuItem = () => {
                         <tbody>
                             {currentItems.length > 0 ? (
                                 currentItems.map(item => (
-                                    <tr key={item._id} className="hover:bg-gray-100">
-                                        <td className="p-3 flex items-center">
+                                    <tr key={item._id} className="hover:bg-gray-100 ">
+                                        <td className="p-3  items-center flex justify-around">
                                             {item.imageUrl && (
                                                 <img
                                                     src={item.imageUrl}
@@ -291,12 +292,13 @@ const AddMenuItem = () => {
                                                     className="w-16 h-16 rounded-lg mr-4"
                                                 />
                                             )}
-                                            <span>{item.name}</span>
+
                                         </td>
-                                        <td className="p-3">{item.description}</td>
-                                        <td className="p-3">₹{item.price}</td>
-                                        <td className="p-3">{item.category}</td>
-                                        <td className="p-3">
+                                        <td className="p-3 text-center">{item.name}</td>
+                                        <td className="p-3 text-center">{item.description}</td>
+                                        <td className="p-3 text-center">₹{item.price}</td>
+                                        <td className="p-3 text-center">{item.category}</td>
+                                        <td className="p-3 text-center">
                                             <div className="flex space-x-2">
                                                 <button onClick={() => handleEdit(item)} className="text-blue-500 hover:underline flex items-center">
                                                     <svg
