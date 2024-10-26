@@ -47,7 +47,6 @@ export default function App() {
                 <Route path="/item/:id" element={<ItemDetail />} />
                 <Route path="/admin" element={<AdminLogin />} />
                 <Route path="/revenue" element={<RevenuePage />} /> {/* Add this line */}
-
                 {/* Protected User Routes */}
                 <Route path="/cart" element={
                   <ProtectedRoute>
