@@ -7,6 +7,7 @@ import toast, { Toaster } from "react-hot-toast";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Pages/Footer";
 import ProtectedRoute from "./components/Pages/ProtectedRoute";
+import LoadingIndicator from "./components/Menu/LoadingIndicator"
 
 // Lazy load your components
 const Hero = React.lazy(() => import("./components/Hero/Hero"));
@@ -25,7 +26,7 @@ const AddMenuItem = React.lazy(() => import("./components/Pages/AddMenuItem"));
 const AdminOrders = React.lazy(() => import("./components/Pages/AdminOrders"));
 const BestSellingItem = React.lazy(() => import("./components/Pages/BestSellingItem"));
 const About = React.lazy(() => import("./components/Pages/About"));
-const RevenuePage = React.lazy(() => import("./components/Pages/RevenuePage")); // Import RevenuePage
+const RevenuePage = React.lazy(() => import("./components/Pages/RevenuePage"));
 
 export default function App() {
   return (
@@ -34,65 +35,36 @@ export default function App() {
       <UserProvider>
         <CartProvider>
           <Router>
-            <Navbar />
-            <Suspense fallback={null}> {/* Remove the loading fallback */}
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<Hero />} />
-                <Route path="/menu" element={<ItemList />} />
-                <Route path="/get-help" element={<GetHelp />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/sign-up" element={<SignUp />} />
-                <Route path="/item/:id" element={<ItemDetail />} />
-                <Route path="/admin" element={<AdminLogin />} />
-                <Route path="/revenue" element={<RevenuePage />} /> {/* Add this line */}
-                {/* Protected User Routes */}
-                <Route path="/cart" element={
-                  <ProtectedRoute>
-                    <Cart />
-                  </ProtectedRoute>
-                } />
-                <Route path="/my-orders" element={
-                  <ProtectedRoute>
-                    <MyOrders />
-                  </ProtectedRoute>
-                } />
-                <Route path="/profile" element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                } />
+            <div className="flex flex-col min-h-screen">
+              <Navbar />
 
-                {/* Protected Admin Routes */}
-                <Route path="/admin-dashboard" element={
-                  <ProtectedRoute adminOnly>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                } />
-                <Route path="/admin/edit" element={
-                  <ProtectedRoute adminOnly>
-                    <AdminEdit />
-                  </ProtectedRoute>
-                } />
-                <Route path="/admin/add-menu-item" element={
-                  <ProtectedRoute adminOnly>
-                    <AddMenuItem />
-                  </ProtectedRoute>
-                } />
-                <Route path="/admin/orders" element={
-                  <ProtectedRoute adminOnly>
-                    <AdminOrders />
-                  </ProtectedRoute>
-                } />
-                <Route path="/admin/best-selling" element={
-                  <ProtectedRoute adminOnly>
-                    <BestSellingItem />
-                  </ProtectedRoute>
-                } />
-              </Routes>
-            </Suspense>
-            <Footer />
+              <Suspense fallback={<div className="flex-grow"><LoadingIndicator /></div>}>
+                <Routes className="flex-grow">
+                  {/* Public Routes */}
+                  <Route path="/" element={<Hero />} />
+                  <Route path="/menu/:category?" element={<ItemList />} />
+                  <Route path="/get-help" element={<GetHelp />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/sign-up" element={<SignUp />} />
+                  <Route path="/item/:id" element={<ItemDetail />} />
+                  <Route path="/admin" element={<AdminLogin />} />
+                  <Route path="/revenue" element={<RevenuePage />} />
+                  {/* Protected User Routes */}
+                  <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+                  <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+                  <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                  {/* Protected Admin Routes */}
+                  <Route path="/admin-dashboard" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+                  <Route path="/admin/edit" element={<ProtectedRoute adminOnly><AdminEdit /></ProtectedRoute>} />
+                  <Route path="/admin/add-menu-item" element={<ProtectedRoute adminOnly><AddMenuItem /></ProtectedRoute>} />
+                  <Route path="/admin/orders" element={<ProtectedRoute adminOnly><AdminOrders /></ProtectedRoute>} />
+                  <Route path="/admin/best-selling" element={<ProtectedRoute adminOnly><BestSellingItem /></ProtectedRoute>} />
+                </Routes>
+              </Suspense>
+
+              <Footer />
+            </div>
           </Router>
         </CartProvider>
       </UserProvider>

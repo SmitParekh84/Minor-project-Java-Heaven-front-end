@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { API_URL } from "../../config";
+import { useNavigate, useLocation } from "react-router-dom"; // Import hooks from react-router-dom
 
 const FilterBar = ({ onFilterChange }) => {
+  const navigate = useNavigate(); // Initialize useNavigate
+  const location = useLocation(); // Get current location
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const [selectedFilter, setSelectedFilter] = useState("");
@@ -16,6 +19,11 @@ const FilterBar = ({ onFilterChange }) => {
     setSelectedFilter(filter);
     onFilterChange(filter);
     setIsOpen(false);
+
+    // Update the URL with the selected filter
+    const queryParams = new URLSearchParams(location.search);
+    queryParams.set("category", filter); // Set the category parameter
+    navigate(`?${queryParams.toString()}`, { replace: true }); // Navigate with new query params
   };
 
   // Close dropdown on outside click
@@ -52,6 +60,7 @@ const FilterBar = ({ onFilterChange }) => {
     fetchCategories();
   }, []);
 
+
   return (
     <div className="bg-primary-foreground py-4">
       <div className="container mx-auto flex justify-between items-center px-4">
@@ -73,8 +82,8 @@ const FilterBar = ({ onFilterChange }) => {
                 categories.map((filter) => (
                   <button
                     key={filter}
-                    className="block w-full text-left p-2 hover:bg-gray-100"
                     onClick={() => handleFilterSelection(filter)}
+                    className={`block px-4 py-2 text-left w-full hover:bg-gray-100 ${selectedFilter === filter ? "bg-gray-200" : ""}`}
                   >
                     {filter}
                   </button>
@@ -85,32 +94,22 @@ const FilterBar = ({ onFilterChange }) => {
         </div>
 
         {/* Filter Buttons for Larger Screens */}
-        <div className="hidden sm:flex space-x-6">
+        <div className="hidden sm:flex space-x-4">
           {error ? (
-            <span className="text-red-600">{error}</span>
+            <div className="text-red-600">{error}</div>
           ) : (
             categories.map((filter) => (
               <button
                 key={filter}
-                className={`text-secondary hover:text-secondary/80 font-medium ${
-                  selectedFilter === filter ? "font-bold" : ""
-                }`}
                 onClick={() => handleFilterSelection(filter)}
+                className={`px-4 py-2 rounded-lg transition duration-300 ${selectedFilter === filter
+                  ? "bg-secondary text-primary-foreground"
+                  : "bg-gray-200 hover:bg-gray-300"
+                  }`}
               >
                 {filter}
               </button>
             ))
-          )}
-          {selectedFilter && (
-            <button
-              className="text-red-500 hover:text-red-700"
-              onClick={() => {
-                setSelectedFilter("");
-                onFilterChange(""); // Clear the filter
-              }}
-            >
-              Clear Filter
-            </button>
           )}
         </div>
       </div>
