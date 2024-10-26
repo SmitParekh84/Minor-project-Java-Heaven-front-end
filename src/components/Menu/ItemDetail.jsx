@@ -4,9 +4,11 @@ import { useCart } from "../../context/CartContext";
 import { useUser } from "../../context/UserContext";
 import toast from "react-hot-toast";
 import { API_URL } from "../../config";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/swiper-bundle.css'; // or 'swiper/swiper.css' for older versions
+import Slider from "react-slick"; // Import Slider from react-slick
+import "slick-carousel/slick/slick.css"; // Import slick carousel styles
+import "slick-carousel/slick/slick-theme.css"; // Import slick theme styles
 import ItemCard from './ItemCard'; // Adjust the import path based on your project structure
+import LoadingIndicator from './LoadingIndicator';
 
 const ItemDetail = () => {
   const navigate = useNavigate();
@@ -64,7 +66,7 @@ const ItemDetail = () => {
   };
 
   // Loading, error, or item not found states
-  if (!item) return <div>Item not found</div>;
+  if (!item) return <LoadingIndicator />;
   if (error) return <ErrorMessage error={error} />;
 
   return (
@@ -98,33 +100,38 @@ const ItemDetail = () => {
       {/* Similar Items Section */}
       <div className="mt-10 w-full">
         <h3 className="text-2xl font-semibold mb-6 text-gray-800">Similar Items</h3>
-        <Swiper
-          slidesPerView={3} // Show 3 items at a time
-          spaceBetween={20} // Space between slides
-          pagination={{ clickable: true }} // Pagination bullets
+        <Slider
+          slidesToShow={3} // Show 3 items at a time
+          slidesToScroll={3} // Scroll 1 item at a time
+          autoplay={true} // Enable autoplay if needed
+          autoplaySpeed={3000} // Autoplay speed
+          dots={true} // Show dots for pagination
           className="relative" // Add class for relative positioning
-          breakpoints={{
-            // Responsive breakpoints
-            640: {
-              slidesPerView: 2, // Show 2 items on small screens
+          responsive={[
+            {
+              breakpoint: 640,
+              settings: {
+                slidesToShow: 2, // Show 2 items on small screens
+              },
             },
-            768: {
-              slidesPerView: 3, // Show 3 items on medium and larger screens
+            {
+              breakpoint: 768,
+              settings: {
+                slidesToShow: 3, // Show 3 items on medium and larger screens
+              },
             },
-          }}
+          ]}
         >
           {similarItems.map((similarItem) => (
-            <SwiperSlide key={similarItem.id}>
+            <div key={similarItem.id}>
               <ItemCard item={similarItem} className="border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300" />
-            </SwiperSlide>
+            </div>
           ))}
-        </Swiper>
-
+        </Slider>
       </div>
     </div>
   );
 };
-
 
 // Image Carousel Component
 const ImageCarousel = ({ images }) => (
@@ -132,13 +139,6 @@ const ImageCarousel = ({ images }) => (
     {images.map((image, index) => (
       <img key={index} src={image} alt={`Item image ${index + 1}`} className="w-48 h-48 object-cover rounded-md mx-2" />
     ))}
-  </div>
-);
-
-// Loading Indicator Component
-const LoadingIndicator = () => (
-  <div className="flex items-center justify-center h-screen">
-    <div className="loader">Loading...</div>
   </div>
 );
 
