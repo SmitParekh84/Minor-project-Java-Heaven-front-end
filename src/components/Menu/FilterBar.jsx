@@ -5,7 +5,8 @@ const FilterBar = ({ onFilterChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const [selectedFilter, setSelectedFilter] = useState("");
-  const [categories, setCategories] = useState([]); // State to hold unique categories
+  const [categories, setCategories] = useState([]);
+  const [error, setError] = useState("");
 
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
@@ -13,8 +14,8 @@ const FilterBar = ({ onFilterChange }) => {
 
   const handleFilterSelection = (filter) => {
     setSelectedFilter(filter);
-    onFilterChange(filter); // Call the parent function to change filter
-    setIsOpen(false); // Close dropdown after selection
+    onFilterChange(filter);
+    setIsOpen(false);
   };
 
   // Close dropdown on outside click
@@ -31,22 +32,24 @@ const FilterBar = ({ onFilterChange }) => {
     };
   }, [dropdownRef]);
 
-  // Fetch items to get unique categories
+  // Fetch unique categories from items
   useEffect(() => {
-    const fetchItems = async () => {
+    const fetchCategories = async () => {
+      setError("");
       try {
         const response = await fetch(`${API_URL}/api/items`);
         if (!response.ok) throw new Error("Failed to fetch items");
 
         const items = await response.json();
-        const uniqueCategories = [...new Set(items.map((item) => item.category))]; // Extract unique categories
+        const uniqueCategories = [...new Set(items.map((item) => item.category))];
         setCategories(uniqueCategories);
       } catch (error) {
         console.error("Error fetching items:", error);
+        setError("There was a problem loading categories. Please try again.");
       }
     };
 
-    fetchItems();
+    fetchCategories();
   }, []);
 
   return (
@@ -57,35 +60,58 @@ const FilterBar = ({ onFilterChange }) => {
           <button
             className="text-secondary hover:text-secondary/80 font-semibold"
             onClick={toggleDropdown}
+            aria-haspopup="true"
+            aria-expanded={isOpen}
           >
             Filter by ▼
           </button>
           {isOpen && (
             <div className="absolute z-10 bg-white shadow-lg rounded mt-1">
-              {categories.map((filter) => ( // Render unique categories
-                <button
-                  key={filter}
-                  className="block w-full text-left p-2 hover:bg-gray-100"
-                  onClick={() => handleFilterSelection(filter)}
-                >
-                  {filter}
-                </button>
-              ))}
+              {error ? (
+                <div className="p-2 text-red-600">{error}</div>
+              ) : (
+                categories.map((filter) => (
+                  <button
+                    key={filter}
+                    className="block w-full text-left p-2 hover:bg-gray-100"
+                    onClick={() => handleFilterSelection(filter)}
+                  >
+                    {filter}
+                  </button>
+                ))
+              )}
             </div>
           )}
         </div>
 
         {/* Filter Buttons for Larger Screens */}
         <div className="hidden sm:flex space-x-6">
-          {categories.map((filter) => ( // Render unique categories
+          {error ? (
+            <span className="text-red-600">{error}</span>
+          ) : (
+            categories.map((filter) => (
+              <button
+                key={filter}
+                className={`text-secondary hover:text-secondary/80 font-medium ${
+                  selectedFilter === filter ? "font-bold" : ""
+                }`}
+                onClick={() => handleFilterSelection(filter)}
+              >
+                {filter}
+              </button>
+            ))
+          )}
+          {selectedFilter && (
             <button
-              key={filter}
-              className="text-secondary hover:text-secondary/80 font-medium"
-              onClick={() => handleFilterSelection(filter)} // Handle filter selection
+              className="text-red-500 hover:text-red-700"
+              onClick={() => {
+                setSelectedFilter("");
+                onFilterChange(""); // Clear the filter
+              }}
             >
-              {filter}
+              Clear Filter
             </button>
-          ))}
+          )}
         </div>
       </div>
     </div>

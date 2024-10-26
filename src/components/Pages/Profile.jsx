@@ -1,34 +1,53 @@
 import React, { useEffect, useState } from "react";
-import { useUser } from "../../context/UserContext"; // Use the custom hook to access UserContext
+import { useUser } from "../../context/UserContext";
 
 export default function Profile() {
-    const { user, setUser } = useUser(); // Access user and setUser from context using the custom hook
-    const [localUser, setLocalUser] = useState(null); // State to hold user data from localStorage
+    const { user, setUser } = useUser();
+    const [localUser, setLocalUser] = useState(null);
+    const [loading, setLoading] = useState(true); // Loading state
 
     useEffect(() => {
-        // Fetch user data from localStorage
         const storedUserInfo = localStorage.getItem("userInfo");
         if (storedUserInfo) {
-            const parsedUserInfo = JSON.parse(storedUserInfo);
-            setLocalUser(parsedUserInfo); // Set localUser state with parsed data
-            setUser(parsedUserInfo); // Set user in context
+            try {
+                const parsedUserInfo = JSON.parse(storedUserInfo);
+                setLocalUser(parsedUserInfo);
+                setUser(parsedUserInfo);
+            } catch (error) {
+                console.error("Failed to parse user info:", error);
+                setLocalUser(null);
+                setUser(null);
+            }
         }
+        setLoading(false); // Set loading to false after checking
     }, [setUser]);
 
     const handleLogout = () => {
-        // Clear user session and state
         localStorage.removeItem("sessionId");
         localStorage.removeItem("sessionStartTime");
         localStorage.removeItem("userInfo");
-        setUser(null); // Reset user state
-        setLocalUser(null); // Clear local user data
+        setUser(null);
+        setLocalUser(null);
+        // Optional: Add feedback for logout action, e.g., toast notification
     };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen flex-col">
+                <div
+                    className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
+                    style={{ borderColor: '#8B4513', borderTopColor: 'transparent' }} // Set the desired brown color
+                ></div>
+                <span className="mt-4 text-lg">Loading...</span>
+            </div>
+        );
+    }
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-background">
             <div className="bg-secondary rounded-lg shadow-lg m-5 p-11 max-w-sm w-full">
                 <h2 className="text-2xl text-center font-bold text-primary-foreground mb-6">Profile</h2>
-                {localUser ? ( // Check if localUser exists
+                {localUser ? (
                     <>
                         <div className="mb-4">
                             <p className="text-muted-foreground">Username: {localUser.username || "N/A"}</p>
@@ -39,7 +58,8 @@ export default function Profile() {
 
                         <button
                             className="w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold"
-                            onClick={handleLogout} // Call the handleLogout function
+                            onClick={handleLogout}
+                            aria-label="Logout" // Accessibility label
                         >
                             Logout
                         </button>

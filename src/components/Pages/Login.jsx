@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext"; // Adjust the import path
 import axios from "axios";
@@ -14,6 +14,7 @@ export default function Login() {
     });
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false); // State to manage password visibility
+    const [loading, setLoading] = useState(false); // Loading state
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -22,11 +23,12 @@ export default function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true); // Set loading to true
 
         try {
             const response = await axios.post(`${API_URL}/api/login`, credentials);
             const sessionId = response.data.sessionId;
-            toast.success(response.data.msg ?? 'Login successful.')
+            toast.success(response.data.msg ?? 'Login successful.');
             const userInfo = response.data.user;
 
             localStorage.setItem("sessionId", sessionId);
@@ -37,8 +39,17 @@ export default function Login() {
             navigate("/"); // Redirect to home page
         } catch (err) {
             toast.error(err.response?.data?.msg || "Login failed. Please try again.");
+        } finally {
+            setLoading(false); // Set loading to false
         }
     };
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem("userInfo");
+        if (storedUser) {
+            setUser(JSON.parse(storedUser)); // Set user from local storage after login
+        }
+    }, [setUser]);
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-background">
@@ -63,12 +74,12 @@ export default function Login() {
                             required
                         />
                     </div>
-                    <div className="mb-4 relative"> {/* Added relative positioning */}
+                    <div className="mb-4 relative">
                         <label className="block text-muted-foreground" htmlFor="password">
                             PASSWORD
                         </label>
                         <input
-                            type={showPassword ? "text" : "password"} // Toggle input type
+                            type={showPassword ? "text" : "password"}
                             id="password"
                             name="password"
                             placeholder="Enter Password *"
@@ -79,8 +90,9 @@ export default function Login() {
                         />
                         <button
                             type="button"
+                            aria-label={showPassword ? "Hide password" : "Show password"}
                             className="absolute right-2 top-9 text-secondary hover:brightness-150"
-                            onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
+                            onClick={() => setShowPassword(!showPassword)}
                         >
                             <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
                         </button>
@@ -93,14 +105,15 @@ export default function Login() {
                     </p>
                     <button
                         type="submit"
-                        className="w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold"
+                        className={`w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        disabled={loading}
                     >
-                        Login
+                        {loading ? "Logging in..." : "Login"}
                     </button>
                 </form>
 
                 <p className="mt-2 text-muted-foreground">
-                    Facing trouble logging in?{" "}
+                    Forgot Password ?{" "}
                     <a href="/get-help" className="text-primary-foreground">
                         Get Help
                     </a>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSyncAlt, faUser, faCheckCircle, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { faSyncAlt, faUser, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import toast from 'react-hot-toast';
 import { API_URL } from '../../config';
 
@@ -15,11 +15,13 @@ const AdminOrders = () => {
     useEffect(() => {
         const fetchOrders = async () => {
             setLoading(true);
+            setError(null); // Reset error state before fetching
             try {
                 const response = await axios.get(`${API_URL}/api/admin/orders`);
                 setOrders(response.data.orders);
             } catch (err) {
-                setError(err.message);
+                setError("Failed to load orders. Please try again later.");
+                toast.error(err.message);
             } finally {
                 setLoading(false);
             }
@@ -30,24 +32,24 @@ const AdminOrders = () => {
 
     const handleStatusChange = async (orderId, newStatus) => {
         const order = orders.find(order => order._id === orderId);
-        if (order.status === 'Delivered' && (newStatus === 'Pending' || newStatus === 'Cancelled')) {
-            toast.error("Cannot change status back to 'Pending' or 'Cancelled' after it has been delivered.");
-            return;
-        }
-        if (order.status === 'Cancelled' && (newStatus === 'Pending' || newStatus === 'Delivered')) {
-            toast.error("Cannot change status back to 'Pending' or 'Delivered' after it has been delivered.");
+        if (!order) return; // Safety check
+
+        // Prevent illegal status transitions
+        if ((order.status === 'Delivered' && (newStatus === 'Pending' || newStatus === 'Cancelled')) ||
+            (order.status === 'Cancelled' && (newStatus === 'Pending' || newStatus === 'Delivered'))) {
+            toast.error(`Cannot change status from '${order.status}' to '${newStatus}'.`);
             return;
         }
 
         try {
             await axios.put(`${API_URL}/api/orders/${orderId}/status`, { status: newStatus });
-            setOrders(prevOrders =>
-                prevOrders.map(order =>
-                    order._id === orderId ? { ...order, status: newStatus } : order
-                )
+            setOrders(prevOrders => 
+                prevOrders.map(order => order._id === orderId ? { ...order, status: newStatus } : order)
             );
+            toast.success(`Order status updated to '${newStatus}'.`);
         } catch (err) {
-            setError(err.message);
+            setError("Failed to update order status. Please try again.");
+            toast.error(err.message);
         }
     };
 
@@ -57,19 +59,30 @@ const AdminOrders = () => {
 
     // Filter and sort orders
     const filteredOrders = orders.filter(order => {
-        if (activeTab === 'pending') return order.status === 'Pending';
-        if (activeTab === 'delivered') return order.status === 'Delivered';
-        if (activeTab === 'cancelled') return order.status === 'Cancelled';
-        return true; // For 'all' tab
+        switch (activeTab) {
+            case 'pending':
+                return order.status === 'Pending';
+            case 'delivered':
+                return order.status === 'Delivered';
+            case 'cancelled':
+                return order.status === 'Cancelled';
+            default:
+                return true; // For 'all' tab
+        }
     }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-screen">
-                <div className="loader">Loading...</div>
+            <div className="flex items-center justify-center h-screen flex-col">
+                <div
+                    className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
+                    style={{ borderColor: '#8B4513', borderTopColor: 'transparent' }} // Set the desired brown color
+                ></div>
+                <span className="mt-4 text-lg">Loading...</span>
             </div>
         );
     }
+    
 
     if (error) {
         return (
@@ -101,7 +114,7 @@ const AdminOrders = () => {
             </div>
 
             {filteredOrders.length > 0 ? (
-                filteredOrders.map((order) => (
+                filteredOrders.map(order => (
                     <div key={order._id} className="border p-6 mb-6 rounded-lg shadow-lg bg-white transition transform hover:shadow-2xl">
                         <div className="flex justify-between items-center mb-4">
                             <div>
@@ -122,9 +135,9 @@ const AdminOrders = () => {
                                     onChange={(e) => handleStatusChange(order._id, e.target.value)}
                                     className="border rounded-md p-2 bg-gray-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 >
-                                    <option value="Pending" disabled={order.status === 'Delivered'}>Pending</option>
-                                    <option value="Delivered">Delivered</option>
-                                    <option value="Cancelled">Cancelled</option>
+                                    <option value="Pending" disabled={order.status === 'Delivered' || order.status === 'Cancelled'}>Pending</option>
+                                    <option value="Delivered" disabled={order.status === 'Delivered'}>Delivered</option>
+                                    <option value="Cancelled" disabled={order.status === 'Cancelled'}>Cancelled</option>
                                 </select>
                             </div>
                         </div>
@@ -134,7 +147,7 @@ const AdminOrders = () => {
                             Items:
                         </h3>
                         <ul className="list-disc pl-6">
-                            {order.items.map((item) => (
+                            {order.items.map(item => (
                                 <li key={item.productId} className="text-gray-700">
                                     {item.name} ({item.size}) - ₹{item.price} x {item.quantity} = ₹{item.subtotal}
                                 </li>

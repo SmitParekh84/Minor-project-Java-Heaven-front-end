@@ -11,7 +11,6 @@ export const useCart = () => {
 // Cart Provider Component
 export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState(() => {
-        // Get cart items from localStorage on initial render
         const savedCart = localStorage.getItem('cartItems');
         return savedCart ? JSON.parse(savedCart) : [];
     });
@@ -29,12 +28,10 @@ export const CartProvider = ({ children }) => {
             );
 
             if (existingItemIndex >= 0) {
-                // If the item already exists in the cart, update its quantity
                 const updatedItems = [...prevItems];
                 updatedItems[existingItemIndex].quantity += newItem.quantity || 1;
                 return updatedItems;
             } else {
-                // If it's a new item, add it to the cart with a specified quantity
                 return [...prevItems, { ...newItem, quantity: newItem.quantity || 1 }];
             }
         });
@@ -60,15 +57,17 @@ export const CartProvider = ({ children }) => {
         setCartItems((prevItems) =>
             prevItems.map((item) =>
                 item.id === itemId && item.size === itemSize
-                    ? { ...item, quantity: Math.max(newQuantity, 1) } // Prevent quantity from going below 1
+                    ? { ...item, quantity: Math.max(newQuantity, 1) }
                     : item
             )
         );
     };
 
-    // Clear the cart
+    // Clear the cart with confirmation
     const clearCart = () => {
-        setCartItems([]);
+        if (window.confirm("Are you sure you want to clear the cart & Place Order?")) {
+            setCartItems([]);
+        }
     };
 
     return (

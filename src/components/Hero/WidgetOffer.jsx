@@ -22,7 +22,7 @@ const offers = [
   // Add more offers here
 ];
 
-export default function   WidgetOffer() {
+export default function WidgetOffer() {
   const settings = {
     infinite: true,
     speed: 500,
@@ -31,17 +31,17 @@ export default function   WidgetOffer() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl pt-20  sm:py-18 lg:pt-16">
-      
-      <Slider {...settings} className="flex justify-center  ">
+    <div className="mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
+      <Slider {...settings} className="flex justify-center">
         {offers.map((offer, index) => (
-          <div key={index} className="px-2 ">
-            <div className="flex  flex-col items-center  bg-secondary py-16 px-6 rounded-lg shadow-lg  justify-between ">
-              <div className="flex flex-col md:flex-row  items-center md:justify-start w-full">
+          <div key={index} className="px-2">
+            <div className="flex flex-col items-center bg-secondary py-16 px-6 rounded-lg shadow-lg justify-between">
+              <div className="flex flex-col md:flex-row items-center md:justify-start w-full">
                 <img
                   src={offer.imageUrl}
                   alt={offer.title}
                   className="w-auto h-32 rounded-lg object-cover mb-4 md:mb-0 md:mr-4"
+                  loading="lazy" // Lazy loading for better performance
                 />
                 <div className="text-center md:text-left">
                   <h2 className="text-muted-foreground text-sm">New Updates</h2>
@@ -49,10 +49,13 @@ export default function   WidgetOffer() {
                   <p className="text-muted-foreground">
                     {offer.description}
                   </p>
-                  <div className='flex lg:justify-start justify-center items-center '>
-                    <button className="bg-primary-foreground text-secondary py-2 px-4 my-2 rounded-full flex items-center shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
+                  <div className='flex lg:justify-start justify-center items-center'>
+                    <button 
+                      className="bg-primary-foreground text-secondary py-2 px-4 my-2 rounded-full flex items-center shadow-md transition-transform duration-300 ease-in-out hover:scale-105"
+                      aria-label={`Learn more about ${offer.title}`} // Added aria-label for accessibility
+                    >
                       <span>Know more</span>
-                      <ion-icon name="arrow-forward-outline"></ion-icon>
+                      <ion-icon name="arrow-forward-outline" aria-hidden="true"></ion-icon> {/* Hiding icon from screen readers */}
                     </button>
                   </div>
                 </div>
