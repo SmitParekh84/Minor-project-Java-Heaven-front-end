@@ -63,7 +63,7 @@ const TypeMenu = () => {
     slidesToScroll: 4,
     arrows: true,
     easing: "ease-in-out", // Smooth easing
-  
+
     responsive: [
       {
         breakpoint: 1024,
@@ -84,14 +84,17 @@ const TypeMenu = () => {
       {
         breakpoint: 480,
         settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
+          slidesToShow: 3,
+          slidesToScroll: 3,
           dots: false,
+
+
+
         },
       },
     ],
   };
-  
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 pt-8 sm:py-18 lg:pt-20">
       <h2 className="text-left text-2xl font-bold text-foreground mb-6">Handcrafted Curations</h2>
@@ -99,22 +102,23 @@ const TypeMenu = () => {
         {categoryImages.map((item, index) => (
           <div
             key={index}
-            className="text-center px-2 cursor-pointer transition-transform duration-200 hover:scale-105"
+            className="text-center px-2 cursor-pointer transition-transform duration-200 "
             onClick={() => handleCategoryClick(item.category)}
           >
             <img
-              className="lg:w-28 w-16 max-w-28 max-h-28 rounded-full mx-auto shadow-md hover:shadow-lg"
+              className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full mx-auto shadow-md hover:shadow-lg object-cover"
               src={item.imageUrl}
               alt={item.category}
               loading="lazy"
             />
+
             <p className="mt-3 text-sm font-medium text-foreground">{item.category}</p>
           </div>
         ))}
       </Slider>
     </div>
   );
-  
+
 };
 
 export default TypeMenu;

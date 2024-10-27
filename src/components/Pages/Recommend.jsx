@@ -36,10 +36,22 @@ export default function Widget() {
     speed: 500,
     slidesToShow: 2,
     slidesToScroll: 1,
+
     autoplay: true,
     autoplaySpeed: 3000,
     cssEase: 'linear',
     responsive: [
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          dots: false,
+
+
+
+        },
+      },
       {
         breakpoint: 768,
         settings: {
