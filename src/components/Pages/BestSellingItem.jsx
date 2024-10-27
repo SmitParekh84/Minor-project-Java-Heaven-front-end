@@ -77,32 +77,33 @@ const BestSellingItem = () => {
     }
 
     return (
-        <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
-            <h1 className="text-2xl font-bold mb-6">Top 5  Selling Items</h1>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="border p-4 rounded-lg shadow-lg bg-white flex items-center">
-                    <FontAwesomeIcon icon={faChartLine} className="text-4xl mr-4 text-purple-500" />
-                    <div>
-                        <h2 className="text-xl font-semibold">Top 5  Selling Items</h2>
-                        <ul className="list-disc pl-4">
-                            {bestSellingItems.length > 0 ? (
-                                bestSellingItems.map((item) => (
-                                    <li key={item.name} className="text-gray-700">
-                                        {item.name} - Sold: {item.totalSold}
-                                    </li>
-                                ))
-                            ) : (
-                                <li className="text-gray-700">No best selling items found.</li>
-                            )}
-                        </ul>
-                    </div>
+        <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0 ">
+            <h1 className="text-2xl font-bold mb-6 text-gray-800">Top Selling Items</h1>
+
+            {/* Best Selling Items Section */}
+            <div className="bg-white p-4 rounded-lg shadow-lg ">
+                <h2 className="text-xl font-bold mb-4 text-secondary border-b-2 border-setext-secondary pb-2">Top 5 Selling Items</h2>
+                <div className="max-h-60 overflow-y-auto">
+                    <ul className="list-disc pl-4">
+                        {bestSellingItems.length > 0 ? (
+                            bestSellingItems.map((item) => (
+                                <li key={item.name} className="text-gray-800 mb-2 flex items-center hover:bg-primary-foreground transition-colors rounded p-2">
+                                    <FontAwesomeIcon icon={faChartLine} className="text-secondary mr-2" />
+                                    <span className="font-bold">{item.name}</span> - <span className="text-secondary font-semibold">{item.totalSold}</span> Sold
+                                </li>
+                            ))
+                        ) : (
+                            <li className="text-gray-700">No best-selling items found.</li>
+                        )}
+                    </ul>
                 </div>
             </div>
 
+
             {/* Pie Chart Section */}
             <div className="mt-6">
-                <h2 className="text-xl font-semibold mb-4">Top 5  Selling Items Chart</h2>
-                <div style={{ position: 'relative', width: '100%', height: '400px' }}>
+                <h2 className="text-xl font-semibold mb-4 text-black">Best Selling Items Distribution</h2>
+                <div className="relative" style={{ width: '100%', height: '400px' }}>
                     <Pie
                         data={pieChartData}
                         options={{
@@ -111,10 +112,17 @@ const BestSellingItem = () => {
                             plugins: {
                                 legend: {
                                     position: 'top',
+                                    labels: {
+                                        color: 'gray',
+                                    },
                                 },
                                 title: {
                                     display: true,
                                     text: 'Best Selling Items Distribution',
+                                    color: 'gray',
+                                    font: {
+                                        size: 20,
+                                    },
                                 },
                             },
                         }}
@@ -122,6 +130,7 @@ const BestSellingItem = () => {
                 </div>
             </div>
         </div>
+
     );
 };
 
