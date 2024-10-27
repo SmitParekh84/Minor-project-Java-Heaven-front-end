@@ -1,100 +1,73 @@
-import React from "react"; // Import React
+// src/App.jsx
+import React, { Suspense } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { CartProvider } from "./context/CartContext"; // Import CartProvider
-import { UserProvider, useUser } from "./context/UserContext"; // Import UserProvider and useUser hook
-import Hero from "./components/Hero/Hero";
-import GetHelp from "./components/Pages/GetHelp";
-import ItemList from "./components/Menu/ItemList";
-import Login from "./components/Pages/Login";
-import ItemDetail from "./components/Menu/ItemDetail";
-import Navbar from "./components/Navbar/Navbar"; // Adjust the path based on your file structure
-import Cart from "./components/Menu/Cart"; // Import the Cart component
-import SignUp from "./components/Pages/SignUp";
-import Profile from "./components/Pages/Profile"; // Import your Profile component
-import MyOrders from "./components/Pages/MyOrders";
-import AdminDashboard from "./components/Pages/AdminDashboard"; // Import AdminDashboard component
-import AdminLogin from "./components/Pages/AdminLogin";
-import toast, { Toaster } from "react-hot-toast"; // Import Toaster from react-hot-toast
+import { CartProvider } from "./context/CartContext";
+import { UserProvider } from "./context/UserContext";
+import toast, { Toaster } from "react-hot-toast";
+import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Pages/Footer";
-import AdminEdit from "./components/Pages/AdminEdit"; // Import AdminEdit component
-import AddMenuItem from "./components/Pages/AddMenuItem"; // Import AddMenuItem component
-import AdminOrders from "./components/Pages/AdminOrders";
-import BestSellingItem from "./components/Pages/BestSellingItem";
-import About from "./components/Pages/About";
-import ProtectedRoute from "./components/Pages/ProtectedRoute"; // Ensure the path is correct
-// ProfileRoute component to handle user context for profile
-const ProfileRoute = () => {
-  const { user } = useUser(); // Access user from UserContext
-  return user ? <Profile /> : <Login />; // Render Profile or Login based on user state
-};
+import ProtectedRoute from "./components/Pages/ProtectedRoute";
+import LoadingIndicator from "./components/Menu/LoadingIndicator"
+
+// Lazy load your components
+const Hero = React.lazy(() => import("./components/Hero/Hero"));
+const GetHelp = React.lazy(() => import("./components/Pages/GetHelp"));
+const ItemList = React.lazy(() => import("./components/Menu/ItemList"));
+const Login = React.lazy(() => import("./components/Pages/Login"));
+const ItemDetail = React.lazy(() => import("./components/Menu/ItemDetail"));
+const Cart = React.lazy(() => import("./components/Menu/Cart"));
+const SignUp = React.lazy(() => import("./components/Pages/SignUp"));
+const Profile = React.lazy(() => import("./components/Pages/Profile"));
+const MyOrders = React.lazy(() => import("./components/Pages/MyOrders"));
+const AdminDashboard = React.lazy(() => import("./components/Pages/AdminDashboard"));
+const AdminLogin = React.lazy(() => import("./components/Pages/AdminLogin"));
+const AdminEdit = React.lazy(() => import("./components/Pages/AdminEdit"));
+const AddMenuItem = React.lazy(() => import("./components/Pages/AddMenuItem"));
+const AdminOrders = React.lazy(() => import("./components/Pages/AdminOrders"));
+const BestSellingItem = React.lazy(() => import("./components/Pages/BestSellingItem"));
+const About = React.lazy(() => import("./components/Pages/About"));
+const RevenuePage = React.lazy(() => import("./components/Pages/RevenuePage"));
 
 export default function App() {
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
-
-      <CartProvider>
-        <UserProvider>
+      <UserProvider>
+        <CartProvider>
           <Router>
-            <Navbar />
-            <Routes>
-              <Route path="/" element={<Hero />} />
-              <Route path="/menu" element={<ItemList />} />
-              <Route path="/get-help" element={<GetHelp />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/sign-up" element={<SignUp />} />
-              <Route path="/item/:id" element={<ItemDetail />} />
-              <Route path="/admin" element={<AdminLogin />} />
+            <div className="flex flex-col min-h-screen  font-spartan">
+              <Navbar />
 
-              {/* Protect routes that require user authentication */}
-              <Route path="/cart" element={
-                <ProtectedRoute>
-                  <Cart />
-                </ProtectedRoute>
-              } />
-              <Route path="/my-orders" element={
-                <ProtectedRoute>
-                  <MyOrders />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile" element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              } />
+              <Suspense fallback={<div className="flex-grow"><LoadingIndicator /></div>}>
+                <Routes className="flex-grow">
+                  {/* Public Routes */}
+                  <Route path="/" element={<Hero />} />
+                  <Route path="/menu/:category?" element={<ItemList />} />
+                  <Route path="/get-help" element={<GetHelp />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/sign-up" element={<SignUp />} />
+                  <Route path="/item/:id" element={<ItemDetail />} />
+                  <Route path="/admin" element={<AdminLogin />} />
+                  <Route path="/revenue" element={<RevenuePage />} />
+                  {/* Protected User Routes */}
+                  <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+                  <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+                  <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                  {/* Protected Admin Routes */}
+                  <Route path="/admin-dashboard" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+                  <Route path="/admin/edit" element={<ProtectedRoute adminOnly><AdminEdit /></ProtectedRoute>} />
+                  <Route path="/admin/add-menu-item" element={<ProtectedRoute adminOnly><AddMenuItem /></ProtectedRoute>} />
+                  <Route path="/admin/orders" element={<ProtectedRoute adminOnly><AdminOrders /></ProtectedRoute>} />
+                  <Route path="/admin/best-selling" element={<ProtectedRoute adminOnly><BestSellingItem /></ProtectedRoute>} />
+                </Routes>
+              </Suspense>
 
-              {/* Admin routes with protection */}
-              <Route path="/admin-dashboard" element={
-                <ProtectedRoute adminOnly>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/edit" element={
-                <ProtectedRoute adminOnly>
-                  <AdminEdit />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/add-menu-item" element={
-                <ProtectedRoute adminOnly>
-                  <AddMenuItem />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/orders" element={
-                <ProtectedRoute adminOnly>
-                  <AdminOrders />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/best-selling" element={
-                <ProtectedRoute adminOnly>
-                  <BestSellingItem />
-                </ProtectedRoute>
-              } />
-            </Routes>
-            <Footer />
+              <Footer />
+            </div>
           </Router>
-        </UserProvider>
-      </CartProvider>
+        </CartProvider>
+      </UserProvider>
     </>
   );
 }

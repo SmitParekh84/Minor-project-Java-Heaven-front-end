@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"; // Import Link if using React Router
 
 export default function Footer() {
   return (
-    <footer className="bg-secondary text-foreground px-auto bottom-0 z-50">
+    <footer className="bg-secondary text-foreground py-4 mt-auto">
       <div className="container mx-auto flex flex-col md:flex-row justify-between py-10 lg:px-20">
         <div className="flex items-center mb-4 md:mb-0">
           <img
@@ -17,17 +17,17 @@ export default function Footer() {
             <h3 className="font-semibold text-primary-foreground mb-2">About Us</h3>
             <ul>
               <li>
-                <Link to="/heritage" className="text-muted-foreground hover:text-primary">
+                <Link to="/heritage" className="text-muted-foreground hover:text-primary" aria-label="Learn about our heritage">
                   Our Heritage
                 </Link>
               </li>
               <li>
-                <Link to="/coffeehouse" className="text-muted-foreground hover:text-primary">
+                <Link to="/coffeehouse" className="text-muted-foreground hover:text-primary" aria-label="Explore our coffeehouse">
                   Coffeehouse
                 </Link>
               </li>
               <li>
-                <Link to="/company" className="text-muted-foreground hover:text-primary">
+                <Link to="/company" className="text-muted-foreground hover:text-primary" aria-label="Discover more about our company">
                   Our Company
                 </Link>
               </li>
@@ -37,27 +37,27 @@ export default function Footer() {
             <h3 className="font-semibold mb-2 text-primary-foreground">Responsibility</h3>
             <ul>
               <li>
-                <Link to="/diversity" className="text-muted-foreground hover:text-primary">
+                <Link to="/diversity" className="text-muted-foreground hover:text-primary" aria-label="Learn about our diversity initiatives">
                   Diversity
                 </Link>
               </li>
               <li>
-                <Link to="/community" className="text-muted-foreground hover:text-primary">
+                <Link to="/community" className="text-muted-foreground hover:text-primary" aria-label="Read about our community efforts">
                   Community
                 </Link>
               </li>
               <li>
-                <Link to="/ethical-sourcing" className="text-muted-foreground hover:text-primary">
+                <Link to="/ethical-sourcing" className="text-muted-foreground hover:text-primary" aria-label="Understand our ethical sourcing">
                   Ethical Sourcing
                 </Link>
               </li>
               <li>
-                <Link to="/environment" className="text-muted-foreground hover:text-primary">
+                <Link to="/environment" className="text-muted-foreground hover:text-primary" aria-label="Explore our environmental stewardship">
                   Environmental Stewardship
                 </Link>
               </li>
               <li>
-                <Link to="/learn-more" className="text-muted-foreground hover:text-primary">
+                <Link to="/learn-more" className="text-muted-foreground hover:text-primary" aria-label="Learn more about us">
                   Learn More
                 </Link>
               </li>
@@ -67,22 +67,22 @@ export default function Footer() {
             <h3 className="font-semibold mb-2 text-primary-foreground">Quick Links</h3>
             <ul>
               <li>
-                <Link to="/privacy-policy" className="text-muted-foreground hover:text-primary">
+                <Link to="/privacy-policy" className="text-muted-foreground hover:text-primary" aria-label="Read our privacy policy">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="/faqs" className="text-muted-foreground hover:text-primary">
+                <Link to="/faqs" className="text-muted-foreground hover:text-primary" aria-label="Frequently asked questions">
                   FAQs
                 </Link>
               </li>
               <li>
-                <Link to="/customer-service" className="text-muted-foreground hover:text-primary">
+                <Link to="/customer-service" className="text-muted-foreground hover:text-primary" aria-label="Contact our customer service">
                   Customer Service
                 </Link>
               </li>
               <li>
-                <Link to="/delivery" className="text-muted-foreground hover:text-primary">
+                <Link to="/delivery" className="text-muted-foreground hover:text-primary" aria-label="Learn about our delivery options">
                   Delivery
                 </Link>
               </li>
@@ -92,15 +92,15 @@ export default function Footer() {
         <div className="mt-4 md:mt-0">
           <h3 className="font-semibold mb-2 text-primary-foreground">Social Media</h3>
           <div className="flex space-x-4">
-            <Link to="/instagram" className="text-muted-foreground hover:text-primary">
+            <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary" aria-label="Visit our Instagram page">
               Instagram
-            </Link>
-            <Link to="/facebook" className="text-muted-foreground hover:text-primary">
+            </a>
+            <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary" aria-label="Visit our Facebook page">
               Facebook
-            </Link>
-            <Link to="/twitter" className="text-muted-foreground hover:text-primary">
+            </a>
+            <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary" aria-label="Visit our Twitter page">
               Twitter
-            </Link>
+            </a>
           </div>
         </div>
       </div>

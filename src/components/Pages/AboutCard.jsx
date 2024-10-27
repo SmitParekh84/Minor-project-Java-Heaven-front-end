@@ -7,7 +7,7 @@ export default function AboutCard() {
       <div className="relative overflow-hidden rounded-lg">
         <img
           src="/images/About-banner.jpg"
-          alt="Coffee Brewing"
+          alt="A beautifully brewed cup of coffee"
           className="w-screen lg:h-full h-56 rounded-lg"
         />
         <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-end p-4">
@@ -16,7 +16,7 @@ export default function AboutCard() {
           </span>
           <h3 className="text-white text-xl font-bold mt-2">Art & Science Of Coffee Brewing</h3>
           <p className="text-muted-foreground text-xs mt-1">
-            Master the perfect brew with Starbucks! Learn the art and science of coffee brewing.
+            Master the perfect brew! Learn the art and science of coffee brewing.
           </p>
           <Link to="/about">
             <button className="mt-4 inline-block bg-muted-foreground text-center text-secondary px-4 py-2 rounded-lg hover:bg-muted-foreground/80">

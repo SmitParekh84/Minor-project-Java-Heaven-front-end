@@ -4,130 +4,125 @@ import { API_URL } from '../../config';
 
 const MyOrders = () => {
     const [orders, setOrders] = useState([]);
+    const [prevOrders, setPrevOrders] = useState([]); // Track previous orders for comparison
     const [loading, setLoading] = useState(true);
+    const [dataChanged, setDataChanged] = useState(false); // Track if data has changed
     const [error, setError] = useState(null);
-    const [activeTab, setActiveTab] = useState('myOrders'); // State to track active tab
-    const loggedInUser = localStorage.getItem('userInfo'); // Use the correct key
+    const [activeTab, setActiveTab] = useState('myOrders');
+    const loggedInUser = localStorage.getItem('userInfo');
     const [items, setItems] = useState([]);
-
 
     const fetchItems = async () => {
         try {
             const response = await axios.get(`${API_URL}/api/items`);
-
-            // Check if the response is an array directly
             if (Array.isArray(response.data)) {
-                setItems(response.data); // Set the items directly
+                setItems(response.data);
             } else {
                 console.error('Items not found in response:', response.data);
             }
         } catch (err) {
             setError('Failed to fetch item images.');
-            console.error('Error fetching items:', err); // Log the error for debugging
+            console.error('Error fetching items:', err);
         }
     };
-    useEffect(() => {
-        // Check if user is logged in by using localStorage or authentication state
-        if (loggedInUser) {
-            const foundUser = JSON.parse(loggedInUser);
-            fetchOrders(foundUser?.username ?? '');
-            fetchItems();// Fetch items on mount
-            // Set up polling to refresh orders every 5 seconds
-            const interval = setInterval(() => {
-                fetchOrders(foundUser?.username ?? '');
-            }, 5000); // 5000 milliseconds = 5 seconds
-
-            // Clean up the interval on component unmount
-            return () => clearInterval(interval);
-        }
-
-    }, [loggedInUser]);
 
     const fetchOrders = async (userId) => {
         try {
             const response = await axios.get(`${API_URL}/api/orders/${userId}`);
-            setOrders(response.data.orders);
-            setLoading(false);
+            const fetchedOrders = response.data.orders;
+
+            // Check if fetched orders differ from previous orders
+            if (JSON.stringify(fetchedOrders) !== JSON.stringify(prevOrders)) {
+                setPrevOrders(fetchedOrders);  // Update prevOrders
+                setOrders(fetchedOrders);      // Update orders
+                setDataChanged(true);          // Set dataChanged to true if there is a change
+            } else {
+                setDataChanged(false);         // No change in data
+            }
         } catch (err) {
-            setError(err.message);
+            setError(err.response?.data?.msg);
+        } finally {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (loggedInUser) {
+            const foundUser = JSON.parse(loggedInUser);
+            fetchOrders(foundUser?.username ?? '');
+            fetchItems();
+
+            const interval = setInterval(() => {
+                setLoading(true);             // Set loading before fetching
+                fetchOrders(foundUser?.username ?? '');
+            }, 5000);
+
+            return () => clearInterval(interval);
+        }
+    }, [loggedInUser, activeTab]);
+
     const getItemImageUrl = (itemName) => {
         if (!items || items.length === 0) return '';
-
-
         const item = items.find(i => i.name.toLowerCase() === itemName.toLowerCase());
-
-
-
         return item ? item.imageUrl : '';
     };
 
+    const filteredOrders = orders.filter(order => {
+        if (activeTab === 'pending') return order.status === 'Pending';
+        if (activeTab === 'delivered') return order.status === 'Delivered';
+        if (activeTab === 'cancelled') return order.status === 'Cancelled';
+        return true;
+    });
 
+    filteredOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    if (loading) {
+    if (loading && dataChanged) {  // Show loading only if there is a data change
         return (
-            <div className="flex flex-col items-center justify-center h-screen">
-                <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
-                    <div className="p-8 text-center text-gray-700">
-                        <h2 className="text-2xl font-semibold">Please login First</h2>
-                        <p className="mt-2">Browse our products and add items to your cart!</p>
-                    </div>
-                </div>
+            <div className="flex items-center justify-center h-screen flex-col">
+                <div
+                    className="animate-spin h-12 w-12 border-4 border-brown-500 border-t-transparent rounded-full"
+                    style={{ borderColor: '#8B4513', borderTopColor: 'transparent' }}
+                ></div>
+                <span className="mt-4 text-lg">Loading...</span>
             </div>
         );
     }
 
     if (error) {
-        return (<div className="flex items-center justify-center h-screen">
-                <div className="loader">Loading Error: {error}</div>
-                </div>);
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <div className="text-red-500">Loading Error: {error}</div>
+            </div>
+        );
     }
 
-    // Filter orders based on the active tab
-    const filteredOrders = orders.filter(order => {
-        if (activeTab === 'pending') return order.status === 'Pending';
-        if (activeTab === 'delivered') return order.status === 'Delivered';
-        if (activeTab === 'cancelled') return order.status === 'Cancelled';
-
-        return true; // For 'myOrders' tab
-    });
-
-    // Sort orders by creation date (newest first)
-    filteredOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-
-
-
     return (
-        <div className="rounded-lg w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
+        <div className="rounded-lg w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
             <div className="container mx-auto p-6">
                 <h1 className="text-3xl font-extrabold text-gray-800 mb-8">My Orders</h1>
 
-                {/* Tab Navigation */}
-                <div className="flex space-x-4 mb-4">
+                <div className="flex space-x-2 sm:space-x-4 mb-4 overflow-x-auto">
                     <button
                         onClick={() => setActiveTab('myOrders')}
-                        className={`px-4 py-2 rounded-md ${activeTab === 'myOrders' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                        className={`px-3 sm:px-4 py-2 rounded-md whitespace-nowrap ${activeTab === 'myOrders' ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
                     >
                         My Orders
                     </button>
                     <button
                         onClick={() => setActiveTab('pending')}
-                        className={`px-4 py-2 rounded-md ${activeTab === 'pending' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                        className={`px-3 sm:px-4 py-2 rounded-md whitespace-nowrap ${activeTab === 'pending' ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
                     >
                         Pending
                     </button>
                     <button
                         onClick={() => setActiveTab('delivered')}
-                        className={`px-4 py-2 rounded-md ${activeTab === 'delivered' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                        className={`px-3 sm:px-4 py-2 rounded-md whitespace-nowrap ${activeTab === 'delivered' ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
                     >
                         Delivered
                     </button>
                     <button
                         onClick={() => setActiveTab('cancelled')}
-                        className={`px-4 py-2 rounded-md ${activeTab === 'delivered' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                        className={`px-3 sm:px-4 py-2 rounded-md whitespace-nowrap ${activeTab === 'cancelled' ? 'bg-secondary text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
                     >
                         Cancelled
                     </button>
@@ -138,7 +133,10 @@ const MyOrders = () => {
                         <div key={order._id} className="border border-gray-200 shadow-md p-8 mb-8 rounded-xl bg-white hover:shadow-lg transition-shadow duration-300">
                             <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-xl font-semibold">Total Amount: ₹{order.totalAmount}</h2>
-                                <span className={`text-sm font-medium py-1 px-3 rounded-full ${order.status === 'Delivered' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'}`}>
+                                <span className={`text-sm font-medium py-1 px-3 rounded-full 
+                                    ${order.status === 'Delivered' ? 'bg-green-100 text-green-600' :
+                                        order.status === 'Cancelled' ? 'bg-red-100 text-red-600' :
+                                            'bg-yellow-100 text-yellow-600'}`}>
                                     {order.status}
                                 </span>
                             </div>
@@ -158,13 +156,11 @@ const MyOrders = () => {
                                 <h3 className="text-lg font-bold mb-3 text-gray-800">Items:</h3>
                                 <ul className="list-inside space-y-4">
                                     {order.items.map((item) => {
-                                        // Get the image URL for the current item using its name
                                         const imageUrl = getItemImageUrl(item.name);
-
                                         return (
                                             <li key={item._id} className="flex items-center space-x-4">
                                                 <img
-                                                    src={imageUrl} // Use the imageUrl fetched from getItemImageUrl
+                                                    src={imageUrl}
                                                     alt={item.name}
                                                     className="w-16 h-16 rounded-md object-cover"
                                                 />
@@ -182,11 +178,16 @@ const MyOrders = () => {
                         </div>
                     ))
                 ) : (
-                    <div className="text-center text-gray-500 py-20">No orders found.</div>
+                    <div className="text-center text-gray-500 py-20">
+                        {activeTab === 'pending' && "No pending orders found."}
+                        {activeTab === 'delivered' && "No delivered orders found."}
+                        {activeTab === 'cancelled' && "No cancelled orders found."}
+                        {activeTab === 'myOrders' && "No orders found. "}
+                        <a href="/menu" className="text-blue-500 underline">Browse Products</a>
+                    </div>
                 )}
             </div>
         </div>
-
     );
 };
 
