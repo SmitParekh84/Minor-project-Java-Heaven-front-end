@@ -23,7 +23,7 @@ export default function About() {
                 <section className="flex flex-col lg:flex-row items-center my-6">
                     <div className="lg:w-1/2">
                         <img
-                            src="https://img.freepik.com/free-photo/barista-hand-preparing-cappuccino-coffee-shop_23-2148209246.jpg"
+                            src="/images/barista-coffee-brewing.jpg"
                             alt="Barista preparing cappuccino"
                             className="w-full h-auto rounded-lg shadow-md"
                         />
@@ -39,7 +39,7 @@ export default function About() {
                 <section className="flex flex-col lg:flex-row-reverse items-center my-6">
                     <div className="lg:w-1/2">
                         <img
-                            src="https://img.freepik.com/free-photo/close-up-view-dark-fresh-roasted-coffee-beans-coffee-beans-background_141793-27283.jpg"
+                            src="/images/coffee-beans-background.jpg"
                             alt="Variety of coffee beans"
                             className="w-full h-auto rounded-lg shadow-md"
                         />
@@ -56,7 +56,7 @@ export default function About() {
                 <section className="flex flex-col lg:flex-row items-center my-6">
                     <div className="lg:w-1/2">
                         <img
-                            src="https://img.freepik.com/free-photo/coffee-machine-making-perfect-cup-coffee_23-2151699646.jpg"
+                            src="/images/coffee-machine-making-perfect-cup-coffee.jpg"
                             alt="Coffee machine brewing coffee"
                             className="w-full h-auto rounded-lg shadow-md"
                         />
