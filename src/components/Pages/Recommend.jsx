@@ -1,7 +1,7 @@
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const items = [
   {
@@ -63,28 +63,28 @@ export default function Widget() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl pt-0 sm:py-14 lg:py-20">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold text-[var(--foreground)]">Barista Recommends</h2>
-        <a href="/menu" className="text-secondary hover:underline">View Menu</a>
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8  sm:py-14 lg:py-20">
+      <div className="flex justify-between items-center mb-6 ">
+        <h2 className="text-2xl font-bold text-[var(--foreground)]">Barista Recommends</h2>
+        <Link to="/menu" className="text-secondary hover:text-secondary-dark hover:underline">View Menu</Link>
       </div>
       <Slider {...settings} className="flex">
         {items.map((item) => (
           <div key={item._id} className="px-2">
-            <div className="bg-white rounded-lg shadow-md flex flex-col p-4 relative min-w-7 md:min-w-8">
+            <div className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col p-5 relative min-w-[180px] md:min-w-[220px]">
               <img
                 src={item.imageUrl}
                 alt={item.title}
-                className="w-full h-32 object-cover mb-4 mx-auto"
+                className="w-full h-40 object-cover rounded-md mb-4 transition-transform duration-300 hover:scale-105"
               />
               <div className="flex-1 text-center md:text-left">
-                <h3 className="text-[var(--foreground)] font-semibold">{item.title}</h3>
-                <p className="text-[var(--muted-foreground)] text-sm">{item.description}</p>
+                <h3 className="text-[var(--foreground)] font-semibold text-lg">{item.title}</h3>
+                <p className="text-[var(--muted-foreground)] text-sm mt-1">{item.description}</p>
               </div>
               <div className="flex justify-between items-center mt-4">
-                <span className="text-[var(--foreground)] font-semibold">{item.price}</span>
+                <span className="text-[var(--foreground)] font-bold text-lg">{item.price}</span>
                 <button
-                  className="bg-secondary text-primary-foreground px-4 py-2 rounded-lg shadow hover:bg-secondary"
+                  className="bg-secondary text-primary-foreground px-4 py-2 rounded-lg shadow-md hover:shadow-lg hover:bg-secondary-dark transition-colors duration-200"
                   onClick={() => handleAddItem(item)}
                 >
                   View Details

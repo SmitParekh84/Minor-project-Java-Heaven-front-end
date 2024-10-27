@@ -55,56 +55,66 @@ const TypeMenu = () => {
   const settings = {
     dots: true,
     infinite: false,
-    speed: 500,
+    autoplay: true, // Auto-play for smooth, automatic scrolling
+    autoplaySpeed: 3000,
+    pauseOnHover: true,
+    speed: 600, // Smoother, slower transition
     slidesToShow: 4,
     slidesToScroll: 4,
     arrows: true,
-
-
+    easing: "ease-in-out", // Smooth easing
+  
     responsive: [
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 4,
-          slidesToScroll: 4,
-
-        }
+          slidesToShow: 3, // Show 3 slides on medium screens
+          slidesToScroll: 3,
+          arrows: false,
+        },
       },
       {
-        breakpoint: 600,
+        breakpoint: 768,
         settings: {
-          slidesToShow: 3,
-          slidesToScroll: 3,
-        }
+          slidesToShow: 2,
+          slidesToScroll: 2,
+          arrows: false,
+        },
       },
       {
         breakpoint: 480,
         settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
-        }
-      }
-    ]
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          dots: false,
+        },
+      },
+    ],
   };
-
+  
   return (
-    <div className="mx-auto max-w-7xl pt-8 sm:py-18 lg:pt-20">
-      <h2 className="text-left text-2xl font-bold text-foreground mb-8">Handcrafted Curations</h2>
+    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 pt-8 sm:py-18 lg:pt-20">
+      <h2 className="text-left text-2xl font-bold text-foreground mb-6">Handcrafted Curations</h2>
       <Slider {...settings} className="flex justify-center">
         {categoryImages.map((item, index) => (
-          <div key={index} className="text-center px-2" onClick={() => handleCategoryClick(item.category)}>
+          <div
+            key={index}
+            className="text-center px-2 cursor-pointer transition-transform duration-200 hover:scale-105"
+            onClick={() => handleCategoryClick(item.category)}
+          >
             <img
-              className="lg:w-24 w-14 max-w-24 max-h-24 rounded-full mx-auto cursor-pointer"
-              src={item.imageUrl} // Use the oldest item's image URL
+              className="lg:w-28 w-16 max-w-28 max-h-28 rounded-full mx-auto shadow-md hover:shadow-lg"
+              src={item.imageUrl}
               alt={item.category}
-              loading="lazy" // Lazy loading for better performance
+              loading="lazy"
             />
-            <p className="mt-2 text-sm text-foreground">{item.category}</p>
+            <p className="mt-3 text-sm font-medium text-foreground">{item.category}</p>
           </div>
         ))}
       </Slider>
     </div>
   );
+  
 };
 
 export default TypeMenu;
