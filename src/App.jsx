@@ -8,7 +8,7 @@ import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Pages/Footer";
 import ProtectedRoute from "./components/Pages/ProtectedRoute";
 import LoadingIndicator from "./components/Menu/LoadingIndicator"
-
+import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 // Lazy load your components
 const Hero = React.lazy(() => import("./components/Hero/Hero"));
 const GetHelp = React.lazy(() => import("./components/Pages/GetHelp"));
@@ -35,6 +35,7 @@ export default function App() {
       <UserProvider>
         <CartProvider>
           <Router>
+            <ScrollToTop /> {/* Add ScrollToTop component here */}
             <div className="flex flex-col min-h-screen  font-spartan">
               <Navbar />
 
