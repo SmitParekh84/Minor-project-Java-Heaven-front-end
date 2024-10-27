@@ -65,9 +65,7 @@ export const CartProvider = ({ children }) => {
 
     // Clear the cart with confirmation
     const clearCart = () => {
-        if (window.confirm("Are you sure you want to clear the cart & Place Order?")) {
             setCartItems([]);
-        }
     };
 
     return (
