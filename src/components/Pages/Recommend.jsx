@@ -63,10 +63,11 @@ export default function Widget() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8  sm:py-14 lg:py-20">
-      <div className="flex justify-between items-center mb-6 ">
-        <h2 className="text-2xl font-bold text-[var(--foreground)]">Barista Recommends</h2>
-        <Link to="/menu" className="text-secondary hover:text-secondary-dark hover:underline">View Menu</Link>
+    <div className="mx-auto max-w-7xl pt-0 sm:py-14 lg:py-20">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-semibold text-[var(--foreground)]">Barista Recommends</h2>
+        <a href="/menu" className="text-secondary z-10 hover:underline">View Menu</a>
+
       </div>
       <Slider {...settings} className="flex">
         {items.map((item) => (
