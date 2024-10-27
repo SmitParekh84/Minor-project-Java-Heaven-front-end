@@ -23,7 +23,7 @@ export default function About() {
                 <section className="flex flex-col lg:flex-row items-center my-6">
                     <div className="lg:w-1/2">
                         <img
-                            src="https://img.freepik.com/free-photo/barista-hand-preparing-cappuccino-coffee-shop_23-2148209246.jpg?t=st=1727907428~exp=1727911028~hmac=04dfc5f545d131d97cafadc9700d57443fffc2749e6262115f6da7e72cb8c813&w=996"
+                            src="/images/barista-coffee-brewing.jpg"
                             alt="Barista preparing cappuccino"
                             className="w-full h-auto rounded-lg shadow-md"
                         />
@@ -39,7 +39,7 @@ export default function About() {
                 <section className="flex flex-col lg:flex-row-reverse items-center my-6">
                     <div className="lg:w-1/2">
                         <img
-                            src="https://img.freepik.com/free-photo/view-lots-coffee-beans_23-2149878128.jpg?t=st=1727907393~exp=1727910993~hmac=5e46d081b68c4b4b84e07400b4c45083bc627b2b02904b9368130ac65fdefa69&w=996"
+                            src="/images/coffee-beans-background.jpg"
                             alt="Variety of coffee beans"
                             className="w-full h-auto rounded-lg shadow-md"
                         />
@@ -56,7 +56,7 @@ export default function About() {
                 <section className="flex flex-col lg:flex-row items-center my-6">
                     <div className="lg:w-1/2">
                         <img
-                            src="https://img.freepik.com/free-photo/coffee-machine-making-perfect-cup-coffee_23-2151699646.jpg?t=st=1727907349~exp=1727910949~hmac=3a86c7a56ad2eaa99b2c357b391d30519d99d193270bd2f9fd7287d1ce8263f8&w=996"
+                            src="/images/coffee-machine-making-perfect-cup-coffee.jpg"
                             alt="Coffee machine brewing coffee"
                             className="w-full h-auto rounded-lg shadow-md"
                         />
