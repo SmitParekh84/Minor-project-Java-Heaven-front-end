@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart, faUsers, faDollarSign, faChartLine } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faUsers, faDollarSign, faChartLine, faClipboardCheck } from '@fortawesome/free-solid-svg-icons';
 import { Bar, Pie } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -21,6 +21,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 
 const AdminDashboard = () => {
     const [totalOrders, setTotalOrders] = useState(0);
+    const [totalDeliveredOrders, setTotalDeliveredOrders] = useState(0);
     const [totalUsers, setTotalUsers] = useState(0);
     const [totalSales, setTotalSales] = useState(0);
     const [bestSellingItems, setBestSellingItems] = useState([]);
@@ -39,6 +40,7 @@ const AdminDashboard = () => {
                     const data = response.data.data;
 
                     setTotalOrders(data.totalOrders || 0);
+                    setTotalDeliveredOrders(data.totalDeliveredOrders || 0);
                     setTotalUsers(data.totalUsers || 0);
                     setTotalSales(data.totalSales || 0);
                     setBestSellingItems(data.bestSellingItems || []);
@@ -98,7 +100,7 @@ const AdminDashboard = () => {
     };
 
     const SkeletonLoader = () => (
-        <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
+        <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
             <h1 className="text-2xl font-bold mb-6 h-8 bg-gray-300 rounded w-1/4 animate-pulse"></h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 {[...Array(4)].map((_, index) => (
@@ -150,48 +152,65 @@ const AdminDashboard = () => {
     });
 
     return (
-        <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
+        <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
             <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="border p-4 rounded-lg shadow-lg bg-white flex items-center">
-                    <FontAwesomeIcon icon={faShoppingCart} className="text-4xl mr-4 text-blue-500" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 p-4">
+                {/* Total Orders Card */}
+                <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
+                    <FontAwesomeIcon icon={faShoppingCart} className="text-5xl mr-4 text-blue-500" />
                     <div>
-                        <h2 className="text-xl font-semibold">Total Orders</h2>
-                        <p className="text-3xl font-bold">{totalOrders}</p>
+                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Orders</h2>
+                        <p className="text-2xl sm:text-3xl font-bold text-blue-600">{totalOrders}</p>
                     </div>
                 </div>
-                <div className="border p-4 rounded-lg shadow-lg bg-white flex items-center">
-                    <FontAwesomeIcon icon={faUsers} className="text-4xl mr-4 text-green-500" />
+
+                {/* Total Users Card */}
+                <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
+                    <FontAwesomeIcon icon={faUsers} className="text-5xl mr-4 text-green-500" />
                     <div>
-                        <h2 className="text-xl font-semibold">Total Users</h2>
-                        <p className="text-3xl font-bold">{totalUsers}</p>
+                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Users</h2>
+                        <p className="text-2xl sm:text-3xl font-bold text-green-600">{totalUsers}</p>
                     </div>
                 </div>
-                <div className="border p-4 rounded-lg shadow-lg bg-white flex items-center">
-                    <FontAwesomeIcon icon={faDollarSign} className="text-4xl mr-4 text-yellow-500" />
+
+                {/* Total Sales Card */}
+                <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
+                    <FontAwesomeIcon icon={faDollarSign} className="text-5xl mr-4 text-yellow-500" />
                     <div>
-                        <h2 className="text-xl font-semibold">Total Sales</h2>
-                        <p className="text-3xl font-bold">₹{totalSales}</p>
+                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Sales</h2>
+                        <p className="text-2xl sm:text-3xl font-bold text-yellow-600">₹{totalSales}</p>
                     </div>
                 </div>
-                <div className="border p-4 rounded-lg shadow-lg bg-white flex items-center">
-                    <FontAwesomeIcon icon={faChartLine} className="text-4xl mr-4 text-purple-500" />
+                {/* Total Delivered Orders Card */}
+                <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
+                    <FontAwesomeIcon icon={faClipboardCheck} className="text-5xl mr-4 text-indigo-500" />
                     <div>
-                        <h2 className="text-xl font-semibold">Best Selling Items</h2>
-                        <ul className="list-disc pl-4">
-                            {bestSellingItems.length > 0 ? (
-                                bestSellingItems.map(item => (
-                                    <li key={item.name} className="text-gray-700">
-                                        {item.name} - Sold: {item.totalSold}
-                                    </li>
-                                ))
-                            ) : (
-                                <li className="text-gray-700">No best selling items found.</li>
-                            )}
-                        </ul>
+                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Delivered Orders</h2>
+                        <p className="text-2xl sm:text-3xl font-bold text-indigo-600">{totalDeliveredOrders}</p>
                     </div>
+                </div>
+                {/* Best Selling Items Card */}
+                <div className="border p-6 rounded-xl shadow-lg bg-white hover:shadow-2xl transition-shadow duration-300">
+                    <div className="flex items-center">
+                        <FontAwesomeIcon icon={faChartLine} className="text-5xl mr-4 text-purple-500" />
+                        <div>
+                            <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Best Selling Items</h2>
+                        </div>
+                    </div>
+                    <ul className="list-disc mt-4 pl-4 text-gray-700 space-y-1">
+                        {bestSellingItems.length > 0 ? (
+                            bestSellingItems.map((item) => (
+                                <li key={item.name}>
+                                    {item.name} - <span className="font-bold">Sold: {item.totalSold}</span>
+                                </li>
+                            ))
+                        ) : (
+                            <li>No best-selling items found.</li>
+                        )}
+                    </ul>
                 </div>
             </div>
+
 
             {/* Bar Chart Section */}
             <div className="mt-6">
