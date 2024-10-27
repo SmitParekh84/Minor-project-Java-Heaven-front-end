@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"; // Import Link if using React Router
 
 export default function Footer() {
   return (
-    <footer className="bg-secondary text-foreground py-4 mt-auto">
+    <footer className="bg-secondary text-foreground py-4  mt-16">
       <div className="container mx-auto flex flex-col md:flex-row justify-between py-10 lg:px-20">
         <div className="flex items-center mb-4 md:mb-0">
           <img
