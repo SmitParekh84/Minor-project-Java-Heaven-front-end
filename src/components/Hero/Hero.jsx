@@ -19,8 +19,8 @@ export default function Hero() {
 
 
   return (
-    <div className="bg-primary-foreground font-spartan">
-      <div className="relative isolate px-8 lg:px-8 ">
+    <div className="bg-primary-foreground font-spartan ">
+      <div className="relative isolate px-8 lg:px-8 z-0">
 
 
 

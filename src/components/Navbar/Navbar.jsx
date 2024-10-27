@@ -62,7 +62,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="inset-x-0 top-0 z-0">
+    <header className="inset-x-0 top-0 ">
       <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-10">
         <div className="flex lg:flex-1">
           <Link to="/" className="-m-1.5 p-1.5">
@@ -90,13 +90,13 @@ export default function Navbar() {
                 <UserIcon className="h-5 w-5 mr-1" aria-hidden="true" />
               </button>
               {showProfileMenu && (
-                <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-50">
+                <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-100">
                   <div className="px-4 py-2 text-gray-800">{user.username}</div>
                   <div className="px-4 py-2 text-gray-800">{user.email}</div>
                   <div className="border-t border-gray-300"></div>
                   <button
                     onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-200"
+                    className="block w-full text-center px-4 py-2 text-sm text-red-600 hover:bg-gray-200"
                   >
                     Logout
                   </button>
@@ -172,7 +172,7 @@ export default function Navbar() {
                   <div className="border-t border-gray-300"></div>
                   <button
                     onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-center text-sm text-red-600 hover:bg-gray-200"
+                    className="block w-full px-4 py-2 text-center text-sm text-red-600 hover:bg-gray-200"
                   >
                     Logout
                   </button>
@@ -189,8 +189,8 @@ export default function Navbar() {
 
       <Dialog open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} className="lg:hidden">
         <div className="fixed inset-0 z-50" />
-        <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-primary-foreground px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-          <div className="flex items-center justify-between">
+        <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-primary-foreground  px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+          <div className="flex items-center justify-between ">
             <Link to="/" onClick={() => handleLinkClick('/')} className="-m-1.5 p-1.5">
               <span className="sr-only">Java Heaven</span>
               <img alt="" src="/images/logo-3.png" className="h-16 w-auto" />
@@ -206,8 +206,8 @@ export default function Navbar() {
             </button>
           </div>
 
-          <div className="mt-6 flow-root">
-            <div className="-my-6 divide-y divide-gray-500">
+          <div className="mt-6 flow-root ">
+            <div className="-my-6 divide-y  divide-gray-500 text-center">
               <div className="space-y-2 py-6">
                 {(!isLoggedIn || (isLoggedIn && !isAdmin)) && (
                   <>
@@ -271,11 +271,11 @@ export default function Navbar() {
                 )}
               </div>
 
-              <div className="py-6">
+              <div className="py-6 flex justify-around">
                 {isLoggedIn ? (
                   <button
                     onClick={handleLogout}
-                    className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-red-600 hover:bg-gray-200"
+                    className="-mx-3 block w-full rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-red-600 hover:bg-muted-foreground"
                   >
                     Logout
                   </button>
