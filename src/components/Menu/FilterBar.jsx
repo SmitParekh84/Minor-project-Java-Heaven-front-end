@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { API_URL } from "../../config";
 import { useNavigate, useLocation } from "react-router-dom"; // Import hooks from react-router-dom
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown, faChevronUp, faTag } from "@fortawesome/free-solid-svg-icons";
 
 const FilterBar = ({ onFilterChange }) => {
   const navigate = useNavigate(); // Initialize useNavigate
@@ -65,33 +67,42 @@ const FilterBar = ({ onFilterChange }) => {
     <div className="bg-primary-foreground py-4">
       <div className="container mx-auto flex justify-between items-center px-4">
         {/* Dropdown Button for Mobile */}
-        <div className="relative sm:hidden" ref={dropdownRef}>
+        <div className="relative sm:hidden " ref={dropdownRef}>
           <button
-            className="text-secondary hover:text-secondary/80 font-semibold"
+            className="flex items-center text-secondary hover:text-secondary/80 font-semibold focus:outline-none"
             onClick={toggleDropdown}
             aria-haspopup="true"
             aria-expanded={isOpen}
           >
-            Filter by ▼
+            Filter by
+            <FontAwesomeIcon
+              icon={isOpen ? faChevronUp : faChevronDown}
+              className="ml-2"
+            />
           </button>
           {isOpen && (
-            <div className="absolute z-10 bg-white shadow-lg rounded mt-1">
+            <div className="absolute z-10 bg-white shadow-lg rounded mt-1 w-48">
               {error ? (
                 <div className="p-2 text-red-600">{error}</div>
               ) : (
-                categories.map((filter) => (
-                  <button
-                    key={filter}
-                    onClick={() => handleFilterSelection(filter)}
-                    className={`block px-4 py-2 text-left w-full hover:bg-gray-100 ${selectedFilter === filter ? "bg-gray-200" : ""}`}
-                  >
-                    {filter}
-                  </button>
-                ))
+                <div className="flex flex-col">
+                  {categories.map((filter) => (
+                    <button
+                      key={filter}
+                      onClick={() => handleFilterSelection(filter)}
+                      className={`flex items-center gap-2 px-4 py-2 text-left w-full hover:bg-gray-100 focus:outline-none transition-colors ${selectedFilter === filter ? "bg-gray-200 font-semibold" : ""
+                        }`}
+                    >
+
+                      {filter}
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
           )}
         </div>
+
 
         {/* Filter Buttons for Larger Screens */}
         <div className="hidden sm:flex space-x-4">
