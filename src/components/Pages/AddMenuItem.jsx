@@ -115,6 +115,11 @@ const AddMenuItem = () => {
         setImageUrl(item.imageUrl);
         setEditId(item._id);
         setImageError(null);
+        // Smooth scroll to the top of the page
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     };
 
     const handleDelete = async (id) => {
@@ -368,6 +373,7 @@ const AddMenuItem = () => {
                             <option value={10}>10</option>
                             <option value={15}>15</option>
                             <option value={20}>20</option>
+                            <option value={30}>30</option>
                         </select>
                         <button
                             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
