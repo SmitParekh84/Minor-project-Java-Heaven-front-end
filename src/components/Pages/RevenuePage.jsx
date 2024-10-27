@@ -16,6 +16,8 @@ import {
 } from 'chart.js';
 import { API_URL } from '../../config';
 import LoadingIndicator from '../Menu/LoadingIndicator';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHandHoldingHeart, faHome } from '@fortawesome/free-solid-svg-icons';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 const RevenuePage = () => {
@@ -101,9 +103,31 @@ const RevenuePage = () => {
     }
 
     return (
-        <div className="rounded-lg  p-8 w-full mt-10 container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0 ">
+        <div className="rounded-lg p-8 w-full mt-10 container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
             <h1 className="text-3xl font-bold text-gray-800 mb-6">Revenue Page</h1>
             <h2 className="text-2xl font-semibold text-gray-600 mb-4">Total Revenue: <span className="text-green-600">₹{totalRevenue}</span></h2>
+
+            {/* Cards for Total Revenue by Delivery Option */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+                {/* Home Delivery Revenue Card */}
+                <div className="border p-6 rounded-lg shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
+                    <FontAwesomeIcon icon={faHome} className="text-5xl mr-4 text-blue-500" />
+                    <div>
+                        <h2 className="text-lg font-semibold text-gray-800">Coffee-to-Home Revenue</h2>
+                        <p className="text-2xl font-bold text-blue-600">₹{deliveryChartData.labels?.includes('home') ? deliveryChartData.datasets[0].data[deliveryChartData.labels.indexOf('home')] : 0}</p>
+                    </div>
+                </div>
+
+                {/* Hand-to-Hand Delivery Revenue Card */}
+                <div className="border p-6 rounded-lg shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
+                    <FontAwesomeIcon icon={faHandHoldingHeart} className="text-5xl mr-4 text-green-500" />
+                    <div>
+                        <h2 className="text-lg font-semibold text-gray-800">Takeaway Revenue</h2>
+                        <p className="text-2xl font-bold text-green-600">₹{deliveryChartData.labels?.includes('hand') ? deliveryChartData.datasets[0].data[deliveryChartData.labels.indexOf('hand')] : 0}</p>
+                    </div>
+                </div>
+            </div>
+
             {/* Bar Chart Section */}
             <div className="mt-6">
                 <h2 className="text-2xl font-semibold text-gray-700 mb-4">Revenue Over Time</h2>
@@ -174,7 +198,8 @@ const RevenuePage = () => {
                     />
                 </div>
             </div>
-        </div >
+        </div>
+
     );
 };
 

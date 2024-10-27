@@ -141,7 +141,7 @@ const AdminOrders = () => {
                                 {order.deliveryOption === "home" ? (
                                     <p className="text-gray-600 mb-1">Address: <span className="font-medium">{order.address}</span></p>
                                 ) : (
-                                    <p className="text-gray-600 mb-1">Address: <span className="font-medium">Not Applicable (Hand-to-Hand)</span></p>
+                                    <p className="text-gray-600 mb-1">Address: <span className="font-medium">Not Applicable (Dine-In)</span></p>
                                 )}
 
                                 <p className="text-gray-600 mb-1">Order Date: <span className="font-medium">{new Date(order.createdAt).toLocaleString()}</span></p>
