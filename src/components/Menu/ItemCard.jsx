@@ -1,6 +1,7 @@
 import { faCartPlus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import PropTypes from "prop-types"; // Import PropTypes
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const ItemCard = ({ item }) => {
@@ -21,8 +22,11 @@ const ItemCard = ({ item }) => {
         <div className="flex flex-col justify-between w-full">
           <div>
             <h3 className="font-bold text-lg sm:text-xl text-gray-800 leading-tight">{item.name}</h3> {/* Added tight line spacing */}
-            <p className="text-sm sm:text-base text-gray-600 mt-1">{item.description}</p> {/* Responsive font size and margin */}
-          </div>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">
+              {item.description.length > 80
+                ? `${item.description.slice(0, 80)}...`
+                : item.description}
+            </p>          </div>
         </div>
       </div>
 
@@ -45,6 +49,15 @@ const ItemCard = ({ item }) => {
 
 
   );
+};
+ItemCard.propTypes = {
+  item: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    imageUrl: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired, // Add prop type validation for description
+    price: PropTypes.number.isRequired,
+  }).isRequired,
 };
 
 export default ItemCard;
