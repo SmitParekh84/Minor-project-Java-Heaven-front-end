@@ -15,8 +15,8 @@ export default function About() {
 
 
     return (
-        <div className="container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
-            <div className="bg-background mx-auto max-w-7xl pt-10 sm:py-18 p-6 rounded-lg ">
+        <div className="container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
+            <div className="bg-background mx-auto max-w-7xl  sm:py-18 p-6 rounded-lg ">
                 <h1 className="text-3xl font-bold mb-6">About Coffee Brewing</h1>
 
                 {/* Section 1: Image Left, Text Right */}

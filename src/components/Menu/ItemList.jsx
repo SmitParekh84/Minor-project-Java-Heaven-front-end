@@ -86,9 +86,9 @@ const ItemList = () => {
   if (currentItems.length === 0) return <EmptyState />; // Show empty state if no items
 
   return (
-    <div className="container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
+    <div className="container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
       {/* Filter Bar */}
-      <div className="relative isolate px-4 sm:px-8 lg:px-8 py-16 bg-primary-foreground font-spartan">
+      <div className="relative isolate px-4 sm:px-8 lg:px-8  bg-primary-foreground font-spartan">
         <FilterBar onFilterChange={setSelectedFilter} />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {currentItems.map((item) => (

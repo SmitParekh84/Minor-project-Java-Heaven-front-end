@@ -102,7 +102,7 @@ const Cart = () => {
   if (!cartItems.length) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
-        <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
+        <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
           <div className="p-8 text-center text-gray-700">
             <h2 className="text-2xl font-semibold">Your Cart is Empty</h2>
             <p className="mt-2">Browse our products and add items to your cart!</p>
@@ -113,7 +113,7 @@ const Cart = () => {
   }
 
   return (
-    <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
+    <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
       <div className="container mx-auto p-4 mt-2">
         <h2 className="text-4xl font-bold mb-8 text-center text-gray-900">Your Shopping Cart</h2>
 

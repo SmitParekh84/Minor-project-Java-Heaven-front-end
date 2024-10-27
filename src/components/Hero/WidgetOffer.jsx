@@ -60,6 +60,9 @@ export default function WidgetOffer() {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    cssEase: 'linear',
   };
 
   const handleKnowMoreClick = (offer) => {
@@ -68,7 +71,7 @@ export default function WidgetOffer() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
+    <div className="mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
       <Slider {...settings} className="flex justify-center">
         {offers.map((offer, index) => (
           <div key={index} className="px-2">

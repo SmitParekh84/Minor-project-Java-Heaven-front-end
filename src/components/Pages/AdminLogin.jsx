@@ -51,61 +51,63 @@ export default function AdminLogin() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-background">
-            <div className="bg-secondary rounded-lg shadow-lg m-5 p-11 max-w-sm w-full">
-                <h2 className="text-2xl text-center font-bold text-primary-foreground mb-6">
-                    Admin Login
-                </h2>
+        <div className="container mx-auto max-w-7xl pt-6 sm:py-18 lg:pt-6 min-h-screen ">
+            <div className="flex items-center justify-center bg-background">
+                <div className="bg-secondary rounded-lg shadow-lg m-5 p-11 max-w-sm w-full">
+                    <h2 className="text-2xl text-center font-bold text-primary-foreground mb-6">
+                        Admin Login
+                    </h2>
 
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-muted-foreground" htmlFor="username">
-                            ADMIN USERNAME
-                        </label>
-                        <input
-                            type="text"
-                            id="username"
-                            name="username"
-                            placeholder="Enter Admin Username *"
-                            className="mt-1 block w-full border border-border rounded-md p-2 focus:outline-none focus:ring focus:ring-ring"
-                            value={credentials.username}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-muted-foreground" htmlFor="password">
-                            PASSWORD
-                        </label>
-                        <div className="relative">
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-4">
+                            <label className="block text-muted-foreground" htmlFor="username">
+                                ADMIN USERNAME
+                            </label>
                             <input
-                                type={showPassword ? "text" : "password"} // Toggle password visibility
-                                id="password"
-                                name="password"
-                                placeholder="Enter Password *"
+                                type="text"
+                                id="username"
+                                name="username"
+                                placeholder="Enter Admin Username *"
                                 className="mt-1 block w-full border border-border rounded-md p-2 focus:outline-none focus:ring focus:ring-ring"
-                                value={credentials.password}
+                                value={credentials.username}
                                 onChange={handleChange}
                                 required
                             />
-                            <button
-                                type="button"
-                                aria-label={showPassword ? "Hide password" : "Show password"}
-                                className="absolute right-2 top-2 text-secondary hover:brightness-150"
-                                onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
-                            >
-                                <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
-                            </button>
                         </div>
-                    </div>
-                    {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
-                    <button
-                        type="submit"
-                        className="w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold"
-                    >
-                        Admin Login
-                    </button>
-                </form>
+                        <div className="mb-4">
+                            <label className="block text-muted-foreground" htmlFor="password">
+                                PASSWORD
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"} // Toggle password visibility
+                                    id="password"
+                                    name="password"
+                                    placeholder="Enter Password *"
+                                    className="mt-1 block w-full border border-border rounded-md p-2 focus:outline-none focus:ring focus:ring-ring"
+                                    value={credentials.password}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    aria-label={showPassword ? "Hide password" : "Show password"}
+                                    className="absolute right-2 top-2 text-secondary hover:brightness-150"
+                                    onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
+                                >
+                                    <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                                </button>
+                            </div>
+                        </div>
+                        {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
+                        <button
+                            type="submit"
+                            className="w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold"
+                        >
+                            Admin Login
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     );

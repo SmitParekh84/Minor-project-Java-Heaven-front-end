@@ -72,7 +72,7 @@ const ItemDetail = () => {
   if (error) return <ErrorMessage error={error} />;
 
   return (
-    <div className="rounded-lg p-8 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
+    <div className="rounded-lg p-8 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
       <div className="rounded-lg  w-full p-8 md:p-10 flex flex-col md:flex-row items-start ">
         <div className="flex-shrink-0">
           <ImageCarousel images={item.images || [item.imageUrl]} />

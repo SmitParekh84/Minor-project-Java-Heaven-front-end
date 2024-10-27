@@ -59,14 +59,15 @@ const TypeMenu = () => {
     slidesToShow: 4,
     slidesToScroll: 4,
     arrows: true,
+
+
     responsive: [
       {
         breakpoint: 1024,
         settings: {
           slidesToShow: 4,
           slidesToScroll: 4,
-          infinite: false,
-          dots: true,
+
         }
       },
       {

@@ -101,7 +101,7 @@ const RevenuePage = () => {
     }
 
     return (
-        <div className="rounded-lg  p-8 w-full mt-10 container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16 ">
+        <div className="rounded-lg  p-8 w-full mt-10 container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0 ">
             <h1 className="text-3xl font-bold text-gray-800 mb-6">Revenue Page</h1>
             <h2 className="text-2xl font-semibold text-gray-600 mb-4">Total Revenue: <span className="text-green-600">₹{totalRevenue}</span></h2>
             {/* Bar Chart Section */}

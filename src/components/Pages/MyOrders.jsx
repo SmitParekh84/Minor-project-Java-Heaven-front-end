@@ -97,7 +97,7 @@ const MyOrders = () => {
     }
 
     return (
-        <div className="rounded-lg w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
+        <div className="rounded-lg w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
             <div className="container mx-auto p-6">
                 <h1 className="text-3xl font-extrabold text-gray-800 mb-8">My Orders</h1>
 

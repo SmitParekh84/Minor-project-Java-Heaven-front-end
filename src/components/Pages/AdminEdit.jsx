@@ -99,7 +99,7 @@ const AdminEdit = () => {
     };
 
     return (
-        <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
+        <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
             <div className="rounded-lg p-6 w-full bg-white shadow-md mt-6">
                 <h2 className="text-xl font-semibold mb-4">{editingAdminId ? 'Edit Admin' : 'Add New Admin'}</h2>
                 <form onSubmit={handleSave} className="mb-4">

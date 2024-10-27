@@ -77,7 +77,7 @@ const BestSellingItem = () => {
     }
 
     return (
-        <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
+        <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
             <h1 className="text-2xl font-bold mb-6">Top 5  Selling Items</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="border p-4 rounded-lg shadow-lg bg-white flex items-center">

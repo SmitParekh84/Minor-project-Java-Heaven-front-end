@@ -87,7 +87,7 @@ const AdminOrders = () => {
     }
 
     return (
-        <div className="rounded-lg p-8 w-full container mx-auto max-w-7xl pt-20 sm:py-18 lg:pt-16">
+        <div className="rounded-lg p-8 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
             <h1 className="text-2xl font-bold mb-6 mt-12 flex justify-between items-center">
                 Admin Dashboard - Orders
                 <button

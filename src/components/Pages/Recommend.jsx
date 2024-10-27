@@ -63,7 +63,7 @@ export default function Widget() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl pt-20 sm:py-14 lg:py-20">
+    <div className="mx-auto max-w-7xl pt-0 sm:py-14 lg:py-20">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold text-[var(--foreground)]">Barista Recommends</h2>
         <a href="/menu" className="text-secondary hover:underline">View Menu</a>

@@ -35,7 +35,7 @@ export default function App() {
       <UserProvider>
         <CartProvider>
           <Router>
-            <div className="flex flex-col min-h-screen">
+            <div className="flex flex-col min-h-screen  font-spartan">
               <Navbar />
 
               <Suspense fallback={<div className="flex-grow"><LoadingIndicator /></div>}>

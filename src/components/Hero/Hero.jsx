@@ -20,16 +20,16 @@ export default function Hero() {
 
   return (
     <div className="bg-primary-foreground font-spartan">
-      <div className="relative isolate px-8 lg:px-8 py-16">
-        <section aria-labelledby="hero-section">
-          <h2 id="hero-section" className="sr-only">Welcome to Our Coffee Shop</h2>
+      <div className="relative isolate px-8 lg:px-8 ">
 
-          <WidgetOffer />
-          <TypeMenu />
-          <Recommend />
-          <AboutCard />
-        </section>
+
+
+        <WidgetOffer />
+        <TypeMenu />
+        <Recommend />
+        <AboutCard />
+
       </div>
-    </div>
+    </div >
   );
 }
