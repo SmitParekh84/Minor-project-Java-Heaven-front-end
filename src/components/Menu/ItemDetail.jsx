@@ -11,6 +11,7 @@ import ItemCard from './ItemCard'; // Adjust the import path based on your proje
 import LoadingIndicator from './LoadingIndicator';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 const ItemDetail = () => {
   const navigate = useNavigate();
@@ -59,6 +60,7 @@ const ItemDetail = () => {
 
     try {
       await addToCart({ ...item, id: item._id, size: selectedSize });
+
       toast.success("Item added to cart successfully!");
     } catch (err) {
       toast.error("Failed to add item to cart.");
@@ -85,9 +87,9 @@ const ItemDetail = () => {
             <p className="text-2xl font-semibold mt-4 text-gray-900">Price: ₹ {item.price.toFixed(2)}</p>
           </div>
 
-
+          <CupSizeSelector selectedSize={selectedSize} onSizeSelect={setSelectedSize} />
           <div className="flex items-center mt-6 justify-between">
-            <CupSizeSelector selectedSize={selectedSize} onSizeSelect={setSelectedSize} />
+
             <button
               className={`bg-secondary text-white py-3 px-5 rounded-lg shadow transition duration-300 ${!selectedSize ? "opacity-50 cursor-not-allowed" : "hover:bg-secondary-dark hover:shadow-lg"}`}
               disabled={!selectedSize || loading} // Disable button if loading or no size selected

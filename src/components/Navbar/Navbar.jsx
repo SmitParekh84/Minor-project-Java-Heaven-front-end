@@ -4,6 +4,8 @@ import { Bars3Icon, XMarkIcon, ShoppingCartIcon, UserIcon } from '@heroicons/rea
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import toast from 'react-hot-toast';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEnvelope, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
 
 const adminNavigation = [
   { name: 'Dashboard', href: '/admin-dashboard' },
@@ -91,13 +93,22 @@ export default function Navbar() {
               </button>
               {showProfileMenu && (
                 <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-100">
-                  <div className="px-4 py-2 text-gray-800">{user.username}</div>
-                  <div className="px-4 py-2 text-gray-800">{user.email}</div>
+                  <div className="px-4 py-2 flex items-center text-gray-800">
+                    <FontAwesomeIcon icon={faUser} className="mr-2 text-gray-600" />
+                    <Link to="/profile" className="hover:text-blue-500 font-semibold">
+                      {user.username}
+                    </Link>
+                  </div>
+                  <div className="px-4 py-2 flex items-center text-gray-800">
+                    <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-gray-600" />
+                    <span>{user.email}</span>
+                  </div>
                   <div className="border-t border-gray-300"></div>
                   <button
                     onClick={handleLogout}
-                    className="block w-full text-center px-4 py-2 text-sm text-red-600 hover:bg-gray-200"
+                    className="flex items-center justify-center block w-full text-center px-4 py-2 text-sm text-red-600 hover:bg-gray-200"
                   >
+                    <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
                     Logout
                   </button>
                 </div>

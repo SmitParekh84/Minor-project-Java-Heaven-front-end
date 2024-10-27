@@ -25,20 +25,29 @@ export default function Login() {
 
         try {
             const response = await axios.post(`${API_URL}/api/login`, credentials);
+
+            // Get the token and session ID from the response
+            const token = response.data.token;
             const sessionId = response.data.sessionId;
-            toast.success(response.data.msg ?? 'Login successful.')
             const userInfo = response.data.user;
 
-            localStorage.setItem("sessionId", sessionId);
-            localStorage.setItem("sessionStartTime", Date.now());
-            localStorage.setItem("userInfo", JSON.stringify(userInfo));
+            // Store JWT token and session ID in the respective storage
+            localStorage.setItem('token', token); // Storing JWT token in localStorage
+            sessionStorage.setItem('sessionId', sessionId); // Storing session ID in sessionStorage
+            localStorage.setItem("sessionStartTime", Date.now()); // Store session start time
+            localStorage.setItem("userInfo", JSON.stringify(userInfo)); // Store user info
 
+            // Optionally, you can set token in headers for future requests
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+           
+            toast.success(response.data.msg ?? 'Login successful.');
             setUser(userInfo); // Set user information in context
             navigate("/"); // Redirect to home page
         } catch (err) {
             toast.error(err.response?.data?.msg || "Login failed. Please try again.");
         }
     };
+
 
     return (
         <div className="container mx-auto max-w-7xl pt-6 sm:py-18 lg:pt-6 min-h-screen ">
@@ -51,7 +60,7 @@ export default function Login() {
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
                             <label className="block text-muted-foreground" htmlFor="username">
-                                USERNAME
+                                Email
                             </label>
                             <input
                                 type="text"
@@ -66,7 +75,7 @@ export default function Login() {
                         </div>
                         <div className="mb-4 relative"> {/* Added relative positioning */}
                             <label className="block text-muted-foreground" htmlFor="password">
-                                PASSWORD
+                                Password
                             </label>
                             <input
                                 type={showPassword ? "text" : "password"} // Toggle input type
@@ -87,7 +96,7 @@ export default function Login() {
                             </button>
                         </div>
                         <p className="mb-4 text-muted-foreground">
-                            Don't have an account?{" "}
+                            Don&apos;t have an account?{" "}
                             <a href="/sign-up" className="text-primary-foreground">
                                 Sign Up
                             </a>
