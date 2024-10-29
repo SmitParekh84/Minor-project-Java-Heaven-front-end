@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import { API_URL } from "../../config"; 
+import { API_URL } from "../../config";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
 
@@ -40,29 +40,31 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-        // Retrieve userInfo from localStorage
-        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        const userId = userInfo ? userInfo._id : null; // Assuming userInfo contains the user's _id
+      localStorage.clear();
+      // Retrieve userInfo from localStorage
+      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      const userId = userInfo ? userInfo._id : null; // Assuming userInfo contains the user's _id
 
-        const response = await axios.post(`${API_URL}/api/logout`, { userId }, {
-            withCredentials: true // Send cookies, if needed
-        });
+      const response = await axios.post(`${API_URL}/api/logout`, { userId }, {
+        withCredentials: true // Send cookies, if needed
+      });
 
-        // Clear sessionStorage and localStorage
-        sessionStorage.clear();
-        localStorage.removeItem('token');
-        localStorage.removeItem('userInfo');
+      // Clear sessionStorage and localStorage
+      sessionStorage.clear();
+      localStorage.removeItem('token');
+      localStorage.removeItem('userInfo');
 
-        toast.success("Logout Successfully");
-        navigate('/');
+      toast.success("Logout Successfully");
+      setMobileMenuOpen(false); // Close the mobile menu
+      navigate('/');
     } catch (error) {
-        console.error("Error during logout:", error);
-        toast.error("Failed to logout. Please try again.");
+      console.error("Error during logout:", error);
+      toast.error("Failed to logout. Please try again.");
     }
     setTimeout(() => {
       window.location.reload();
     }, 500);
-};
+  };
 
 
 
