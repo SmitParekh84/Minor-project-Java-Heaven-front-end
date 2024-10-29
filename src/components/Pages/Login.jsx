@@ -14,7 +14,8 @@ export default function Login() {
     });
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false); // State to manage password visibility
-
+    const [showModal, setShowModal] = useState(false); // State to manage modal visibility
+    const [sessionConflict, setSessionConflict] = useState(false); // State to check if session conflict exists
     const handleChange = (e) => {
         const { name, value } = e.target;
         setCredentials({ ...credentials, [name]: value });
@@ -22,20 +23,28 @@ export default function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         try {
             const response = await axios.post(`${API_URL}/api/login`, credentials);
-    
-            const { token, sessionId, userId, user } = response.data;
-    
+
+            const { token, sessionId, userId, user, conflict } = response.data;
+            if (conflict) {
+                // If conflict exists, show the modal to the user
+                setSessionConflict(true);
+                setShowModal(true);
+                return;
+            }
+            // Log values before storing them
+            console.log('Login response:', response.data);
+
             // Save necessary data in sessionStorage and localStorage
             localStorage.setItem('token', token);
             sessionStorage.setItem('sessionId', sessionId);
             sessionStorage.setItem('userId', userId);
             localStorage.setItem("userInfo", JSON.stringify(user));
-    
+
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    
+
             toast.success(response.data.msg ?? 'Login successful.');
             setUser(user);
             navigate("/");
@@ -43,8 +52,44 @@ export default function Login() {
             toast.error(err.response?.data?.msg || "Login failed. Please try again.");
         }
     };
-    
 
+    const handleLogoutOtherSessions = async () => {
+        try {
+            // Get the userId from session storage
+            const response1 = await axios.post(`${API_URL}/api/login`, credentials);
+            const {  userId } = response1.data;
+
+            // const { userId } = response1.data;
+            if (!userId) {
+                toast.error("User ID is not available. Please log in again.");
+                return; // Exit if userId is not found
+            }
+
+            // Send request to logout other sessions
+            const response = await axios.post(`${API_URL}/api/logout-other-sessions`, { userId });
+
+            // Handle response
+            if (response.data.success) {
+                setShowModal(false); // Close any modal if applicable
+                toast.success("Logged out from other sessions. Please log in again.");
+                // If necessary, you can call a function to refresh the session or redirect
+                navigate("/login"); // Or wherever you want to redirect after logging out
+            } else {
+                toast.error("Failed to log out from other sessions. Please try again.");
+            }
+        } catch (err) {
+            // Log error for debugging purposes
+            console.error("Error logging out from other sessions:", err);
+            toast.error("An error occurred. Please try again.");
+        }
+    };
+
+
+
+    const handleCancel = () => {
+        setShowModal(false);
+        toast("Cancelled login.");
+    };
 
     return (
         <div className="container mx-auto max-w-7xl pt-6 sm:py-18 lg:pt-6 min-h-screen ">
@@ -114,6 +159,31 @@ export default function Login() {
                     </p>
                 </div>
             </div>
+            {showModal && (
+                <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+                    <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-xl">
+                        <h2 className="text-xl font-bold mb-4">Session Conflict</h2>
+                        <p className="mb-6">
+                            You are already logged in from another device or session. Would
+                            you like to log out from the other session and continue?
+                        </p>
+                        <div className="flex justify-between">
+                            <button
+                                className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600"
+                                onClick={handleLogoutOtherSessions}
+                            >
+                                Log Out Other Session
+                            </button>
+                            <button
+                                className="bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600"
+                                onClick={handleCancel}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

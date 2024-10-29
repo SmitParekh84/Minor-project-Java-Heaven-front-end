@@ -8,7 +8,6 @@ import axios from 'axios';
 import { API_URL } from "../../config";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
-
 const adminNavigation = [
   { name: 'Dashboard', href: '/admin-dashboard' },
   { name: 'Orders', href: 'admin/orders' },
@@ -26,7 +25,6 @@ export default function Navbar() {
   const [user, setUser] = useState(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const navigate = useNavigate();
-
   const totalItemsInCart = useMemo(() => cartItems.reduce((total, item) => total + item.quantity, 0), [cartItems]);
   const loggedInUser = localStorage.getItem('userInfo');
 
@@ -38,10 +36,11 @@ export default function Navbar() {
     }
   }, [loggedInUser]);
 
+
   const handleLogout = async () => {
-    
+
     try {
-      
+
       // Retrieve userInfo from localStorage
       const userInfo = JSON.parse(localStorage.getItem('userInfo'));
       const userId = userInfo ? userInfo._id : null; // Assuming userInfo contains the user's _id
@@ -55,13 +54,13 @@ export default function Navbar() {
       localStorage.removeItem('token');
       localStorage.removeItem('userInfo');
 
-      toast.success("Logout Successfully");
       setMobileMenuOpen(false); // Close the mobile menu
+      toast.success("Logout Successfully");
       navigate('/');
     } catch (error) {
       console.error("Error during logout:", error);
-      toast.error("Failed to logout. Please try again.");
       setMobileMenuOpen(false);
+      toast.error("Failed to logout. Please try again.");
     }
     setTimeout(() => {
       window.location.reload();
@@ -106,6 +105,7 @@ export default function Navbar() {
               </button>
               {showProfileMenu && (
                 <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-100">
+
                   <div className="px-4 py-2 flex items-center text-gray-800">
                     <FontAwesomeIcon icon={faUser} className="mr-2 text-gray-600" />
                     <Link to="/profile" className="hover:text-blue-500 font-semibold">
@@ -119,6 +119,7 @@ export default function Navbar() {
                   <div className="border-t border-gray-300"></div>
                   <button
                     onClick={handleLogout}
+
                     className="flex items-center justify-center block w-full text-center px-4 py-2 text-sm text-red-600 hover:bg-gray-200"
                   >
                     <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
@@ -189,10 +190,12 @@ export default function Navbar() {
               >
                 <UserIcon className="h-5 w-5 mr-1" aria-hidden="true" />
                 {user.username}
+
               </button>
               {showProfileMenu && (
                 <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-50">
-                  <div className="px-4 py-2 text-gray-800">{user.email}</div>
+
+                <div className="px-4 py-2 text-gray-800">{user.email}</div>
                   <div className="border-t border-gray-300"></div>
                   <button
                     onClick={handleLogout}
