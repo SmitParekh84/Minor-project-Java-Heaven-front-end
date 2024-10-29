@@ -4,9 +4,16 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config"; // Ensure this path is correct and the config file exports API_URL
+const DEFAULT_IMAGE = "https://cloud-atg.moph.go.th/quality/sites/default/files/default_images/default.png"; 
 
 const TypeMenu = () => {
-  const [categoryImages, setCategoryImages] = useState([]); // State to hold category images
+  const [categoryImages, setCategoryImages] = useState([
+    // Initial placeholder data to show while loading
+    { category: "Loading...", imageUrl: DEFAULT_IMAGE },
+    { category: "Loading...", imageUrl: DEFAULT_IMAGE },
+    { category: "Loading...", imageUrl: DEFAULT_IMAGE },
+    { category: "Loading...", imageUrl: DEFAULT_IMAGE },
+  ]); // State to hold category images
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,13 +28,15 @@ const TypeMenu = () => {
         // Group items by category and find the oldest item in each category
         const categoryMap = data.reduce((acc, item) => {
           const category = item.category;
-          // If category doesn't exist, initialize it
+          const imageUrl = item.imageUrl || defaultImage; // Use default image if not provided
+
+          // If category doesn't exist, initialize it with the item
           if (!acc[category]) {
-            acc[category] = { ...item };
+            acc[category] = { ...item, imageUrl }; // Assign default image if needed
           } else {
             // If this item is older, replace it
             if (new Date(item.createdAt) < new Date(acc[category].createdAt)) {
-              acc[category] = { ...item };
+              acc[category] = { ...item, imageUrl }; // Update the item with the default image if needed
             }
           }
           return acc;
@@ -47,6 +56,7 @@ const TypeMenu = () => {
 
     fetchItems(); // Fetch items on component mount
   }, []);
+
 
   const handleCategoryClick = (category) => {
     navigate(`/menu/${category}`); // Redirect to the menu page with the selected category
