@@ -22,31 +22,28 @@ export default function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         try {
             const response = await axios.post(`${API_URL}/api/login`, credentials);
-
-            // Get the token and session ID from the response
-            const token = response.data.token;
-            const sessionId = response.data.sessionId;
-            const userInfo = response.data.user;
-
-            // Store JWT token and session ID in the respective storage
-            localStorage.setItem('token', token); // Storing JWT token in localStorage
-            sessionStorage.setItem('sessionId', sessionId); // Storing session ID in sessionStorage
-            localStorage.setItem("sessionStartTime", Date.now()); // Store session start time
-            localStorage.setItem("userInfo", JSON.stringify(userInfo)); // Store user info
-
-            // Optionally, you can set token in headers for future requests
+    
+            const { token, sessionId, userId, user } = response.data;
+    
+            // Save necessary data in sessionStorage and localStorage
+            localStorage.setItem('token', token);
+            sessionStorage.setItem('sessionId', sessionId);
+            sessionStorage.setItem('userId', userId);
+            localStorage.setItem("userInfo", JSON.stringify(user));
+    
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-           
+    
             toast.success(response.data.msg ?? 'Login successful.');
-            setUser(userInfo); // Set user information in context
-            navigate("/"); // Redirect to home page
+            setUser(user);
+            navigate("/");
         } catch (err) {
             toast.error(err.response?.data?.msg || "Login failed. Please try again.");
         }
     };
+    
 
 
     return (
