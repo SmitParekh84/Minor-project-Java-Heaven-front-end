@@ -39,6 +39,7 @@ export default function Navbar() {
   }, [loggedInUser]);
 
   const handleLogout = async () => {
+    localStorage.clear();
     try {
       localStorage.clear();
       // Retrieve userInfo from localStorage
@@ -60,6 +61,7 @@ export default function Navbar() {
     } catch (error) {
       console.error("Error during logout:", error);
       toast.error("Failed to logout. Please try again.");
+      setMobileMenuOpen(false);
     }
     setTimeout(() => {
       window.location.reload();
