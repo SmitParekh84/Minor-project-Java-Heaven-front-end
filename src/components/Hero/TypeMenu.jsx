@@ -4,11 +4,12 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config"; // Ensure this path is correct and the config file exports API_URL
-const DEFAULT_IMAGE = "https://cloud-atg.moph.go.th/quality/sites/default/files/default_images/default.png"; 
+const DEFAULT_IMAGE = "https://cloud-atg.moph.go.th/quality/sites/default/files/default_images/default.png";
 
 const TypeMenu = () => {
   const [categoryImages, setCategoryImages] = useState([
     // Initial placeholder data to show while loading
+    { category: "Loading...", imageUrl: DEFAULT_IMAGE },
     { category: "Loading...", imageUrl: DEFAULT_IMAGE },
     { category: "Loading...", imageUrl: DEFAULT_IMAGE },
     { category: "Loading...", imageUrl: DEFAULT_IMAGE },
@@ -69,8 +70,8 @@ const TypeMenu = () => {
     autoplaySpeed: 3000,
     pauseOnHover: true,
     speed: 600, // Smoother, slower transition
-    slidesToShow: 4,
-    slidesToScroll: 4,
+    slidesToShow: 5,
+    slidesToScroll: 5,
     arrows: true,
     easing: "ease-in-out", // Smooth easing
 
