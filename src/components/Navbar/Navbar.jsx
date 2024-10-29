@@ -4,6 +4,8 @@ import { Bars3Icon, XMarkIcon, ShoppingCartIcon, UserIcon } from '@heroicons/rea
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import toast from 'react-hot-toast';
+import axios from 'axios';
+import { API_URL } from "../../config"; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
 
@@ -36,26 +38,33 @@ export default function Navbar() {
     }
   }, [loggedInUser]);
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    // Clear the user state, but keep other fields if necessary
-    setUser((prevUser) => ({
-      ...prevUser,
-      username: "", // Clear username
-      email: ""     // Clear email
-    }));
-    setShowProfileMenu(false);
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem('user');
-    localStorage.removeItem('userRole');
-    toast.success("Logout Successfully");
-    setMobileMenuOpen(false);
-    navigate('/');
-    // Force a page reload to reset everything
+  const handleLogout = async () => {
+    try {
+        // Retrieve userInfo from localStorage
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        const userId = userInfo ? userInfo._id : null; // Assuming userInfo contains the user's _id
+
+        const response = await axios.post(`${API_URL}/api/logout`, { userId }, {
+            withCredentials: true // Send cookies, if needed
+        });
+
+        // Clear sessionStorage and localStorage
+        sessionStorage.clear();
+        localStorage.removeItem('token');
+        localStorage.removeItem('userInfo');
+
+        toast.success("Logout Successfully");
+        navigate('/');
+    } catch (error) {
+        console.error("Error during logout:", error);
+        toast.error("Failed to logout. Please try again.");
+    }
     setTimeout(() => {
-      window.location.reload(); // This will refresh the page and reset the state
-    }, 500); // A short delay before reloading
-  };
+      window.location.reload();
+    }, 500);
+};
+
+
 
   const isAdmin = user?.role === 'admin'; // Check if the logged-in user is an admin
   const handleLinkClick = (path) => {
