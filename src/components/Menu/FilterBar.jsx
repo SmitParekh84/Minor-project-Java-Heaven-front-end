@@ -46,15 +46,15 @@ const FilterBar = ({ onFilterChange }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       setError("");
+      // Set loading to true before fetching
       try {
-        const response = await fetch(`${API_URL}/api/items`);
-        if (!response.ok) throw new Error("Failed to fetch items");
+        const response = await fetch(`${API_URL}/api/items/uniq/categories`); // Fetch unique categories
+        if (!response.ok) throw new Error("Failed to fetch categories");
 
-        const items = await response.json();
-        const uniqueCategories = [...new Set(items.map((item) => item.category))];
+        const uniqueCategories = await response.json();
         setCategories(uniqueCategories);
       } catch (error) {
-        console.error("Error fetching items:", error);
+        console.error("Error fetching categories:", error);
         setError("There was a problem loading categories. Please try again.");
       }
     };

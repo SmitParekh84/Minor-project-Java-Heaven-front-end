@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import ItemCard from "./ItemCard";
 import FilterBar from "./FilterBar";
+import ItemCard from "./ItemCard";
 import toast from "react-hot-toast";
 import { API_URL } from "../../config";
 import LoadingIndicator from './LoadingIndicator';
@@ -38,7 +38,6 @@ const ItemList = () => {
   useEffect(() => {
     fetchItems(); // Fetch items on mount
   }, []); // Empty dependency array to run the effect once on mount
-
   // Update the selected filter and filter items
   useEffect(() => {
     // Set selected filter based on URL
@@ -68,6 +67,7 @@ const ItemList = () => {
     setCurrentPage(1); // Reset to the first page when filter changes
   }, [selectedFilter, items, navigate]);
 
+
   // Handle pagination
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -92,7 +92,7 @@ const ItemList = () => {
         <FilterBar onFilterChange={setSelectedFilter} />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {currentItems.map((item) => (
-            <ItemCard key={item._id} item={item} /> // Use item._id for key if item has it
+            <ItemCard key={item._id} item={item}  /> // Use item._id for key if item has it
           ))}
         </div>
         <Pagination
