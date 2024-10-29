@@ -39,9 +39,9 @@ export default function Navbar() {
   }, [loggedInUser]);
 
   const handleLogout = async () => {
-    localStorage.clear();
+    
     try {
-      localStorage.clear();
+      
       // Retrieve userInfo from localStorage
       const userInfo = JSON.parse(localStorage.getItem('userInfo'));
       const userId = userInfo ? userInfo._id : null; // Assuming userInfo contains the user's _id
