@@ -57,14 +57,13 @@ export default function Navbar() {
       setMobileMenuOpen(false); // Close the mobile menu
       toast.success("Logout Successfully");
       navigate('/');
+      window.location.reload();
     } catch (error) {
       console.error("Error during logout:", error);
       setMobileMenuOpen(false);
       toast.error("Failed to logout. Please try again.");
     }
-    setTimeout(() => {
-      window.location.reload();
-    }, 500);
+
   };
 
 
@@ -195,7 +194,7 @@ export default function Navbar() {
               {showProfileMenu && (
                 <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-50">
 
-                <div className="px-4 py-2 text-gray-800">{user.email}</div>
+                  <div className="px-4 py-2 text-gray-800">{user.email}</div>
                   <div className="border-t border-gray-300"></div>
                   <button
                     onClick={handleLogout}
