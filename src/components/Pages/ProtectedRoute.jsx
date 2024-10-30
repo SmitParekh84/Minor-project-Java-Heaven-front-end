@@ -4,8 +4,23 @@ import { useUser } from "../../context/UserContext"; // Ensure this path is corr
 import PropTypes from 'prop-types'; // Optional: for prop type validation
 
 const ProtectedRoute = ({ children, adminOnly }) => {
-    const { user } = useUser();
-
+    
+    const token = localStorage.getItem("token");
+    const parseJwt = (token) => {
+        try {
+          const base64Url = token.split('.')[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          }).join(''));
+    
+          return JSON.parse(jsonPayload);
+        } catch (error) {
+          return null;
+        }
+      };
+      const user = parseJwt(token);
+      
     // Check if the user is authenticated based on user properties
     const isAuthenticated = user && user.username; // Ensure user is defined
     const isAdmin = user && user.role === "admin"; // Ensure user is defined
