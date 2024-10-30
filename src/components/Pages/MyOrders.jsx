@@ -9,7 +9,7 @@ const MyOrders = () => {
     const [dataChanged, setDataChanged] = useState(false); // Track if data has changed
     const [error, setError] = useState(null);
     const [activeTab, setActiveTab] = useState('myOrders');
-    const loggedInUser = localStorage.getItem('userInfo');
+    const loggedInUser = localStorage.getItem('user');
     const [items, setItems] = useState([]);
 
     const fetchItems = async () => {

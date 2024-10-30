@@ -8,7 +8,7 @@ export default function Profile() {
     const [loading, setLoading] = useState(true); // Loading state
 
     useEffect(() => {
-        const storedUserInfo = localStorage.getItem("userInfo");
+        const storedUserInfo = localStorage.getItem("user");
         if (storedUserInfo) {
             try {
                 const parsedUserInfo = JSON.parse(storedUserInfo);
@@ -26,7 +26,7 @@ export default function Profile() {
     const handleLogout = () => {
         localStorage.removeItem("sessionId");
         localStorage.removeItem("sessionStartTime");
-        localStorage.removeItem("userInfo");
+        localStorage.removeItem("user");
         setUser(null);
         setLocalUser(null);
         // Optional: Add feedback for logout action, e.g., toast notification

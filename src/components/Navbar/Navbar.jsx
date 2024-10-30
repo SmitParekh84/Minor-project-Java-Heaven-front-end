@@ -26,7 +26,7 @@ export default function Navbar() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const navigate = useNavigate();
   const totalItemsInCart = useMemo(() => cartItems.reduce((total, item) => total + item.quantity, 0), [cartItems]);
-  const loggedInUser = localStorage.getItem('userInfo');
+  const loggedInUser = localStorage.getItem('user');
 
   useEffect(() => {
     if (loggedInUser) {
@@ -41,7 +41,7 @@ export default function Navbar() {
 
     try {
       // Retrieve userInfo from localStorage
-      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      const userInfo = JSON.parse(localStorage.getItem('user'));
       const userId = userInfo ? userInfo._id : null; // Assuming userInfo contains the user's _id
 
       const response = await axios.post(`${API_URL}/api/logout`, { userId }, {
@@ -51,7 +51,7 @@ export default function Navbar() {
       // Clear sessionStorage and localStorage
       sessionStorage.clear();
       localStorage.removeItem('token');
-      localStorage.removeItem('userInfo');
+      // localStorage.removeItem('userInfo');
       localStorage.removeItem('user');
       setMobileMenuOpen(false); // Close the mobile menu
       toast.success("Logout Successfully");

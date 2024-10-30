@@ -25,7 +25,7 @@ const Cart = () => {
 
   // Load user info on component mount
   useEffect(() => {
-    const storedUser = localStorage.getItem("userInfo");
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
       setUserInfo((prev) => ({
