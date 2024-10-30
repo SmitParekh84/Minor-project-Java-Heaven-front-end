@@ -41,6 +41,7 @@ const teamMembers = [
     },
 ];
 
+const DEFAULT_IMAGE = "https://cloud-atg.moph.go.th/quality/sites/default/files/default_images/default.png";
 
 
 
@@ -61,7 +62,7 @@ const LeadershipTeam = () => {
 
 
                             <img
-                                src={member.image}
+                                src={member.image || DEFAULT_IMAGE}
                                 alt={member.name}
                                 className="w-full h-auto max-h-48 object-cover transition-opacity duration-300 hover:opacity-75" /> </a>
                         <div className="p-6">
