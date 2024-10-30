@@ -1,9 +1,7 @@
-// src/components/Pages/RevenuePage.jsx
+// src/components/Pages/RevenuePage.jsx 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Bar, Pie } from 'react-chartjs-2';
-
-
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -20,12 +18,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHandHoldingHeart, faHome } from '@fortawesome/free-solid-svg-icons';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
+
 const RevenuePage = () => {
     const [totalRevenue, setTotalRevenue] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [chartData, setChartData] = useState({});
     const [deliveryChartData, setDeliveryChartData] = useState({});
+    const [dataType, setDataType] = useState('monthly'); // New state for dropdown selection
+    const [timePeriod, setTimePeriod] = useState('monthly'); // Default to 'monthly'
 
     // Function to fetch revenue data from dashboard endpoint
     const fetchRevenueData = async () => {
@@ -39,47 +40,77 @@ const RevenuePage = () => {
                 // Set total revenue from the dashboard
                 setTotalRevenue(data.totalSales || 0);
 
-                // Prepare the bar chart data based on monthly data
-                const labels = data.monthlyData?.map(item => item.month) || [];
-                const revenueAmounts = data.monthlyData?.map(item => item.totalSales) || [];
-
-                setChartData({
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Revenue Over Time',
-                            data: revenueAmounts,
-                            backgroundColor: 'rgba(75, 192, 192, 1)',
-                        },
-                    ],
-                });
+                // Prepare the chart data based on the selected time period
+                updateChartData(data);
 
                 // Prepare the pie chart data based on deliveryOptionData
                 const deliveryOptions = data.deliveryOptionData?.map(item => item.deliveryOption) || [];
                 const deliverySales = data.deliveryOptionData?.map(item => item.totalSales) || [];
 
+                // Set the delivery chart data for the pie chart
                 setDeliveryChartData({
                     labels: deliveryOptions,
                     datasets: [
                         {
                             label: 'Sales by Delivery Option',
                             data: deliverySales,
-                            backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)'], // Custom colors for the Pie chart
+                            backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)'],
                         },
                     ],
                 });
+            } else {
+                console.error("Failed to fetch data: ", response.data.message || 'Unknown error');
             }
         } catch (err) {
             setError(err.message);
-            console.error("Error fetching revenue data: ", err);
+            console.error("Error fetching revenue data: ", err); // Log detailed error information
         } finally {
-            setLoading(false);
+            setLoading(false); // Ensure loading state is reset
         }
+    };
+
+    // Function to update chart data based on selected data type
+    const updateChartData = (data) => {
+        let labels = [];
+        let revenueAmounts = [];
+
+        switch (dataType) {
+            case 'monthly':
+                labels = data.monthlyData?.map(item => item.month) || [];
+                revenueAmounts = data.monthlyData?.map(item => item.totalSales) || [];
+                break;
+            case 'daily':
+                labels = data.dailyData?.map(item => item._id) || [];
+                revenueAmounts = data.dailyData?.map(item => item.totalSales) || [];
+                break;
+            case 'yearly':
+                labels = data.yearlyData?.map(item => item._id) || [];
+                revenueAmounts = data.yearlyData?.map(item => item.totalSales) || [];
+                break;
+            default:
+                break;
+        }
+
+        setChartData({
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Revenue Over Time',
+                    data: revenueAmounts,
+                    backgroundColor: 'rgba(75, 192, 192, 1)',
+                },
+            ],
+        });
     };
 
     useEffect(() => {
         fetchRevenueData(); // Fetch data on component mount
     }, []);
+
+    useEffect(() => {
+        // Update chart data when dataType changes
+        fetchRevenueData();
+    }, [dataType]);
 
     const handleRetry = () => {
         setLoading(true);
@@ -87,11 +118,8 @@ const RevenuePage = () => {
         fetchRevenueData(); // Retry fetching data
     };
 
-
     if (loading) {
-        return (
-            <LoadingIndicator />
-        );
+        return <LoadingIndicator />;
     }
     if (error) {
         return (
@@ -107,9 +135,10 @@ const RevenuePage = () => {
             <h1 className="text-3xl font-bold text-gray-800 mb-6">Revenue Page</h1>
             <h2 className="text-2xl font-semibold text-gray-600 mb-4">Total Revenue: <span className="text-green-600">₹{totalRevenue}</span></h2>
 
+
+
             {/* Cards for Total Revenue by Delivery Option */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
-                {/* Home Delivery Revenue Card */}
                 <div className="border p-6 rounded-lg shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
                     <FontAwesomeIcon icon={faHome} className="text-5xl mr-4 text-blue-500" />
                     <div>
@@ -117,8 +146,6 @@ const RevenuePage = () => {
                         <p className="text-2xl font-bold text-blue-600">₹{deliveryChartData.labels?.includes('home') ? deliveryChartData.datasets[0].data[deliveryChartData.labels.indexOf('home')] : 0}</p>
                     </div>
                 </div>
-
-                {/* Hand-to-Hand Delivery Revenue Card */}
                 <div className="border p-6 rounded-lg shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
                     <FontAwesomeIcon icon={faHandHoldingHeart} className="text-5xl mr-4 text-green-500" />
                     <div>
@@ -128,9 +155,23 @@ const RevenuePage = () => {
                 </div>
             </div>
 
+
             {/* Bar Chart Section */}
             <div className="mt-6">
-                <h2 className="text-2xl font-semibold text-gray-700 mb-4">Revenue Over Time</h2>
+                {/* Dropdown for selecting data type */}
+                <div className="mb-4 flex justify-end">
+                    <label htmlFor="data-type" className="mr-2 text-gray-600">Select Data Type:</label>
+                    <select
+                        id="data-type"
+                        value={dataType}
+                        onChange={(e) => setDataType(e.target.value)}
+                        className="border rounded p-2"
+                    >
+                        <option value="monthly">Monthly</option>
+                        <option value="daily">Daily</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                </div>
                 <Bar
                     data={chartData}
                     options={{
@@ -199,7 +240,6 @@ const RevenuePage = () => {
                 </div>
             </div>
         </div>
-
     );
 };
 
