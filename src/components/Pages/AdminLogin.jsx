@@ -8,6 +8,7 @@ import { API_URL } from "../../config";
 export default function AdminLogin() {
     const navigate = useNavigate();
     const { setUser } = useUser(); // Access setUser from UserContext
+    const [loading, setLoading] = useState(false); // New loading state
     const [credentials, setCredentials] = useState({
         username: "",
         password: "",
@@ -22,7 +23,7 @@ export default function AdminLogin() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setLoading(true); // Set loading to true when submitting
         try {
             const response = await axios.post(`${API_URL}/api/admin/login`, credentials);
             const userInfo = response.data.admin; // Admin information
@@ -50,6 +51,8 @@ export default function AdminLogin() {
             console.error("Login error:", err); // Log the error for debugging
             setError(err.response?.data?.msg || "Admin login failed. Please try again."); // Set error for UI
             toast.error(error); // Show toast with error message
+        } finally {
+            setLoading(false); // Set loading to false after request completes
         }
     };
 
@@ -105,9 +108,10 @@ export default function AdminLogin() {
                         {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
                         <button
                             type="submit"
-                            className="w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold"
+                            className={`w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold ${loading ? 'opacity-50 cursor-not-allowed' : ''}`} // Disable button when loading
+                            disabled={loading} // Disable button based on loading state
                         >
-                            Admin Login
+                            {loading ? "Admin logging in..." : "Admin Login"} {/* Conditional button text */}
                         </button>
                     </form>
                 </div>

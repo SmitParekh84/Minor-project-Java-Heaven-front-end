@@ -7,7 +7,8 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import { API_URL } from "../../config";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faEnvelope, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
+
 const adminNavigation = [
   { name: 'Dashboard', href: '/admin-dashboard' },
   { name: 'Orders', href: 'admin/orders' },
@@ -17,8 +18,31 @@ const adminNavigation = [
   { name: 'Best Selling Item', href: 'admin/best-selling' },
 ];
 
-export default function Navbar() {
+const ProfileMenu = ({ user, handleLogout, loading }) => (
+  <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-100">
+    <div className="px-4 py-2 flex items-center text-gray-800">
+      <FontAwesomeIcon icon={faUser} className="mr-2 text-gray-600" />
+      <Link to="/profile" className="hover:text-blue-500 font-semibold">
+        {user.username || "Guest"}
+      </Link>
+    </div>
+    <div className="px-4 py-2 flex items-center text-gray-800">
+      <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-gray-600" />
+      <span>{user.email || "Guest"}</span>
+    </div>
+    <div className="border-t border-gray-300"></div>
+    <button
+      onClick={handleLogout}
+      className={`flex items-center justify-center w-full text-center px-4 py-2 text-sm text-red-600 hover:bg-gray-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+      disabled={loading}
+    >
+      <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
+      {loading ? "Logging out..." : "Logout"}
+    </button>
+  </div>
+);
 
+export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { cartItems } = useCart();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -28,93 +52,82 @@ export default function Navbar() {
   const totalItemsInCart = useMemo(() => cartItems.reduce((total, item) => total + item.quantity, 0), [cartItems]);
   const loggedInUser = localStorage.getItem('userInfo');
   const menuRef = useRef(null);
-  // Close the menu when clicking outside
+  const [loading, setLoading] = useState(false);
+
   const handleClickOutside = (event) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
       setShowProfileMenu(false);
     }
   };
-  // Add and clean up event listeners for clicks outside
+
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
   const parseJwt = (token) => {
     try {
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
-
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
       return JSON.parse(jsonPayload);
     } catch (error) {
       return null;
     }
   };
+
   useEffect(() => {
     if (loggedInUser) {
       const foundUser = JSON.parse(loggedInUser);
-      console.log(foundUser);
       setUser(foundUser);
       setIsLoggedIn(true);
     }
   }, [loggedInUser]);
 
-
   const handleLogout = async () => {
-
+    setLoading(true);
     try {
-      setMobileMenuOpen(false); // Close the mobile menu
-      // Retrieve token from localStorage
+      setMobileMenuOpen(false);
       const token = localStorage.getItem('token');
       let userId = null;
 
       if (token) {
-        // Decode the token to get the userId or relevant data
         const decodedToken = parseJwt(token);
-        userId = decodedToken ? decodedToken.userId : null; // Assuming your token contains userId
+        userId = decodedToken ? decodedToken.userId : null;
       }
 
-      const response = await axios.post(`${API_URL}/api/logout`, { userId }, {
-        withCredentials: true // Send cookies, if needed
-      });
+      await axios.post(`${API_URL}/api/logout`, { userId }, { withCredentials: true });
 
-      // Clear sessionStorage and localStorage
       sessionStorage.clear();
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       localStorage.removeItem('userInfo');
 
-
       navigate('/');
-
       toast.success("Logout Successfully");
-
     } catch (error) {
       console.error("Error during logout:", error);
       setMobileMenuOpen(false);
       toast.error("Failed to logout. Please try again.");
+    } finally {
+      setLoading(false);
     }
     setTimeout(() => {
       window.location.reload();
     }, 500);
   };
 
-
-
-  const isAdmin = user?.role === 'admin'; // Check if the logged-in user is an admin
-  console.log(isAdmin);
+  const isAdmin = user?.role === 'admin';
 
   const handleLinkClick = (path) => {
-    setMobileMenuOpen(false); // Close the mobile menu
-    navigate(path); // Navigate to the specified path
+    setMobileMenuOpen(false);
+    navigate(path);
   };
 
   return (
-    <header className="inset-x-0 top-0 ">
+    <header className="inset-x-0 top-0">
       <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-10">
         <div className="flex lg:flex-1">
           <Link to="/" className="-m-1.5 p-1.5">
@@ -124,7 +137,7 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center lg:hidden">
-          {isLoggedIn && !isAdmin && ( // Show cart link only if user is logged in and not an admin
+          {isLoggedIn && !isAdmin && (
             <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4">
               <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
               Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
@@ -141,35 +154,11 @@ export default function Navbar() {
               >
                 <UserIcon className="h-5 w-5 mr-1" aria-hidden="true" />
               </button>
-              {showProfileMenu && (
-                <div onMouseEnter={() => setShowProfileMenu(true)}
-                  onMouseLeave={() => setShowProfileMenu(false)} className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-100">
-
-                  <div className="px-4 py-2 flex items-center text-gray-800">
-                    <FontAwesomeIcon icon={faUser} className="mr-2 text-gray-600" />
-                    <Link to="/profile" onClick={() => setShowProfileMenu(false)} className="hover:text-blue-500 font-semibold">
-                      {user.username ? user.username : "Guest"}
-                    </Link>
-                  </div>
-                  <div className="px-4 py-2 flex items-center text-gray-800">
-                    <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-gray-600" />
-                    <span>{user.email ? user.email : "Guest"}</span>
-                  </div>
-                  <div className="border-t border-gray-300"></div>
-                  <button
-                    onClick={handleLogout}
-
-                    className="flex items-center justify-center block w-full text-center px-4 py-2 text-sm text-red-600 hover:bg-gray-200"
-                  >
-                    <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
-                    Logout
-                  </button>
-                </div>
-              )}
+              {showProfileMenu && <ProfileMenu user={user} handleLogout={handleLogout} loading={loading} />}
             </div>
           ) : (
             <Link to="/login" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
-              Log in <span aria-hidden="true">&rarr;</span>
+              <span className="mr-2">Log in</span> <FontAwesomeIcon icon={faArrowRight} aria-hidden="true" />
             </Link>
           )}
           <button
@@ -197,10 +186,8 @@ export default function Navbar() {
             </>
           )}
 
-
-          {isLoggedIn && !isAdmin && ( // Show My Orders and Cart only if user is logged in and not an admin
+          {isLoggedIn && !isAdmin && (
             <>
-
               <Link key="my-orders" to="/my-orders" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
                 My Orders
               </Link>
@@ -221,47 +208,20 @@ export default function Navbar() {
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           {isLoggedIn ? (
             <div className="relative" ref={menuRef}>
-
               <button
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-800 rounded-md  transition duration-200 ease-in-out  hover:text-secondary  "
+                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-800 rounded-md transition duration-200 ease-in-out hover:text-secondary"
                 aria-haspopup="true"
                 aria-expanded={showProfileMenu}
               >
                 <UserIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
-                <span className="truncate">{user.username ? user.username : "Guest"}</span>
-
+                <span className="truncate">{user.username || "Guest"}</span>
               </button>
-
-              {showProfileMenu && (
-                <div onMouseEnter={() => setShowProfileMenu(true)}
-                  onMouseLeave={() => setShowProfileMenu(false)} className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-100">
-
-                  <div className="px-4 py-2 flex items-center text-gray-800">
-                    <FontAwesomeIcon icon={faUser} className="mr-2 text-gray-600" />
-                    <Link to="/profile" onClick={() => setShowProfileMenu(false)} className="hover:text-blue-500 font-semibold">
-                      {user.username ? user.username : "Guest"}
-                    </Link>
-                  </div>
-                  <div className="px-4 py-2 flex items-center text-gray-800">
-                    <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-gray-600" />
-                    <span>{user.email ? user.email : "Guest"}</span>
-                  </div>
-                  <div className="border-t border-gray-300"></div>
-                  <button
-                    onClick={handleLogout}
-
-                    className="flex items-center justify-center block w-full text-center px-4 py-2 text-sm text-red-600 hover:bg-gray-200"
-                  >
-                    <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
-                    Logout
-                  </button>
-                </div>
-              )}
+              {showProfileMenu && <ProfileMenu user={user} handleLogout={handleLogout} loading={loading} />}
             </div>
           ) : (
             <Link to="/login" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
-              Log in <span aria-hidden="true">&rarr;</span>
+              <span className="mr-2">Log in</span> <FontAwesomeIcon icon={faArrowRight} aria-hidden="true" />
             </Link>
           )}
         </div>
@@ -269,13 +229,12 @@ export default function Navbar() {
 
       <Dialog open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} className="lg:hidden">
         <div className="fixed inset-0 z-50" />
-        <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-primary-foreground  px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-          <div className="flex items-center justify-between ">
+        <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-primary-foreground px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+          <div className="flex items-center justify-between">
             <Link to="/" onClick={() => handleLinkClick('/')} className="-m-1.5 p-1.5">
               <span className="sr-only">Java Heaven</span>
               <img alt="" src="/images/logo-3.png" className="h-16 w-auto" />
             </Link>
-
             <button
               type="button"
               onClick={() => setMobileMenuOpen(false)}
@@ -286,8 +245,8 @@ export default function Navbar() {
             </button>
           </div>
 
-          <div className="mt-6 flow-root ">
-            <div className="-my-6 divide-y  divide-gray-500 text-center">
+          <div className="mt-6 flow-root">
+            <div className="-my-6 divide-y divide-gray-500 text-center">
               <div className="space-y-2 py-6">
                 {(!isLoggedIn || (isLoggedIn && !isAdmin)) && (
                   <>
@@ -318,7 +277,6 @@ export default function Navbar() {
                   </>
                 )}
 
-                {/* Display Admin Navigation Links Only Once */}
                 {isLoggedIn && (isAdmin ? adminNavigation : []).map((item) => (
                   <Link
                     key={item.name}
@@ -363,9 +321,9 @@ export default function Navbar() {
                   <Link
                     to="/login"
                     onClick={() => handleLinkClick('/login')}
-                    className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+                    className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105"
                   >
-                    Log in
+                    <span className="mr-2">Log in</span> <FontAwesomeIcon icon={faArrowRight} aria-hidden="true" />
                   </Link>
                 )}
               </div>
@@ -373,7 +331,6 @@ export default function Navbar() {
           </div>
         </DialogPanel>
       </Dialog>
-
     </header>
   );
 }

@@ -2,6 +2,22 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../../config";
+import toast from "react-hot-toast";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+
+const countryCodes = [
+  { name: "India", code: "+91" },
+  { name: "United States", code: "+1" },
+  { name: "United Kingdom", code: "+44" },
+  { name: "Canada", code: "+1" },
+  { name: "Australia", code: "+61" },
+  { name: "Germany", code: "+49" },
+  { name: "France", code: "+33" },
+  { name: "Japan", code: "+81" },
+  { name: "Brazil", code: "+55" },
+  { name: "South Africa", code: "+27" },
+];
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -11,6 +27,7 @@ export default function SignUp() {
     email: "",
     password: "",
     confirmPassword: "",
+    countryCode: "+91", // Default to India
   });
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
@@ -19,18 +36,52 @@ export default function SignUp() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+
+    if (name === "mobno") {
+      // Remove non-digit characters
+      const digits = value.replace(/\D/g, '');
+
+      // Format as xxxxx-xxxxx
+      let formattedNumber = '';
+      if (digits.length > 5) {
+        formattedNumber = `${digits.slice(0, 5)}-${digits.slice(5, 10)}`;
+      } else {
+        formattedNumber = digits;
+      }
+
+      setFormData({ ...formData, [name]: formattedNumber });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+
     setError({ ...error, [name]: "" }); // Clear error message on input change
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Construct mobile number: +countryCode-mobno
+    const formattedMobileNumber = `${formData.countryCode}-${formData.mobno.replace(/-/g, '')}`; // Correctly remove hyphen for concatenation
+
+    // Log the data being sent
+    console.log("Sending data:", { ...formData, mobno: formattedMobileNumber });
+
     // Client-side validations
     let newErrors = {};
+
+    // Username validation
     if (formData.username.length < 3) newErrors.username = "Username must be at least 3 characters";
-    if (formData.mobno.length !== 10 || !/^[0-9]+$/.test(formData.mobno)) newErrors.mobno = "Mobile number must be 10 digits";
+
+    // Mobile number validation
+    if (!/^\+\d{1,3}-\d{10}$/.test(formattedMobileNumber)) { // Adjusted regex to match the format +countryCode-xxxxxxxxxx
+      newErrors.mobno = "Mobile number must start with a country code followed by 10 digits, formatted as +xxxx-xxxxxxxxxx.";
+    }
+
+    // Email validation
     if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Enter a valid email address";
+
+    // Password validations
     if (formData.password.length < 6) newErrors.password = "Password must be at least 6 characters";
     if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
 
@@ -42,12 +93,17 @@ export default function SignUp() {
 
     setLoading(true);
     try {
-      await axios.post(`${API_URL}/api/signup`, formData);
+      // Sending the full mobile number along with other form data
+      await axios.post(`${API_URL}/api/signup`, { ...formData, mobno: formattedMobileNumber });
+      toast.success("Registration successful! Please log in."); // Toast for success
       navigate("/login");
     } catch (err) {
+      // Handle errors
       if (err.response?.status === 409) {
+        toast.error("User already exists.");
         setError({ server: "User already exists" });
       } else {
+        toast.error(err.response?.data.message || "Registration failed.");
         setError({ server: err.response?.data.message || "Registration failed" });
       }
     } finally {
@@ -55,21 +111,23 @@ export default function SignUp() {
     }
   };
 
+
+
   return (
-    <div className="rounded-lg p-6 w-full container mx-auto max-w-lg pt-20">
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="bg-secondary rounded-lg shadow-xl m-5 p-8 max-w-sm w-full">
-          <h2 className="text-3xl text-center font-bold text-primary-foreground mb-6">Sign Up</h2>
+    <div className="container mx-auto max-w-2xl p-6 leading-none">
+      <div className="flex items-center justify-center">
+        <div className="bg-secondary rounded-lg shadow-2xl p-5 w-full">
+          <h2 className="text-4xl text-center font-extrabold text-primary-foreground mb-8">Sign Up</h2>
           {error.server && <p className="text-red-500 mb-4 text-center">{error.server}</p>}
-          <form onSubmit={handleSubmit}>
-            <div className="mb-6">
-              <label className="block text-muted-foreground font-semibold mb-1" htmlFor="username">Username</label>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="mb-4">
+              <label className="block text-muted-foreground font-semibold mb-2" htmlFor="username">Username</label>
               <input
                 type="text"
                 id="username"
                 name="username"
                 placeholder="Enter your username *"
-                className="mt-1 block w-full border border-border rounded-md p-3"
+                className="mt-1 block w-full border border-border rounded-md p-4 transition duration-200 focus:ring focus:ring-primary-foreground focus:outline-none"
                 value={formData.username}
                 onChange={handleChange}
                 required
@@ -77,29 +135,49 @@ export default function SignUp() {
               {error.username && <p className="text-red-500 text-sm mt-1">{error.username}</p>}
             </div>
 
-            <div className="mb-6">
-              <label className="block text-muted-foreground font-semibold mb-1" htmlFor="mobno">Mobile Number</label>
-              <input
-                type="tel"
-                id="mobno"
-                name="mobno"
-                placeholder="Enter your mobile number *"
-                className="mt-1 block w-full border border-border rounded-md p-3"
-                value={formData.mobno}
-                onChange={handleChange}
-                required
-              />
-              {error.mobno && <p className="text-red-500 text-sm mt-1">{error.mobno}</p>}
+            <div className="flex flex-col md:flex-row md:space-x-4 mb-4 ">
+              <div className="flex-1 mb-4 md:mb-0">
+                <label className="block text-muted-foreground font-semibold mb-2" htmlFor="countryCode">Country Code</label>
+                <select
+                  id="countryCode"
+                  name="countryCode"
+                  className="mt-1 block w-full border border-border rounded-md p-4 transition duration-200 focus:ring focus:ring-primary-foreground focus:outline-none"
+                  value={formData.countryCode}
+                  onChange={handleChange}
+                >
+                  {countryCodes.map((country, index) => (
+                    <option key={index} value={country.code}>
+                      {country.name} ({country.code})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex-1">
+                <label className="block text-muted-foreground font-semibold mb-2" htmlFor="mobno">Mobile Number</label>
+                <input
+                  type="tel"
+                  id="mobno"
+                  name="mobno"
+                  placeholder="Enter your mobile number *"
+                  className="mt-1 block w-full border border-border rounded-md p-4 transition duration-200 focus:ring focus:ring-primary-foreground focus:outline-none"
+                  value={formData.mobno}
+                  onChange={handleChange}
+                  required
+                />
+                {error.mobno && <p className="text-red-500 text-sm mt-1">{error.mobno}</p>}
+              </div>
             </div>
 
-            <div className="mb-6">
-              <label className="block text-muted-foreground font-semibold mb-1" htmlFor="email">Email</label>
+
+            <div className="mb-4">
+              <label className="block text-muted-foreground font-semibold mb-2" htmlFor="email">Email</label>
               <input
                 type="email"
                 id="email"
                 name="email"
                 placeholder="Enter Email ID *"
-                className="mt-1 block w-full border border-border rounded-md p-3"
+                className="mt-1 block w-full border border-border rounded-md p-4 transition duration-200 focus:ring focus:ring-primary-foreground focus:outline-none"
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -107,14 +185,14 @@ export default function SignUp() {
               {error.email && <p className="text-red-500 text-sm mt-1">{error.email}</p>}
             </div>
 
-            <div className="mb-6 relative">
-              <label className="block text-muted-foreground font-semibold mb-1" htmlFor="password">Password</label>
+            <div className="relative mb-4">
+              <label className="block text-muted-foreground font-semibold mb-2" htmlFor="password">Password</label>
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
                 name="password"
                 placeholder="Enter Password *"
-                className="mt-1 block w-full border border-border rounded-md p-3"
+                className="block w-full border border-border rounded-md p-4 pr-12 transition duration-200 focus:ring focus:ring-primary-foreground focus:outline-none"
                 value={formData.password}
                 onChange={handleChange}
                 required
@@ -122,21 +200,21 @@ export default function SignUp() {
               <button
                 type="button"
                 className="absolute right-2 top-9 text-secondary hover:brightness-150"
-                onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
+                onClick={() => setShowPassword(!showPassword)}
               >
-                <i className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
+                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} size="lg" />
               </button>
               {error.password && <p className="text-red-500 text-sm mt-1">{error.password}</p>}
             </div>
 
-            <div className="mb-6 relative">
-              <label className="block text-muted-foreground font-semibold mb-1" htmlFor="confirmPassword">Confirm Password</label>
+            <div className="relative mb-4">
+              <label className="block text-muted-foreground font-semibold mb-2" htmlFor="confirmPassword">Confirm Password</label>
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 id="confirm-password"
                 name="confirmPassword"
                 placeholder="Confirm Password *"
-                className="mt-1 block w-full border border-border rounded-md p-3"
+                className="block w-full border border-border rounded-md p-4 pr-12 transition duration-200 focus:ring focus:ring-primary-foreground focus:outline-none"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
@@ -144,27 +222,33 @@ export default function SignUp() {
               <button
                 type="button"
                 className="absolute right-2 top-9 text-secondary hover:brightness-150"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)} // Toggle confirm password visibility
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                <i className={`fas ${showConfirmPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
+                <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} size="lg" />
               </button>
               {error.confirmPassword && <p className="text-red-500 text-sm mt-1">{error.confirmPassword}</p>}
             </div>
 
-            <button
-              type="submit"
-              className="w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold"
-              disabled={loading}
-            >
-              {loading ? "Signing Up..." : "Sign Up"}
-            </button>
+            <div>
+              <button
+                type="submit"
+                className="w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-3 rounded-full font-semibold transition duration-200"
+                disabled={loading}
+              >
+                {loading ? "Signing Up..." : "Sign Up"}
+              </button>
+            </div>
           </form>
-          <p className="mt-4 text-muted-foreground text-center">
+          <p className="mt-6 text-muted-foreground text-center">
             Need assistance?{" "}
-            <a href="/get-help" className="text-primary-foreground font-semibold">Get Help</a>
+            <a href="/get-help" className="text-primary-foreground font-semibold hover:underline">Get Help</a>
           </p>
         </div>
       </div>
     </div>
+
+
+
+
   );
 }

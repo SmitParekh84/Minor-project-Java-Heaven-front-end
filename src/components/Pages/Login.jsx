@@ -8,6 +8,8 @@ import { API_URL } from "../../config";
 export default function Login() {
     const navigate = useNavigate();
     const { setUser } = useUser(); // Access setUser from UserContext
+    const [loading, setLoading] = useState(false); // New loading state
+
     const [credentials, setCredentials] = useState({
         identifier: "",
         password: "",
@@ -23,7 +25,7 @@ export default function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setLoading(true); // Set loading to true when submitting
         try {
             const response = await axios.post(`${API_URL}/api/login`, credentials);
 
@@ -50,6 +52,8 @@ export default function Login() {
             navigate("/");
         } catch (err) {
             toast.error(err.response?.data?.msg || "Login failed. Please try again.");
+        } finally {
+            setLoading(false); // Set loading to false after request completes
         }
     };
 
@@ -145,9 +149,10 @@ export default function Login() {
                         </p>
                         <button
                             type="submit"
-                            className="w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold"
+                            className={`w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            disabled={loading} // Disable button based on loading state
                         >
-                            Login
+                            {loading ? "Logging in..." : "Login"} {/* Conditional button text */}
                         </button>
                     </form>
 

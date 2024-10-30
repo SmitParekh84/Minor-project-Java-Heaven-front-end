@@ -62,7 +62,8 @@ const ItemDetail = () => {
       toast.error("Please select a cup size");
       return;
     }
-    if (!user.username) {
+    // Check if user object exists before accessing user.username
+    if (!user || !user.username) {
       toast.error("Please log in to add items to your cart");
       navigate("/login");
       return;
