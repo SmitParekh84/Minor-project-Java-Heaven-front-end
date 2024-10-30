@@ -3,12 +3,27 @@ import { useUser } from "../../context/UserContext";
 import LoadingIndicator from "../Menu/LoadingIndicator";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../../config";
+import axios from "axios";
 
 export default function Profile() {
     const { user, setUser } = useUser();
     const [localUser, setLocalUser] = useState(null);
     const [loading, setLoading] = useState(true); // Loading state
     const navigate = useNavigate();
+    const parseJwt = (token) => {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            return JSON.parse(jsonPayload);
+        } catch (error) {
+            return null;
+        }
+    };
     useEffect(() => {
         const storedUserInfo = localStorage.getItem("userInfo");
         if (storedUserInfo) {
@@ -25,16 +40,42 @@ export default function Profile() {
         setLoading(false); // Set loading to false after checking
     }, [setUser]);
 
-    const handleLogout = () => {
-        localStorage.removeItem("sessionId");
-        localStorage.removeItem("sessionStartTime");
-        localStorage.removeItem("userInfo");
-        setUser(null);
-        setLocalUser(null);
-        toast.success("Logout Successfully");
-        window.location.reload();
-        navigate('/');
-        // Optional: Add feedback for logout action, e.g., toast notification
+    const handleLogout = async () => {
+
+        try {
+            // Retrieve token from localStorage
+            const token = localStorage.getItem('token');
+            let userId = null;
+
+            if (token) {
+                // Decode the token to get the userId or relevant data
+                const decodedToken = parseJwt(token);
+                userId = decodedToken ? decodedToken.userId : null; // Assuming your token contains userId
+            }
+
+            const response = await axios.post(`${API_URL}/api/logout`, { userId }, {
+                withCredentials: true // Send cookies, if needed
+            });
+
+            // Clear sessionStorage and localStorage
+            sessionStorage.clear();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('userInfo');
+
+
+            navigate('/');
+
+            toast.success("Logout Successfully");
+
+        } catch (error) {
+            console.error("Error during logout:", error);
+
+            toast.error("Failed to logout. Please try again.");
+        }
+        setTimeout(() => {
+            window.location.reload();
+        }, 500);
     };
 
 
