@@ -269,6 +269,9 @@ export default function Navbar() {
                     >
                       Menu
                     </Link>
+                    <Link key="leadership-team" to="/leadership-team" onClick={() => handleLinkClick('/leadership-team')} className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
+                      Leadership
+                    </Link>
                     <Link
                       key="about"
                       to="/about"
