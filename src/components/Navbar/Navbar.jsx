@@ -180,6 +180,9 @@ export default function Navbar() {
               <Link key="about" to="/about" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
                 About
               </Link>
+              <Link key="leadership-team" to="/leadership-team" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
+                Leadership
+              </Link>
               <Link key="menu" to="/menu" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
                 Menu
               </Link>

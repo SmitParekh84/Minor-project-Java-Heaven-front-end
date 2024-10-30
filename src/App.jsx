@@ -9,6 +9,8 @@ import Footer from "./components/Pages/Footer";
 import ProtectedRoute from "./components/Pages/ProtectedRoute";
 import LoadingIndicator from "./components/Menu/LoadingIndicator"
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
+import LeadershipTeam from "./components/Pages/LeadershipTeam";
+import About from "./components/Pages/About";
 // Lazy load your components
 const Hero = React.lazy(() => import("./components/Hero/Hero"));
 const GetHelp = React.lazy(() => import("./components/Pages/GetHelp"));
@@ -25,7 +27,7 @@ const AdminEdit = React.lazy(() => import("./components/Pages/AdminEdit"));
 const AddMenuItem = React.lazy(() => import("./components/Pages/AddMenuItem"));
 const AdminOrders = React.lazy(() => import("./components/Pages/AdminOrders"));
 const BestSellingItem = React.lazy(() => import("./components/Pages/BestSellingItem"));
-const About = React.lazy(() => import("./components/Pages/About"));
+// const About = React.lazy(() => import("./components/Pages/About"));
 const RevenuePage = React.lazy(() => import("./components/Pages/RevenuePage"));
 
 export default function App() {
@@ -48,6 +50,7 @@ export default function App() {
                   <Route path="/login" element={<Login />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/sign-up" element={<SignUp />} />
+                  <Route path="/leadership-team" element={<LeadershipTeam />} />
                   <Route path="/item/:id" element={<ItemDetail />} />
                   <Route path="/admin" element={<AdminLogin />} />
                   <Route path="/revenue" element={<RevenuePage />} />

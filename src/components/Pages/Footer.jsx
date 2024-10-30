@@ -1,113 +1,88 @@
 import React from "react";
-import { Link } from "react-router-dom"; // Import Link if using React Router
+import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFacebook, faTwitter, faInstagram, faLinkedin } from '@fortawesome/free-brands-svg-icons'; // Import the specific icons you need
+
+const FooterSection = ({ title, links }) => (
+  <div className="mr-10">
+    <h3 className="font-semibold mb-2 text-primary-foreground">{title}</h3>
+    <ul>
+      {links.map(({ to, label, ariaLabel }) => (
+        <li key={to}>
+          <Link to={to} className="text-muted-foreground hover:text-primary" aria-label={ariaLabel}>
+            {label}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+const SocialMediaLink = ({ href, label, ariaLabel, icon }) => (
+  <a href={href} aria-label={ariaLabel} target="_blank" rel="noopener noreferrer" className="flex items-center">
+    <FontAwesomeIcon icon={icon} className="text-primary-foreground h-5 w-5" />
+
+  </a>
+);
+
 
 export default function Footer() {
+  const aboutUsLinks = [
+    { to: "/heritage", label: "Our Heritage", ariaLabel: "Learn about our heritage" },
+    { to: "/coffeehouse", label: "Coffeehouse", ariaLabel: "Explore our coffeehouse" },
+    { to: "/company", label: "Our Company", ariaLabel: "Discover more about our company" },
+  ];
+
+  const responsibilityLinks = [
+    { to: "/diversity", label: "Diversity", ariaLabel: "Learn about our diversity initiatives" },
+    { to: "/community", label: "Community", ariaLabel: "Read about our community efforts" },
+    { to: "/ethical-sourcing", label: "Ethical Sourcing", ariaLabel: "Understand our ethical sourcing" },
+    { to: "/environment", label: "Environmental Stewardship", ariaLabel: "Explore our environmental stewardship" },
+    { to: "/learn-more", label: "Learn More", ariaLabel: "Learn more about us" },
+  ];
+
+  const quickLinks = [
+    { to: "/privacy-policy", label: "Privacy Policy", ariaLabel: "Read our privacy policy" },
+    { to: "/faqs", label: "FAQs", ariaLabel: "Frequently asked questions" },
+    { to: "/customer-service", label: "Customer Service", ariaLabel: "Contact our customer service" },
+    { to: "/delivery", label: "Delivery", ariaLabel: "Learn about our delivery options" },
+  ];
+
+  const socialMediaLinks = [
+    { href: 'https://facebook.com', label: 'Facebook', ariaLabel: 'Facebook', icon: faFacebook },
+    { href: 'https://twitter.com', label: 'Twitter', ariaLabel: 'Twitter', icon: faTwitter },
+    { href: 'https://instagram.com', label: 'Instagram', ariaLabel: 'Instagram', icon: faInstagram },
+    { href: 'https://linkedin.com', label: 'LinkedIn', ariaLabel: 'LinkedIn', icon: faLinkedin },
+  ];
+
   return (
-    <footer className="bg-secondary text-foreground py-4  mt-16">
+    <footer className="bg-secondary text-foreground w-full mt-16 px-10 ">
       <div className="container mx-auto flex flex-col md:flex-row justify-between py-10 lg:px-20">
-        <div className="flex items-center mb-4 md:mb-0">
+        <div className="flex justify-around items-center mb-6 md:mb-0">
           <img
             src="/images/logo-muted-2.png"
-            alt="Starbucks Logo"
-            className="max-h-32 max-w-32 sm:max-h-52 sm:max-w-52" // Adjust max height and width
+            alt="Java Heaven Coffee Logo"
+            className="max-h-44  sm:max-h-52 sm:max-w-7xl"
           />
         </div>
-        <div className="flex flex-col md:flex-row">
-          <div className="mr-10">
-            <h3 className="font-semibold text-primary-foreground mb-2">About Us</h3>
-            <ul>
-              <li>
-                <Link to="/heritage" className="text-muted-foreground hover:text-primary" aria-label="Learn about our heritage">
-                  Our Heritage
-                </Link>
-              </li>
-              <li>
-                <Link to="/coffeehouse" className="text-muted-foreground hover:text-primary" aria-label="Explore our coffeehouse">
-                  Coffeehouse
-                </Link>
-              </li>
-              <li>
-                <Link to="/company" className="text-muted-foreground hover:text-primary" aria-label="Discover more about our company">
-                  Our Company
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div className="mr-10">
-            <h3 className="font-semibold mb-2 text-primary-foreground">Responsibility</h3>
-            <ul>
-              <li>
-                <Link to="/diversity" className="text-muted-foreground hover:text-primary" aria-label="Learn about our diversity initiatives">
-                  Diversity
-                </Link>
-              </li>
-              <li>
-                <Link to="/community" className="text-muted-foreground hover:text-primary" aria-label="Read about our community efforts">
-                  Community
-                </Link>
-              </li>
-              <li>
-                <Link to="/ethical-sourcing" className="text-muted-foreground hover:text-primary" aria-label="Understand our ethical sourcing">
-                  Ethical Sourcing
-                </Link>
-              </li>
-              <li>
-                <Link to="/environment" className="text-muted-foreground hover:text-primary" aria-label="Explore our environmental stewardship">
-                  Environmental Stewardship
-                </Link>
-              </li>
-              <li>
-                <Link to="/learn-more" className="text-muted-foreground hover:text-primary" aria-label="Learn more about us">
-                  Learn More
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-semibold mb-2 text-primary-foreground">Quick Links</h3>
-            <ul>
-              <li>
-                <Link to="/privacy-policy" className="text-muted-foreground hover:text-primary" aria-label="Read our privacy policy">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link to="/faqs" className="text-muted-foreground hover:text-primary" aria-label="Frequently asked questions">
-                  FAQs
-                </Link>
-              </li>
-              <li>
-                <Link to="/customer-service" className="text-muted-foreground hover:text-primary" aria-label="Contact our customer service">
-                  Customer Service
-                </Link>
-              </li>
-              <li>
-                <Link to="/delivery" className="text-muted-foreground hover:text-primary" aria-label="Learn about our delivery options">
-                  Delivery
-                </Link>
-              </li>
-            </ul>
-          </div>
+        <div className="flex justify-around  flex-col md:flex-row md:space-x-10">
+          <FooterSection title="About Us" links={aboutUsLinks} />
+          <FooterSection title="Responsibility" links={responsibilityLinks} />
+          <FooterSection title="Quick Links" links={quickLinks} />
         </div>
-        <div className="mt-4 md:mt-0">
+        <div className="mt-6 md:mt-0">
           <h3 className="font-semibold mb-2 text-primary-foreground">Social Media</h3>
           <div className="flex space-x-4">
-            <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary" aria-label="Visit our Instagram page">
-              Instagram
-            </a>
-            <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary" aria-label="Visit our Facebook page">
-              Facebook
-            </a>
-            <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary" aria-label="Visit our Twitter page">
-              Twitter
-            </a>
+            {socialMediaLinks.map(({ href, label, ariaLabel, icon }) => (
+              <SocialMediaLink key={href} href={href} label={label} ariaLabel={ariaLabel} icon={icon} />
+            ))}
           </div>
         </div>
       </div>
-      <div className="text-center mt-10 text-sm text-muted-foreground">
-        <p>Web Accessibility | Privacy Statement | Terms of Use | Contact Us</p>
+      <div className="text-center mt-8 text-sm text-muted-foreground px-4">
+        <p className="mb-1">Web Accessibility | Privacy Statement | Terms of Use | Contact Us</p>
         <p>© 2024 Java Heaven Coffee Company. All rights reserved. Developed by Smit Parekh and Preet Patel.</p>
       </div>
     </footer>
+
   );
 }
