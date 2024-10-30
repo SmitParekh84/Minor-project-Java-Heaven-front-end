@@ -1,21 +1,43 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 // Create the UserContext
 const UserContext = createContext();
 
 // Create the UserProvider component
 export const UserProvider = ({ children }) => {
+
+    const parseJwt = (token) => {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            return JSON.parse(jsonPayload);
+        } catch (error) {
+            return null;
+        }
+    };
+
+
     // Initialize user state with properties for username, email, and userId
+
     const [user, setUser] = useState(() => {
         // Retrieve user data from local storage if available
-        const savedUser = localStorage.getItem("user");
-        return savedUser ? JSON.parse(savedUser) : { username: "", email: "", id: "", mobno: "" };
+        const savedUser = localStorage.getItem("token");
+        return savedUser ? savedUser : null;
     });
 
     // Effect to update local storage whenever the user state changes
     useEffect(() => {
-        localStorage.setItem("user", JSON.stringify(user));
+
+        localStorage.setItem("user", localStorage.getItem("token"));
+
+
     }, [user]);
+
 
     return (
         <UserContext.Provider value={{ user, setUser }}>
@@ -40,6 +62,7 @@ export const useUser = () => {
 // Inside your component where logout functionality is used:
 const NavBar = () => {
     const { user, setUser } = useUser();
+
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
 
@@ -48,6 +71,7 @@ const NavBar = () => {
             setIsLoggedIn(!!user.username); // Check if the user is logged in based on username
         }
     }, [user]);
+
 
     const handleLogout = () => {
         setIsLoggedIn(false);

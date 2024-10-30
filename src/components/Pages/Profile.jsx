@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useUser } from "../../context/UserContext";
 import LoadingIndicator from "../Menu/LoadingIndicator";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
     const { user, setUser } = useUser();
     const [localUser, setLocalUser] = useState(null);
     const [loading, setLoading] = useState(true); // Loading state
-
+    const navigate = useNavigate();
     useEffect(() => {
         const storedUserInfo = localStorage.getItem("userInfo");
         if (storedUserInfo) {
@@ -29,6 +31,9 @@ export default function Profile() {
         localStorage.removeItem("userInfo");
         setUser(null);
         setLocalUser(null);
+        toast.success("Logout Successfully");
+        window.location.reload();
+        navigate('/');
         // Optional: Add feedback for logout action, e.g., toast notification
     };
 

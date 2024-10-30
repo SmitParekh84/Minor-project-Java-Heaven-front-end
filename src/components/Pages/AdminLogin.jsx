@@ -35,6 +35,7 @@ export default function AdminLogin() {
 
                 sessionStorage.setItem('sessionId', sessionId);
                 sessionStorage.setItem('userId', userId);
+                localStorage.setItem("token", response.data.token)
                 localStorage.setItem("userInfo", JSON.stringify(userInfo)); // Store user info
                 localStorage.setItem("userRole", userInfo.role ?? ""); // Store user role safely
 

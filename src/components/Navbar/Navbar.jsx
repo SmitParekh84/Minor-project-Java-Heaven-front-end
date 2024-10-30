@@ -27,10 +27,23 @@ export default function Navbar() {
   const navigate = useNavigate();
   const totalItemsInCart = useMemo(() => cartItems.reduce((total, item) => total + item.quantity, 0), [cartItems]);
   const loggedInUser = localStorage.getItem('userInfo');
+  const parseJwt = (token) => {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
 
+      return JSON.parse(jsonPayload);
+    } catch (error) {
+      return null;
+    }
+  };
   useEffect(() => {
     if (loggedInUser) {
       const foundUser = JSON.parse(loggedInUser);
+      console.log(foundUser);
       setUser(foundUser);
       setIsLoggedIn(true);
     }
@@ -40,9 +53,15 @@ export default function Navbar() {
   const handleLogout = async () => {
 
     try {
-      // Retrieve userInfo from localStorage
-      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-      const userId = userInfo ? userInfo._id : null; // Assuming userInfo contains the user's _id
+      // Retrieve token from localStorage
+      const token = localStorage.getItem('token');
+      let userId = null;
+
+      if (token) {
+        // Decode the token to get the userId or relevant data
+        const decodedToken = parseJwt(token);
+        userId = decodedToken ? decodedToken.userId : null; // Assuming your token contains userId
+      }
 
       const response = await axios.post(`${API_URL}/api/logout`, { userId }, {
         withCredentials: true // Send cookies, if needed
@@ -51,23 +70,29 @@ export default function Navbar() {
       // Clear sessionStorage and localStorage
       sessionStorage.clear();
       localStorage.removeItem('token');
-      localStorage.removeItem('userInfo');
       localStorage.removeItem('user');
+      localStorage.removeItem('userInfo');
       setMobileMenuOpen(false); // Close the mobile menu
-      toast.success("Logout Successfully");
+
       navigate('/');
-      window.location.reload();
+
+      toast.success("Logout Successfully");
+
     } catch (error) {
       console.error("Error during logout:", error);
       setMobileMenuOpen(false);
       toast.error("Failed to logout. Please try again.");
     }
-
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
   };
 
 
 
   const isAdmin = user?.role === 'admin'; // Check if the logged-in user is an admin
+  console.log(isAdmin);
+
   const handleLinkClick = (path) => {
     setMobileMenuOpen(false); // Close the mobile menu
     navigate(path); // Navigate to the specified path
@@ -107,12 +132,12 @@ export default function Navbar() {
                   <div className="px-4 py-2 flex items-center text-gray-800">
                     <FontAwesomeIcon icon={faUser} className="mr-2 text-gray-600" />
                     <Link to="/profile" className="hover:text-blue-500 font-semibold">
-                      {user.username}
+                      {user.username ? user.username : "Guest"}
                     </Link>
                   </div>
                   <div className="px-4 py-2 flex items-center text-gray-800">
                     <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-gray-600" />
-                    <span>{user.email}</span>
+                    <span>{user.email ? user.email : "Guest"}</span>
                   </div>
                   <div className="border-t border-gray-300"></div>
                   <button
@@ -187,13 +212,13 @@ export default function Navbar() {
                 aria-expanded={showProfileMenu}
               >
                 <UserIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-                {user.username}
+                {user.username ? user.username : "Guest"}
 
               </button>
               {showProfileMenu && (
                 <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-50">
 
-                  <div className="px-4 py-2 text-gray-800">{user.email}</div>
+                  <div className="px-4 py-2 text-gray-800">{user.email ? user.email : "Guest"}</div>
                   <div className="border-t border-gray-300"></div>
                   <button
                     onClick={handleLogout}
