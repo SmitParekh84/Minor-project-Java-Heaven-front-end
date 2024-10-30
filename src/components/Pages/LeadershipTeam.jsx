@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLinkedin, faTwitter, faFacebook, faGithub, faInstagram } from '@fortawesome/free-brands-svg-icons';
 
@@ -42,98 +42,70 @@ const teamMembers = [
 ];
 
 
-const SkeletonLoader = () => {
-    return (
-        <div className="bg-gray-200 rounded-lg shadow-lg p-6 animate-pulse">
-            <div className="h-48 bg-gray-300 rounded-lg mb-4"></div>
-            <div className="h-6 bg-gray-300 rounded mb-2"></div>
-            <div className="h-4 bg-gray-300 rounded mb-2"></div>
-            <div className="h-4 bg-gray-300 rounded mb-4"></div>
-            <div className="flex justify-center space-x-4">
-                <div className="h-6 w-6 bg-gray-300 rounded-full"></div>
-                <div className="h-6 w-6 bg-gray-300 rounded-full"></div>
-                <div className="h-6 w-6 bg-gray-300 rounded-full"></div>
-            </div>
-        </div>
-    );
-};
+
 
 const LeadershipTeam = () => {
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        // Simulate loading time
-        const timer = setTimeout(() => {
-            setLoading(false);
-        }, 2000); // 2 seconds
-
-        return () => clearTimeout(timer);
-    }, []);
-
     return (
         <section className="container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
             <h2 className="text-center text-4xl font-bold text-gray-800 mb-8">Our Leadership Team</h2>
             <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4">
-                {loading ? (
-                    Array.from({ length: 3 }).map((_, index) => (
-                        <SkeletonLoader key={index} />
-                    ))
-                ) : (
-                    teamMembers.map((member) => (
-                        <div key={member.name} className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105">
-                            <a
-                                href={member.socialLinks.linkedin}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label={`${member.name} LinkedIn`}
-                                className="transition-colors duration-200"
-                            >
-                                <img
-                                    src={member.image}
-                                    alt={member.name}
-                                    className="w-full h-auto max-h-48 object-cover transition-opacity duration-300 hover:opacity-75"
-                                />
-                            </a>
-                            <div className="p-6">
-                                <h3 className="text-2xl font-semibold text-gray-800 mb-1">{member.name}</h3>
-                                <p className="text-gray-600 text-sm mb-0">{member.title}</p>
-                                <p className="text-gray-600 text-sm mb-3">{member.position}</p>
-                                <p className="text-gray-700 mb-4">{member.description}</p>
-                                <div className="flex justify-center space-x-4">
-                                    <a
-                                        href={member.socialLinks.linkedin}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        aria-label={`${member.name} LinkedIn`}
-                                        className="hover:text-secondary/90 duration-200"
-                                    >
-                                        <FontAwesomeIcon icon={faLinkedin} className="h-6 w-6" />
-                                    </a>
-                                    <a
-                                        href={member.socialLinks.twitter}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        aria-label={`${member.name} Twitter`}
-                                        className="hover:text-secondary/90 transition-colors duration-200"
-                                    >
-                                        <FontAwesomeIcon icon={faGithub} className="h-6 w-6" />
-                                    </a>
-                                    <a
-                                        href={member.socialLinks.facebook}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        aria-label={`${member.name} Facebook`}
-                                        className="hover:text-secondary/90 transition-colors duration-200"
-                                    >
-                                        <FontAwesomeIcon icon={faInstagram} className="h-6 w-6" />
-                                    </a>
-                                </div>
+                {teamMembers.map((member) => (
+                    <div key={member.name} className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform transform  hover:scale-105">
+                        <a
+                            href={member.socialLinks.linkedin}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`${member.name} LinkedIn`}
+                            className=" transition-colors duration-200"
+                        >
+
+
+                            <img
+                                src={member.image}
+                                alt={member.name}
+                                className="w-full h-auto max-h-48 object-cover transition-opacity duration-300 hover:opacity-75" /> </a>
+                        <div className="p-6">
+                            <h3 className="text-2xl font-semibold text-gray-800 mb-1">{member.name}</h3>
+                            <p className="text-gray-600 text-sm mb-0">{member.title}</p>
+                            <p className="text-gray-600 text-sm mb-3">{member.position}</p>
+                            <p className="text-gray-700 mb-4">{member.description}</p>
+                            <div className="flex justify-center space-x-4">
+                                <a
+                                    href={member.socialLinks.linkedin}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label={`${member.name} LinkedIn`}
+                                    className=" hover:text-secondary/90 duration-200 "
+                                >
+                                    <FontAwesomeIcon icon={faLinkedin} className="h-6 w-6 " />
+                                </a>
+                                <a
+                                    href={member.socialLinks.twitter}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label={`${member.name} Twitter`}
+                                    className=" hover:text-secondary/90  transition-colors duration-200"
+                                >
+                                    <FontAwesomeIcon icon={faGithub} className="h-6 w-6" />
+                                </a>
+                                <a
+                                    href={member.socialLinks.facebook}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label={`${member.name} Facebook`}
+                                    className=" hover:text-secondary/90  transition-colors duration-200"
+                                >
+                                    <FontAwesomeIcon icon={faInstagram} className="h-6 w-6" />
+                                </a>
                             </div>
+
                         </div>
-                    ))
-                )}
+
+                    </div>
+                ))}
             </div>
-        </section>
+        </section >
+
     );
 };
 
