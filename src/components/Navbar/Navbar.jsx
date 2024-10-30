@@ -40,7 +40,6 @@ export default function Navbar() {
   const handleLogout = async () => {
 
     try {
-
       // Retrieve userInfo from localStorage
       const userInfo = JSON.parse(localStorage.getItem('userInfo'));
       const userId = userInfo ? userInfo._id : null; // Assuming userInfo contains the user's _id
@@ -53,7 +52,7 @@ export default function Navbar() {
       sessionStorage.clear();
       localStorage.removeItem('token');
       localStorage.removeItem('userInfo');
-
+      localStorage.removeItem('user');
       setMobileMenuOpen(false); // Close the mobile menu
       toast.success("Logout Successfully");
       navigate('/');

@@ -26,13 +26,15 @@ export default function AdminLogin() {
         try {
             const response = await axios.post(`${API_URL}/api/admin/login`, credentials);
             const userInfo = response.data.admin; // Admin information
-            const sessionId = response.data.sessionId; // Ensure this is correctly accessed
 
+            const sessionId = response.data.sessionId; // Ensure this is correctly accessed
+            const userId = response.data.userId; // Ensure this is correctly accessed
             // Ensure userInfo and sessionId are not undefined
             if (userInfo && sessionId) {
                 toast.success(response.data.msg ?? 'Admin login successful.');
 
-                localStorage.setItem("sessionId", sessionId); // Store sessionId
+                sessionStorage.setItem('sessionId', sessionId);
+                sessionStorage.setItem('userId', userId);
                 localStorage.setItem("userInfo", JSON.stringify(userInfo)); // Store user info
                 localStorage.setItem("userRole", userInfo.role ?? ""); // Store user role safely
 

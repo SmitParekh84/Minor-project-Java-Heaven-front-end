@@ -57,7 +57,7 @@ export default function Login() {
         try {
             // Get the userId from session storage
             const response1 = await axios.post(`${API_URL}/api/login`, credentials);
-            const {  userId } = response1.data;
+            const { userId } = response1.data;
 
             // const { userId } = response1.data;
             if (!userId) {
