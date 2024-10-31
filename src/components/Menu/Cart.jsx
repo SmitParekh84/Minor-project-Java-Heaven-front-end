@@ -183,7 +183,7 @@ const Cart = () => {
               className="border border-gray-300 p-2 w-full mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           )}
-          <button type="submit" className="w-full bg-secondary text-white py-2 rounded-lg hover:brightness-150 transition duration-200">
+          <button type="submit" className="w-full bg-secondary text-white py-2 rounded-lg hover:bg-secondary-light transition duration-200">
             Place Order
           </button>
         </form>

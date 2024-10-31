@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import { API_URL } from "../../config";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faEnvelope, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faEnvelope, faSignOutAlt, faUser, faBars, faXmark, faShoppingCart, faShoppingBasket } from '@fortawesome/free-solid-svg-icons';
 
 const adminNavigation = [
   { name: 'Dashboard', href: '/admin-dashboard' },
@@ -127,8 +127,8 @@ export default function Navbar() {
   };
 
   return (
-    <header className="inset-x-0 top-0">
-      <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-10">
+    <header className="inset-x-0 top-0 ">
+      <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-10 " >
         <div className="flex lg:flex-1">
           <Link to="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Java Heaven</span>
@@ -136,11 +136,18 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <div className="flex items-center lg:hidden">
+        <div className="flex items-center lg:hidden   ">
           {isLoggedIn && !isAdmin && (
-            <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4">
-              <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-              Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
+            <Link
+              to="/cart"
+              className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4 relative"
+            >
+              <FontAwesomeIcon icon={faShoppingBasket} className="cursor-pointer text-2xl" />
+              {totalItemsInCart > 0 && (
+                <span className="absolute -top-1 -right-1 bg-secondary-light text-white rounded-full h-5 w-5 flex items-center justify-center text-xs">
+                  {totalItemsInCart}
+                </span>
+              )}
             </Link>
           )}
 
@@ -152,7 +159,7 @@ export default function Navbar() {
                 aria-haspopup="true"
                 aria-expanded={showProfileMenu}
               >
-                <UserIcon className="h-5 w-5 mr-1" aria-hidden="true" />
+                <FontAwesomeIcon icon={faUser} className="cursor-pointer text-2xl" />
               </button>
               {showProfileMenu && <ProfileMenu user={user} handleLogout={handleLogout} loading={loading} />}
             </div>
@@ -167,7 +174,7 @@ export default function Navbar() {
             className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
           >
             <span className="sr-only">Open main menu</span>
-            <Bars3Icon aria-hidden="true" className="h-6 w-6" />
+            <FontAwesomeIcon icon={faBars} className="text-2xl cursor-pointer" />
           </button>
         </div>
 
@@ -195,8 +202,8 @@ export default function Navbar() {
                 My Orders
               </Link>
               <Link to="/cart" className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4">
-                <ShoppingCartIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-                Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
+
+                <FontAwesomeIcon icon={faShoppingCart} className=" cursor-pointer" /><span className='ml-2'>Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}</span>
               </Link>
             </>
           )}
@@ -217,7 +224,7 @@ export default function Navbar() {
                 aria-haspopup="true"
                 aria-expanded={showProfileMenu}
               >
-                <UserIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
+                <FontAwesomeIcon icon={faUser} className=" cursor-pointer" />
                 <span className="truncate">{user.username || "Guest"}</span>
               </button>
               {showProfileMenu && <ProfileMenu user={user} handleLogout={handleLogout} loading={loading} />}
@@ -244,8 +251,7 @@ export default function Navbar() {
               className="-m-2.5 rounded-md p-2.5 text-gray-700"
             >
               <span className="sr-only">Close menu</span>
-              <XMarkIcon aria-hidden="true" className="h-6 w-6" />
-            </button>
+              <FontAwesomeIcon icon={faXmark} className="cursor-pointer text-2xl  " />            </button>
           </div>
 
           <div className="mt-6 flow-root">
@@ -304,12 +310,27 @@ export default function Navbar() {
                     >
                       My Orders
                     </Link>
+
+
                     <Link
                       to="/cart"
                       onClick={() => handleLinkClick('/cart')}
                       className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
                     >
-                      Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}
+                      <span className='mr-2'>Cart {totalItemsInCart > 0 && `(${totalItemsInCart})`}</span>
+                      <FontAwesomeIcon icon={faShoppingCart} className=" cursor-pointer" />
+
+                    </Link>
+                    <Link
+                      key="my-orders"
+                      to="/profile"
+                      onClick={() => handleLinkClick('/profile')}
+                      className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200"
+                    >
+                      <span className='mr-2'>Profile</span>
+                      <FontAwesomeIcon icon={faUser} className="mr-2 " />
+
+
                     </Link>
                   </>
                 )}

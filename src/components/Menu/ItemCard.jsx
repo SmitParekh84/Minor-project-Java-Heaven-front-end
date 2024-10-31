@@ -41,7 +41,7 @@ const ItemCard = ({ item, loading }) => {
           ₹{item.price.toFixed(2)}
         </span>
         <button
-          className="bg-secondary text-white hover:bg-secondary/90 transition duration-300 ease-in-out rounded-full py-2 px-4 sm:px-5 flex items-center shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50"
+          className="bg-secondary text-white hover:bg-secondary-light transition duration-300 ease-in-out rounded-full py-2 px-4 sm:px-5 flex items-center shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50"
           onClick={handleAddItem}
           aria-label={`Add ${item.name} to cart`}
         >

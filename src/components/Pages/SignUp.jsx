@@ -199,7 +199,7 @@ export default function SignUp() {
               />
               <button
                 type="button"
-                className="absolute right-2 top-9 text-secondary hover:brightness-150"
+                className="absolute right-2 top-9 text-secondary hover:bg-secondary-light"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} size="lg" />
@@ -221,7 +221,7 @@ export default function SignUp() {
               />
               <button
                 type="button"
-                className="absolute right-2 top-9 text-secondary hover:brightness-150"
+                className="absolute right-2 top-9 text-secondary hover:text-secondary-light"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
                 <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} size="lg" />

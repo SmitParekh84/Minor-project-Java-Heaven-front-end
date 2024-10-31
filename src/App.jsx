@@ -11,6 +11,7 @@ import LoadingIndicator from "./components/Menu/LoadingIndicator"
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import LeadershipTeam from "./components/Pages/LeadershipTeam";
 import About from "./components/Pages/About";
+import NotFound from "./NotFound";
 // Lazy load your components
 const Hero = React.lazy(() => import("./components/Hero/Hero"));
 const GetHelp = React.lazy(() => import("./components/Pages/GetHelp"));
@@ -64,6 +65,8 @@ export default function App() {
                   <Route path="/admin/add-menu-item" element={<ProtectedRoute adminOnly><AddMenuItem /></ProtectedRoute>} />
                   <Route path="/admin/orders" element={<ProtectedRoute adminOnly><AdminOrders /></ProtectedRoute>} />
                   <Route path="/admin/best-selling" element={<ProtectedRoute adminOnly><BestSellingItem /></ProtectedRoute>} />
+                  {/* 404 Route */}
+                  <Route path="*" element={<NotFound />} /> {/* Catch-all route for 404 */}
                 </Routes>
               </Suspense>
 

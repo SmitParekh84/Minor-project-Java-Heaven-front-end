@@ -240,7 +240,7 @@ const AddMenuItem = () => {
                     {error && <p className="text-red-500 mt-2">{error}</p>}
                     <button
                         type="submit"
-                        className="mt-6 bg-secondary text-white rounded-lg py-3 px-6 hover:bg-secondary/90 transition duration-300 focus:outline-none"
+                        className="mt-6 bg-secondary text-white rounded-lg py-3 px-6 hover:bg-secondary-light transition duration-300 focus:outline-none"
                     >
                         <FontAwesomeIcon icon={faPlus} className="ml-1" />
                         {editId ? ' Update Item' : ' Add Item'}
@@ -262,7 +262,7 @@ const AddMenuItem = () => {
                         />
                         <button
                             type="submit"
-                            className="ml-3 bg-secondary text-white rounded-lg py-2 px-4 hover:bg-secondary/90 transition duration-300 flex items-center"
+                            className="ml-3 bg-secondary text-white rounded-lg py-2 px-4 hover:bg-secondary-light transition duration-300 flex items-center"
                         >
                             <FontAwesomeIcon icon={faPlus} className="mr-1" /> Add
                         </button>

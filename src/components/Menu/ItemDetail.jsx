@@ -107,7 +107,7 @@ const ItemDetail = () => {
           <CupSizeSelector selectedSize={selectedSize} onSizeSelect={setSelectedSize} />
           <div className="flex items-center mt-6 justify-between">
             <button
-              className={`bg-secondary text-white py-2 px-5 md:py-3 md:px-6 rounded-lg shadow-md transition duration-300 ${!selectedSize ? "opacity-50 cursor-not-allowed" : "hover:bg-brown-700 hover:shadow-lg"
+              className={`bg-secondary text-white py-2 px-5 md:py-3 md:px-6 rounded-lg shadow-md transition duration-300 ${!selectedSize ? "opacity-50 cursor-not-allowed" : "hover:bg-secondary-light hover:shadow-lg"
                 }`}
               disabled={!selectedSize || loading}
               onClick={handleAddToCart}

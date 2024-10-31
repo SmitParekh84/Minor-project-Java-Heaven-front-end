@@ -11,6 +11,7 @@ export default {
         // Light mode colors
         primary: '#FFFFFF', // White
         secondary: '#503225', // Brown
+        'secondary-light': '#853817', // Darker brown
         'primary-foreground': '#F5F5DC', // Off-White
         'muted-foreground': '#D3D3D3', // Light Gray
         success: '#22C55E',
