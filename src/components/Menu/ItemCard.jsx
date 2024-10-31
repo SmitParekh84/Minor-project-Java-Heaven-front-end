@@ -81,16 +81,11 @@ const SkeletonItemCard = () => {
 };
 ItemCard.propTypes = {
   item: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    imageUrl: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired, // Add prop type validation for description
-    price: PropTypes.number.isRequired,
-  }).isRequired,
-  loading: PropTypes.bool,
-};
-ItemCard.defaultProps = {
-  loading: false,
+    name: PropTypes.string,
+    description: PropTypes.string,
+    price: PropTypes.number,
+    imageUrl: PropTypes.string,
+  }),
 };
 
 export default ItemCard;
