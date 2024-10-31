@@ -36,6 +36,7 @@ export default function Login() {
                 setShowModal(true);
                 return;
             }
+
             // Log values before storing them
             console.log('Login response:', response.data);
 
@@ -44,7 +45,22 @@ export default function Login() {
             sessionStorage.setItem('sessionId', sessionId);
             sessionStorage.setItem('userId', userId);
             localStorage.setItem("userInfo", JSON.stringify(user));
+            const storedUserInfo = localStorage.getItem("userInfo");
+            const parsedUserInfo = JSON.parse(storedUserInfo);
+            const uId = parsedUserInfo._id;
+            console.log("User ID:", uId);
+            // const cartResponse = await fetch(`${API_URL}/api/users/cart/${uId}`);
+            // // Create and store the cart token
+            // const cartToken = createCartToken(cartResponse); // Generate the cart token
+            // localStorage.setItem('carttoken', cartToken); // Store it in localStorage
 
+            // Fetch the cart items for the logged-in user
+            const cartResponse = await fetch(`${API_URL}/api/users/cart/${uId}`);
+            const cartData = await cartResponse.json(); // Parse the response to JSON
+            console.log('Cart data:', cartData);
+            // Create and store the cart token
+            const cartToken = btoa(JSON.stringify(cartData)); // Generate the cart token
+            localStorage.setItem('carttoken', cartToken); // Store it in localStorage
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
             toast.success(response.data.msg ?? 'Login successful.');
@@ -56,7 +72,10 @@ export default function Login() {
             setLoading(false); // Set loading to false after request completes
         }
     };
-
+    // // Function to create a cart token by encoding the cart items to a base64 string
+    // const createCartToken = (items) => {
+    //     return btoa(JSON.stringify({ cartItems: items })); // Convert items to JSON and then to Base64
+    // };
     const handleLogoutOtherSessions = async () => {
         try {
             // Get the userId from session storage

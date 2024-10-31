@@ -1,26 +1,95 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { API_URL } from '../config';
 
-// Create Cart Context
 const CartContext = createContext();
 
-// Custom hook to use Cart Context
-export const useCart = () => {
-    return useContext(CartContext);
-};
+export const useCart = () => useContext(CartContext);
 
-// Cart Provider Component
 export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState(() => {
-        const savedCart = localStorage.getItem('cartItems');
-        return savedCart ? JSON.parse(savedCart) : [];
+        const savedToken = localStorage.getItem('carttoken');
+        if (savedToken) {
+            try {
+                const decoded = JSON.parse(atob(savedToken));
+                return decoded.cartItems || []; // Fallback to empty array if no cart items
+            } catch (error) {
+                console.error('Error decoding cart token:', error);
+                return [];
+            }
+        }
+        return [];
     });
-
-    // Effect to update localStorage whenever cartItems change
+    // Fetch cart items when user logs in
     useEffect(() => {
-        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        const storedUserInfo = localStorage.getItem("userInfo");
+        const parsedUserInfo = JSON.parse(storedUserInfo);
+
+        if (parsedUserInfo && parsedUserInfo._id) {
+            fetchCartItems(parsedUserInfo._id);
+        }
+    }, []);
+    const fetchCartItems = async (userId) => {
+        try {
+            console.log('Fetching cart items for user:', userId);
+            const response = await fetch(`${API_URL}/api/users/cart/${userId}`);
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to fetch cart items');
+            }
+            setCartItems(data.cart || []); // Ensure fallback to empty array
+            console.log('Fetched cart items:', data.cart);
+        } catch (error) {
+            console.error('Error fetching cart items:', error);
+        }
+    };
+
+    const createCartToken = (items) => {
+        return btoa(JSON.stringify({ cartItems: items })); // No secret included
+    };
+
+    const updateCartOnServer = async () => {
+        try {
+            const storedUserInfo = localStorage.getItem("userInfo");
+            const parsedUserInfo = JSON.parse(storedUserInfo);
+
+            if (!parsedUserInfo || !parsedUserInfo._id) {
+                console.error("User information is not available.");
+                return;
+            }
+
+            const userId = parsedUserInfo._id;
+            const response = await fetch(`${API_URL}/api/users/cart`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId: userId, cartItems }),
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to update cart on server');
+            }
+            console.log('Cart updated on server:', data);
+        } catch (error) {
+            console.error('Error updating cart on server:', error);
+        }
+    };
+
+
+
+    // Update localStorage and send token to the server whenever cartItems change
+    useEffect(() => {
+        const token = createCartToken(cartItems);
+        localStorage.setItem('carttoken', token);
+
+        if (cartItems.length > 0) {
+            updateCartOnServer(); // Send the token to the server only if there are cart items
+        }
+        console.log("Token being sent:", token);
     }, [cartItems]);
 
-    // Add item to cart (with id and size)
     const addToCart = (newItem) => {
         setCartItems((prevItems) => {
             const existingItemIndex = prevItems.findIndex(
@@ -37,22 +106,12 @@ export const CartProvider = ({ children }) => {
         });
     };
 
-    // Remove specific item from cart (by id and size)
     const removeFromCart = (itemId, itemSize) => {
-        setCartItems((prevItems) => {
-            const updatedItems = prevItems.filter(
-                (item) => !(item.id === itemId && item.size === itemSize)
-            );
-
-            if (updatedItems.length === prevItems.length) {
-                console.warn(`Item with id: ${itemId} and size: ${itemSize} not found in cart.`);
-            }
-
-            return updatedItems;
-        });
+        setCartItems((prevItems) =>
+            prevItems.filter((item) => !(item.id === itemId && item.size === itemSize))
+        );
     };
 
-    // Update item quantity, ensuring it doesn't go below 1
     const updateCartItemQuantity = (itemId, itemSize, newQuantity) => {
         setCartItems((prevItems) =>
             prevItems.map((item) =>
@@ -63,9 +122,9 @@ export const CartProvider = ({ children }) => {
         );
     };
 
-    // Clear the cart with confirmation
     const clearCart = () => {
-            setCartItems([]);
+        setCartItems([]);
+        localStorage.removeItem('carttoken');
     };
 
     return (

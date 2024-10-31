@@ -23,8 +23,13 @@ const ItemDetail = () => {
   const [loading, setLoading] = useState(false); // Loading state for button
   const [error, setError] = useState(null);
   const [similarItems, setSimilarItems] = useState([]);
+  const loggedInUser = localStorage.getItem('user');
 
   useEffect(() => {
+    // const userInfo = parseJwt(user);
+    // console.log("User", user);
+    // Check if user object exists before accessing user.username
+
     const fetchItem = async () => {
       try {
         const response = await fetch(`${API_URL}/api/items/${id}`);
@@ -57,13 +62,17 @@ const ItemDetail = () => {
       return null;
     }
   };
+
+
   const handleAddToCart = async () => {
+    const foundUser = parseJwt(loggedInUser);
+
     if (!selectedSize) {
       toast.error("Please select a cup size");
       return;
     }
     // Check if user object exists before accessing user.username
-    if (!user || !user.username) {
+    if (!foundUser || !foundUser.username) {
       toast.error("Please log in to add items to your cart");
       navigate("/login");
       return;

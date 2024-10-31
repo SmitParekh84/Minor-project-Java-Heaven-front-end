@@ -104,7 +104,7 @@ export default function Navbar() {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       localStorage.removeItem('userInfo');
-
+      localStorage.removeItem('carttoken');
       navigate('/');
       toast.success("Logout Successfully");
     } catch (error) {

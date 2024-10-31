@@ -52,7 +52,13 @@ const Cart = () => {
     const { name, value } = e.target;
     setUserInfo((prev) => ({ ...prev, [name]: value }));
   };
-
+  const modifiedCartItems = cartItems.map(item => ({
+    id: item._id, // Rename _id to id
+    name: item.name,
+    price: item.price,
+    quantity: item.quantity,
+    size: item.size,
+  }));
   const handleCheckout = async (e) => {
     e.preventDefault();
     setLoading(true); // Start loading
@@ -72,7 +78,7 @@ const Cart = () => {
     try {
       const response = await axios.post(`${API_URL}/api/orders`, {
         userId: userInfo.username,
-        cartItems,
+        cartItems: modifiedCartItems,
         deliveryOption,  // Add delivery option
         address: deliveryOption === "home" ? userInfo.address : "",  // Include address if home delivery
       });
