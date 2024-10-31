@@ -12,7 +12,7 @@ const offers = [
     validity: "Valid until December 31, 2024",
     terms: "Terms and conditions apply.",
     additionalInfo: "Earn extra stars for every purchase made through our app.",
-    imageUrl: "https://static.vecteezy.com/system/resources/thumbnails/025/282/026/small_2x/stock-of-mix-a-cup-coffee-latte-more-motive-top-view-foodgraphy-generative-ai-photo.jpg",
+    imageUrl: "/images/offers/Java Heaven Rewards.jpg",
   },
   {
     title: "Brewed Awakening Special",
@@ -20,7 +20,7 @@ const offers = [
     validity: "Every Monday to Friday",
     terms: "Only valid for brewed coffee, dine-in only.",
     additionalInfo: "Come early to secure your favorite blend!",
-    imageUrl: "https://tb-static.uber.com/prod/image-proc/processed_images/a858270fef9316b4084765661a0c058d/fb86662148be855d931b37d6c1e5fcbe.jpeg",
+    imageUrl: "/images/offers/Brewed Awakening Special.jpeg",
   },
   {
     title: "Pastry Pairing Promo",
@@ -28,7 +28,7 @@ const offers = [
     validity: "Valid until November 30, 2024",
     terms: "Free pastry must be of equal or lesser value.",
     additionalInfo: "Choose from our daily fresh selection of pastries.",
-    imageUrl: "https://geocuisinebayridge.com/wp-content/uploads/2024/03/Decadent_Delights_Pairing_Pastries_with_Coffee_for_Indulgence.webp",
+    imageUrl: "/images/offers/Pastry Pairing Promo.webp",
   },
   {
     title: "Seasonal Pumpkin Spice Latte",
@@ -36,7 +36,7 @@ const offers = [
     validity: "Valid from October 1 to November 30, 2024",
     terms: "Loyalty stamp valid only with purchase of Pumpkin Spice Latte.",
     additionalInfo: "Sip into the season with this fall favorite!",
-    imageUrl: "https://sa1s3optim.patientpop.com/assets/images/provider/photos/2674135.jpg",
+    imageUrl: "/images/offers/Seasonal Pumpkin Spice Latte.jpg",
   },
   {
     title: "Cappuccino Combo",
@@ -44,7 +44,7 @@ const offers = [
     validity: "Valid until December 15, 2024",
     terms: "Discount applies to the next order only.",
     additionalInfo: "Pair it with a sweet treat for an even better deal!",
-    imageUrl: "https://www.allrecipes.com/thmb/chsZz0jqIHWYz39ViZR-9k_BkkE=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/8624835-how-to-make-a-cappuccino-beauty-4x3-0301-13d55eaad60b42058f24369c292d4ccb.jpg",
+    imageUrl: "/images/offers/Cappuccino Combo.jpg",
   },
   // Add more offers here
 ];
