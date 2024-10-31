@@ -88,28 +88,32 @@ const ItemDetail = () => {
 
   return (
     <div className="rounded-lg p-8 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
-      <div className="rounded-lg  w-full p-8 md:p-10 flex flex-col md:flex-row items-start ">
-        <div className="flex-shrink-0">
+      <div className="bg-white rounded-lg shadow-md w-full p-6 md:p-10 flex flex-col md:flex-row items-start transition-all duration-500 hover:shadow-xl">
+        <div className="flex-shrink-0 justify-around w-full  md:w-1/2">
           <ImageCarousel images={item.images || [item.imageUrl]} />
         </div>
 
-        <div className="flex flex-col justify-between w-full md:ml-6 mt-6 md:mt-0">
+        <div className="flex flex-col justify-between w-full md:ml-8 mt-6 md:mt-0">
           <div>
-            <h2 className="text-4xl font-bold text-gray-800 hover:text-gray-700 transition duration-300">{item.name}</h2>
-            <p className="text-gray-700 mt-2 text-lg">{item.description}</p>
-            <p className="text-2xl font-semibold mt-4 text-gray-900">Price: ₹ {item.price.toFixed(2)}</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 hover:text-gray-600 transition duration-300">
+              {item.name}
+            </h2>
+            <p className="text-gray-600 mt-2 text-md md:text-lg">{item.description}</p>
+            <p className="text-xl md:text-2xl font-semibold mt-4 text-brown-700">
+              Price: ₹ {item.price.toFixed(2)}
+            </p>
           </div>
 
           <CupSizeSelector selectedSize={selectedSize} onSizeSelect={setSelectedSize} />
           <div className="flex items-center mt-6 justify-between">
-
             <button
-              className={`bg-secondary text-white py-3 px-5 rounded-lg shadow transition duration-300 ${!selectedSize ? "opacity-50 cursor-not-allowed" : "hover:bg-secondary-dark hover:shadow-lg"}`}
-              disabled={!selectedSize || loading} // Disable button if loading or no size selected
+              className={`bg-secondary text-white py-2 px-5 md:py-3 md:px-6 rounded-lg shadow-md transition duration-300 ${!selectedSize ? "opacity-50 cursor-not-allowed" : "hover:bg-brown-700 hover:shadow-lg"
+                }`}
+              disabled={!selectedSize || loading}
               onClick={handleAddToCart}
             >
-              {loading ? "Adding... " : " Add to Cart "} {/* Change button text when loading */}
-              <FontAwesomeIcon icon={faCartPlus} className="ml-2 sm:ml-3" />
+              {loading ? "Adding..." : "Add to Cart"}
+              <FontAwesomeIcon icon={faCartPlus} className="ml-2" />
             </button>
           </div>
         </div>
@@ -157,11 +161,17 @@ const ItemDetail = () => {
 
 // Image Carousel Component
 const ImageCarousel = ({ images }) => (
-  <div className="flex overflow-x-auto">
+  <div className="flex justify-center space-x-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory mt-4">
     {images.map((image, index) => (
-      <img key={index} src={image} alt={`Item image ${index + 1}`} className="w-48 h-48 object-cover rounded-md mx-2" />
+      <img
+        key={index}
+        src={image}
+        alt={`Item image ${index + 1}`}
+        className="w-48 h-48 md:w-64 md:h-64 object-cover rounded-md flex-shrink-0 snap-center"
+      />
     ))}
   </div>
+
 );
 
 // Error Message Component
