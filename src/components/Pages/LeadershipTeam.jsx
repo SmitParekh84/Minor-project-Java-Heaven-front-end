@@ -31,7 +31,7 @@ const teamMembers = [
         name: 'Dhru Patel',
         title: 'Quality Assurance Tester',
         position: 'QA Lead',
-        image: '/dhru.jpg', // Replace with your image paths
+        image: '/Dhru-Patel.jpg', // Replace with your image paths
         description: 'Dhru is dedicated to ensuring that our products meet the highest standards of quality. With a strong background in testing methodologies, he meticulously evaluates software functionality, performance, and usability. His commitment to delivering a seamless user experience drives the continuous improvement of our applications.',
         socialLinks: {
             linkedin: '/leadership-team',
