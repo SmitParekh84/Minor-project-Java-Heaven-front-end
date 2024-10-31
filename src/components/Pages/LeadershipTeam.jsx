@@ -7,7 +7,7 @@ const teamMembers = [
         name: 'Smit Parekh',
         title: 'Project Manager & Full-Stack Developer',
         position: 'Founder & CEO',
-        image: '/Smit-Parekh-About.webp', // Replace with your image paths
+        image: '/Smit-Parekh.jpg', // Replace with your image paths
         description: 'With a solid foundation in both project management and full-stack development, Smit combines technical expertise with leadership skills. He excels in driving projects from conception to completion, ensuring that each phase aligns with strategic goals. His passion for innovation and dedication to team collaboration empower the organization to deliver exceptional results.',
         socialLinks: {
             linkedin: 'https://linkedin.com/in/smitparekh84',
@@ -18,7 +18,7 @@ const teamMembers = [
     {
         name: 'Preet Patel',
         title: 'Back-End Developer & White Box Tester',
-        position: 'Co-Founder & CTO',
+        position: 'Co-Founder & C0O',
         image: '/Preet.png', // Replace with your image paths
         description: 'Preet is a talented back-end developer with a keen eye for detail. His expertise in white box testing ensures that the systems we build are robust and efficient. Preets ability to identify potential issues before they become problems contributes significantly to the quality of our software solutions, making him an invaluable asset to our development team.',
         socialLinks: {
