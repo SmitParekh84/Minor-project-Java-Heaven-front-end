@@ -12,7 +12,7 @@ const teamMembers = [
         socialLinks: {
             linkedin: 'https://linkedin.com/in/smitparekh84',
             github: 'https://github.com/SmitParekh84',
-            instagram: 'https://www.instagram.com/smit_8_4/',
+            instagram: 'https://www.instagram.com/smit_8_4',
         },
     },
     {
@@ -34,9 +34,9 @@ const teamMembers = [
         image: '/Dhru-Patel.jpg', // Replace with your image paths
         description: 'Dhru is dedicated to ensuring that our products meet the highest standards of quality. With a strong background in testing methodologies, he meticulously evaluates software functionality, performance, and usability. His commitment to delivering a seamless user experience drives the continuous improvement of our applications.',
         socialLinks: {
-            linkedin: '/leadership-team',
-            github: '/leadership-team',
-            instagram: '/leadership-team',
+            linkedin: 'https://www.linkedin.com/in/dhru-patel-3849892b3',
+            github: 'https://github.com/PatelDHRU26',
+            instagram: 'https://www.instagram.com/dp_dhru',
         },
     },
 ];
