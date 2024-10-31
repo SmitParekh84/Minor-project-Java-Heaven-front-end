@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import FilterBar from "./FilterBar";
 import ItemCard from "./ItemCard";
 import toast from "react-hot-toast";
 import { API_URL } from "../../config";
 import LoadingIndicator from './LoadingIndicator';
+import { debounce } from 'lodash';
 
 const ItemList = () => {
   const { category } = useParams(); // Get category from URL
@@ -38,6 +39,13 @@ const ItemList = () => {
   useEffect(() => {
     fetchItems(); // Fetch items on mount
   }, []); // Empty dependency array to run the effect once on mount
+
+  // Debounced navigation function
+  const debouncedNavigate = useCallback(
+    debounce((path) => navigate(path, { replace: true }), 300),
+    [navigate]
+  );
+
   // Update the selected filter and filter items
   useEffect(() => {
     // Set selected filter based on URL
@@ -49,14 +57,14 @@ const ItemList = () => {
 
     setFilteredItems(filtered);
     setCurrentPage(1); // Reset to the first page whenever filter changes
-  }, [category, items]); // Watch for changes in category and items
+  }, [category, items]);
 
   // Update the filter based on user selection from FilterBar
   useEffect(() => {
     if (selectedFilter) {
-      navigate(`/menu/${selectedFilter}`, { replace: true }); // Update URL with selected filter
+      debouncedNavigate(`/menu/${selectedFilter}`); // Update URL with selected filter
     } else {
-      navigate(`/menu`, { replace: true }); // Reset URL if no filter
+      debouncedNavigate(`/menu`); // Reset URL if no filter
     }
 
     const filtered = selectedFilter
@@ -65,8 +73,7 @@ const ItemList = () => {
 
     setFilteredItems(filtered);
     setCurrentPage(1); // Reset to the first page when filter changes
-  }, [selectedFilter, items, navigate]);
-
+  }, [selectedFilter, items, debouncedNavigate]);
 
   // Handle pagination
   const handlePageChange = (pageNumber) => {
@@ -92,7 +99,7 @@ const ItemList = () => {
         <FilterBar onFilterChange={setSelectedFilter} />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {currentItems.map((item) => (
-            <ItemCard key={item._id} item={item}  /> // Use item._id for key if item has it
+            <ItemCard key={item._id} item={item} /> // Use item._id for key if item has it
           ))}
         </div>
         <Pagination

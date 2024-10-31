@@ -43,8 +43,8 @@ const FilterBar = ({ onFilterChange }) => {
 
   // Clear the selected filter
   const clearFilter = () => {
-    // setSelectedFilter("");
-    // onFilterChange(""); // Call the filter change handler with an empty string
+    setSelectedFilter("");
+    onFilterChange(""); // Call the filter change handler with an empty string
 
     // Update the URL to remove the category parameter
     const queryParams = new URLSearchParams(location.search);
@@ -58,8 +58,7 @@ const FilterBar = ({ onFilterChange }) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
 
-        // Clear the selected filter
-        clearFilter();
+
       }
     };
 
