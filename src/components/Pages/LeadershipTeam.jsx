@@ -23,8 +23,8 @@ const teamMembers = [
         description: 'Preet is a talented back-end developer with a keen eye for detail. His expertise in white box testing ensures that the systems we build are robust and efficient. Preets ability to identify potential issues before they become problems contributes significantly to the quality of our software solutions, making him an invaluable asset to our development team.',
         socialLinks: {
             linkedin: 'https://www.linkedin.com/in/preet-patel-8b4617256/',
-            github: 'https://twitter.com/preetpatel',
-            instagram: 'https://facebook.com/preetpatel',
+            github: '/leadership-team',
+            instagram: '/leadership-team',
         },
     },
     {
@@ -34,9 +34,9 @@ const teamMembers = [
         image: '/dhru.jpg', // Replace with your image paths
         description: 'Dhru is dedicated to ensuring that our products meet the highest standards of quality. With a strong background in testing methodologies, he meticulously evaluates software functionality, performance, and usability. His commitment to delivering a seamless user experience drives the continuous improvement of our applications.',
         socialLinks: {
-            linkedin: 'https://linkedin.com/in/dhrupatel',
-            github: 'https://twitter.com/dhrupatel',
-            instagram: 'https://facebook.com/dhrupatel',
+            linkedin: '/leadership-team',
+            github: '/leadership-team',
+            instagram: '/leadership-team',
         },
     },
 ];
