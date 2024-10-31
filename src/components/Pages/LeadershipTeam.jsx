@@ -19,7 +19,7 @@ const teamMembers = [
         name: 'Preet Patel',
         title: 'Back-End Developer & White Box Tester',
         position: 'Co-Founder & COO',
-        image: '/Preet.png', // Replace with your image paths
+        image: '/Preet-Patel.jpg', // Replace with your image paths
         description: 'Preet is a talented back-end developer with a keen eye for detail. His expertise in white box testing ensures that the systems we build are robust and efficient. Preets ability to identify potential issues before they become problems contributes significantly to the quality of our software solutions, making him an invaluable asset to our development team.',
         socialLinks: {
             linkedin: 'https://www.linkedin.com/in/preet-patel-8b4617256/',
