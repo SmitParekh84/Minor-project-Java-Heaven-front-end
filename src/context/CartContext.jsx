@@ -84,16 +84,17 @@ export const CartProvider = ({ children }) => {
         const token = createCartToken(cartItems);
         localStorage.setItem('carttoken', token);
 
-        if (cartItems.length > 0) {
             updateCartOnServer(); // Send the token to the server only if there are cart items
-        }
         console.log("Token being sent:", token);
     }, [cartItems]);
 
     const addToCart = (newItem) => {
         setCartItems((prevItems) => {
+            
             const existingItemIndex = prevItems.findIndex(
-                (item) => item.id === newItem.id && item.size === newItem.size
+                
+                (item) => {
+                    return item._id === newItem.id && item.size === newItem.size}
             );
 
             if (existingItemIndex >= 0) {
@@ -129,7 +130,7 @@ export const CartProvider = ({ children }) => {
 
     return (
         <CartContext.Provider
-            value={{ cartItems, addToCart, removeFromCart, updateCartItemQuantity, clearCart }}
+            value={{ cartItems,setCartItems, addToCart, removeFromCart, updateCartItemQuantity, clearCart }}
         >
             {children}
         </CartContext.Provider>

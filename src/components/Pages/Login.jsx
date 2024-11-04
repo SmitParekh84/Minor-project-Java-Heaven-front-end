@@ -4,9 +4,11 @@ import { useUser } from "../../context/UserContext"; // Adjust the import path
 import axios from "axios";
 import toast from "react-hot-toast";
 import { API_URL } from "../../config";
+import { useCart } from "../../context/CartContext";
 
 export default function Login() {
     const navigate = useNavigate();
+    const {setCartItems} = useCart(); // Access setCartItems from CartContext
     const { setUser } = useUser(); // Access setUser from UserContext
     const [loading, setLoading] = useState(false); // New loading state
 
@@ -58,10 +60,11 @@ export default function Login() {
             const cartResponse = await fetch(`${API_URL}/api/users/cart/${uId}`);
             const cartData = await cartResponse.json(); // Parse the response to JSON
             console.log('Cart data:', cartData);
+            setCartItems(cartData?.cart)
             // Create and store the cart token
             const cartToken = btoa(JSON.stringify(cartData)); // Generate the cart token
             localStorage.setItem('carttoken', cartToken); // Store it in localStorage
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            // axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
             toast.success(response.data.msg ?? 'Login successful.');
             setUser(user);

@@ -19,7 +19,8 @@ const ItemDetail = () => {
   const [item, setItem] = useState(null);
   const [selectedSize, setSelectedSize] = useState("");
   const { user } = useUser();
-  const { addToCart } = useCart();
+  const { addToCart,cartItems } = useCart();
+  
   const [loading, setLoading] = useState(false); // Loading state for button
   const [error, setError] = useState(null);
   const [similarItems, setSimilarItems] = useState([]);
@@ -71,6 +72,7 @@ const ItemDetail = () => {
       toast.error("Please select a cup size");
       return;
     }
+    // debugger; 
     // Check if user object exists before accessing user.username
     if (!foundUser || !foundUser.username) {
       toast.error("Please log in to add items to your cart");
@@ -82,6 +84,8 @@ const ItemDetail = () => {
 
     try {
       await addToCart({ ...item, id: item._id, size: selectedSize });
+      console.log(selectedSize);
+      
 
       toast.success("Item added to cart successfully!");
     } catch (err) {
@@ -90,6 +94,9 @@ const ItemDetail = () => {
       setLoading(false); // Reset loading state
     }
   };
+
+  console.log(cartItems,item);
+
 
   // Loading, error, or item not found states
   if (!item) return <LoadingIndicator />;

@@ -23,6 +23,10 @@ const Cart = () => {
     [cartItems]
   );
 
+  const storedToken = localStorage.getItem("carttoken");
+  console.log(storedToken
+  );
+  
   // Load user info on component mount
   useEffect(() => {
     const storedUser = localStorage.getItem("userInfo");
@@ -34,7 +38,7 @@ const Cart = () => {
         email: parsedUser.email,
       }));
     }
-  }, []);
+  }, [storedToken]);
 
   const handleQuantityChange = useCallback(
     (item, change) => {
@@ -117,6 +121,7 @@ const Cart = () => {
       </div>
     );
   }
+console.log(cartItems);
 
   return (
     <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">

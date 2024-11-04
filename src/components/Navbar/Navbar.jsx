@@ -57,6 +57,7 @@ export default function Navbar() {
   const handleClickOutside = (event) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
       setShowProfileMenu(false);
+      
     }
   };
 
@@ -90,6 +91,7 @@ export default function Navbar() {
     setLoading(true);
     try {
       setMobileMenuOpen(false);
+      setShowProfileMenu(false); // Close profile menu on logout
       const token = localStorage.getItem('token');
       let userId = null;
 
@@ -101,10 +103,11 @@ export default function Navbar() {
       await axios.post(`${API_URL}/api/logout`, { userId }, { withCredentials: true });
 
       sessionStorage.clear();
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('userInfo');
-      localStorage.removeItem('carttoken');
+      localStorage.clear();
+      
+      setIsLoggedIn(false);
+      setUser(null);
+      
       navigate('/');
       toast.success("Logout Successfully");
     } catch (error) {
@@ -114,15 +117,14 @@ export default function Navbar() {
     } finally {
       setLoading(false);
     }
-    setTimeout(() => {
-      window.location.reload();
-    }, 500);
+ 
   };
 
   const isAdmin = user?.role === 'admin';
 
   const handleLinkClick = (path) => {
     setMobileMenuOpen(false);
+    setShowProfileMenu(false); // Close profile menu on navigation
     navigate(path);
   };
 
