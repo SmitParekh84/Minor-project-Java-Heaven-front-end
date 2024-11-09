@@ -5,111 +5,173 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config";
 import axios from "axios";
+import EditPassword from "./EditPassword"; // Import new component for password editing
 
 export default function Profile() {
     const { user, setUser } = useUser();
     const [localUser, setLocalUser] = useState(null);
-    const [loading, setLoading] = useState(true); // Loading state
-    const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
+    const [editMode, setEditMode] = useState(false);
+    const [showPasswordModal, setShowPasswordModal] = useState(false); // State to control password modal
+    const [originalUser, setOriginalUser] = useState({});
     const parseJwt = (token) => {
         try {
             const base64Url = token.split('.')[1];
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+                '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+            ).join(''));
             return JSON.parse(jsonPayload);
         } catch (error) {
             return null;
         }
     };
+
     useEffect(() => {
-        const storedUserInfo = localStorage.getItem("userInfo");
-        if (storedUserInfo) {
-            try {
-                const parsedUserInfo = JSON.parse(storedUserInfo);
-                setLocalUser(parsedUserInfo);
-                setUser(parsedUserInfo);
-            } catch (error) {
-                console.error("Failed to parse user info:", error);
-                setLocalUser(null);
-                setUser(null);
-            }
+        const storedUserInfo = localStorage.getItem("user");
+        const parsedUserInfo = parseJwt(storedUserInfo);
+        if (parsedUserInfo) {
+            setLocalUser(parsedUserInfo);
+            setUser(parsedUserInfo);
+            setOriginalUser(parsedUserInfo); // Store the original data for comparison
         }
-        setLoading(false); // Set loading to false after checking
+        setLoading(false);
     }, [setUser]);
 
-    const handleLogout = async () => {
-
+    const handleUpdate = async () => {
         try {
-            // Retrieve token from localStorage
             const token = localStorage.getItem('token');
-            let userId = null;
+            const userId = user && user.userId;
 
-            if (token) {
-                // Decode the token to get the userId or relevant data
-                const decodedToken = parseJwt(token);
-                userId = decodedToken ? decodedToken.userId : null; // Assuming your token contains userId
+            if (!userId) {
+                toast.error("User ID not found");
+                return;
             }
 
-            const response = await axios.post(`${API_URL}/api/logout`, { userId }, {
-                withCredentials: true // Send cookies, if needed
+            const response = await axios.put(`${API_URL}/api/users/${userId}`, {
+                mobno: localUser.mobno,
+                address: localUser.address
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
             });
 
-            // Clear sessionStorage and localStorage
-            sessionStorage.clear();
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            localStorage.removeItem('userInfo');
+            // Get current user info from localStorage
+            const storedUserInfo = localStorage.getItem("userInfo");
+            let updatedUserInfo = storedUserInfo ? JSON.parse(storedUserInfo) : {};
 
+            // Update only the relevant fields
+            updatedUserInfo = {
+                ...updatedUserInfo, // Spread the existing data
+                address: response.data.user.address,  // Update address if changed
+                mobno: response.data.user.mobno,      // Update mobno if changed
+                // Add any other fields you want to update
+            };
 
-            navigate('/');
+            // Update user context with the new data
+            setUser(updatedUserInfo);
 
-            toast.success("Logout Successfully");
-
+            // Save the updated user info back to localStorage
+            localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
+            toast.success("Profile updated successfully!");
+            setEditMode(false);
         } catch (error) {
-            console.error("Error during logout:", error);
-
-            toast.error("Failed to logout. Please try again.");
+            console.error("Error updating profile:", error);
+            toast.error("Failed to update profile.");
         }
-        setTimeout(() => {
-            window.location.reload();
-        }, 500);
     };
 
-
-    if (loading) {
-        return (
-            <LoadingIndicator />
-        );
-    }
+    const handleCancel = () => {
+        // Reset the changes to the original user data
+        setLocalUser(originalUser);
+        setEditMode(false);
+    };
+    if (loading) return <LoadingIndicator />;
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-background">
-            <div className="bg-secondary rounded-lg shadow-lg m-5 p-11 max-w-sm w-full">
-                <h2 className="text-2xl text-center font-bold text-primary-foreground mb-6">Profile</h2>
+        <div className="flex items-center justify-center min-h-screen">
+            <div className="bg-secondary rounded-lg shadow-lg m-5 p-8 max-w-md w-full">
+                <h2 className="text-3xl text-center font-semibold text-primary-foreground mb-8">Profile</h2>
                 {localUser ? (
                     <>
-                        <div className="mb-4">
-                            <p className="text-muted-foreground">Username: {localUser.username || "N/A"}</p>
+                        <div className="mb-5">
+                            <label className="text-primary font-medium">Username</label>
+                            <p className="text-muted-foreground">{localUser.username || "N/A"}</p>
                         </div>
-                        <div className="mb-4">
-                            <p className="text-muted-foreground">Email: {localUser.email || "N/A"}</p>
+                        <div className="mb-5">
+                            <label className="text-primary font-medium">Email</label>
+                            <p className="text-muted-foreground">{localUser.email || "N/A"}</p>
+                        </div>
+                        <div className="mb-5">
+                            <label className="text-primary font-medium">Mobile No</label>
+                            <p className="text-muted-foreground">
+                                {editMode ? (
+                                    <input
+                                        type="text"
+                                        className="border-2 text-secondary border-primary rounded-md w-full px-3 py-2 mt-1 focus:border-primary-foreground focus:outline-none"
+                                        value={localUser.mobno || ""}
+                                        onChange={(e) => setLocalUser({ ...localUser, mobno: e.target.value })}
+                                    />
+                                ) : (
+                                    localUser.mobno || "N/A"
+                                )}
+                            </p>
+                        </div>
+                        <div className="mb-5">
+                            <label className="text-primary font-medium">Address</label>
+                            <p className="text-muted-foreground">
+                                {editMode ? (
+                                    <input
+                                        type="text"
+                                        className="border-2 text-secondary border-primary rounded-md w-full px-3 py-2 mt-1 focus:border-primary-foreground focus:outline-none"
+                                        value={localUser.address || ""}
+                                        onChange={(e) => setLocalUser({ ...localUser, address: e.target.value })}
+                                    />
+                                ) : (
+                                    localUser.address || "N/A"
+                                )}
+                            </p>
                         </div>
 
-                        <button
-                            className="w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold"
-                            onClick={handleLogout}
-                            aria-label="Logout" // Accessibility label
-                        >
-                            Logout
-                        </button>
+                        {/* Button Container */}
+                        <div className="flex flex-col gap-4 mt-6">
+                            {/* Edit / Save button */}
+                            <button
+                                onClick={editMode ? handleUpdate : () => setEditMode(true)}
+                                className={`py-3 rounded-full font-semibold text-secondary 
+                                ${editMode ? "bg-green-500 hover:bg-green-600" : "bg-primary-foreground hover:bg-primary-foreground/80"}`}
+                            >
+                                {editMode ? "Save Changes" : "Edit Profile"}
+                            </button>
+
+                            {/* Cancel button */}
+                            {editMode && (
+                                <button
+                                    onClick={handleCancel}
+                                    className="py-3 rounded-full font-semibold bg-gray-300 text-gray-700 hover:bg-gray-400"
+                                >
+                                    Cancel
+                                </button>
+                            )}
+
+                            {/* Change Password Button */}
+                            <button
+                                onClick={() => setShowPasswordModal(true)}
+                                className="py-3 rounded-full font-semibold bg-primary-foreground text-secondary hover:bg-primary-foreground/80"
+                            >
+                                Change Password
+                            </button>
+                        </div>
                     </>
                 ) : (
                     <p className="text-muted-foreground">No user is logged in.</p>
                 )}
+
+                {/* Password Edit Modal */}
+                {showPasswordModal && (
+                    <EditPassword onClose={() => setShowPasswordModal(false)} />
+                )}
             </div>
         </div>
+
     );
 }
