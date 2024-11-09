@@ -30,7 +30,7 @@ export default function Widget() {
   }, []);
 
   const handleAddItem = (item) => {
-    navigate(`/menu/${item._id}`);
+    navigate(`/item/${item._id}`);
   };
 
   const settings = {
