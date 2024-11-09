@@ -50,14 +50,29 @@ export default function Navbar() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const navigate = useNavigate();
   const totalItemsInCart = useMemo(() => cartItems.reduce((total, item) => total + item.quantity, 0), [cartItems]);
-  const loggedInUser = localStorage.getItem('userInfo');
+  const parseJwt = (token) => {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+      ).join(''));
+      return JSON.parse(jsonPayload);
+    } catch (error) {
+      return null;
+    }
+  };
+
+  const storedUserInfo = localStorage.getItem('user');
+  const decodedToken = JSON.stringify(storedUserInfo);
+  const loggedInUser = parseJwt(decodedToken);
   const menuRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
   const handleClickOutside = (event) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
       setShowProfileMenu(false);
-      
+
     }
   };
 
@@ -68,20 +83,11 @@ export default function Navbar() {
     };
   }, []);
 
-  const parseJwt = (token) => {
-    try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-      return JSON.parse(jsonPayload);
-    } catch (error) {
-      return null;
-    }
-  };
+
 
   useEffect(() => {
     if (loggedInUser) {
-      const foundUser = JSON.parse(loggedInUser);
+      const foundUser = JSON.stringify(loggedInUser);
       setUser(foundUser);
       setIsLoggedIn(true);
     }
@@ -104,10 +110,10 @@ export default function Navbar() {
 
       sessionStorage.clear();
       localStorage.clear();
-      
+
       setIsLoggedIn(false);
       setUser(null);
-      
+
       navigate('/');
       toast.success("Logout Successfully");
     } catch (error) {
@@ -117,7 +123,7 @@ export default function Navbar() {
     } finally {
       setLoading(false);
     }
- 
+
   };
 
   const isAdmin = user?.role === 'admin';

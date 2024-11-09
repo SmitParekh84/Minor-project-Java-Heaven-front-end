@@ -4,8 +4,11 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config";
+import { useUser } from "../../context/UserContext";
 
 const Cart = () => {
+  const { user, setUser } = useUser();
+
   const navigate = useNavigate();
   const { cartItems, updateCartItemQuantity, removeFromCart, clearCart } = useCart();
 
@@ -16,29 +19,37 @@ const Cart = () => {
   });
   const [deliveryOption, setDeliveryOption] = useState("hand");
   const [loading, setLoading] = useState(false); // Add loading state
-
+  const parseJwt = (token) => {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+      ).join(''));
+      return JSON.parse(jsonPayload);
+    } catch (error) {
+      return null;
+    }
+  };
   // Calculate total amount in cart
   const totalAmount = useMemo(
     () => cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
     [cartItems]
   );
 
-  const storedToken = localStorage.getItem("carttoken");
-  console.log(storedToken
-  );
-  
   // Load user info on component mount
   useEffect(() => {
-    const storedUser = localStorage.getItem("userInfo");
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUserInfo((prev) => ({
+    const storedUser = localStorage.getItem("user");
+    const parsedUserInfo = parseJwt(storedUser);
+    if (parsedUserInfo) {
+      const parsedUser = parsedUserInfo;
+      setUser((prev) => ({
         ...prev,
         username: parsedUser.username,
         email: parsedUser.email,
       }));
     }
-  }, [storedToken]);
+  }, []);
 
   const handleQuantityChange = useCallback(
     (item, change) => {
@@ -67,13 +78,13 @@ const Cart = () => {
     e.preventDefault();
     setLoading(true); // Start loading
 
-    if (!userInfo.username) {
+    if (!user.username) {
       toast.error("User not logged in. Please log in to place an order.");
       setLoading(false); // Stop loading
       return;
     }
 
-    if (deliveryOption === "home" && !userInfo.address.trim()) {
+    if (deliveryOption === "home" && !user.address.trim()) {
       toast.error("Address is required for home delivery.");
       setLoading(false); // Stop loading
       return;
@@ -81,10 +92,10 @@ const Cart = () => {
 
     try {
       const response = await axios.post(`${API_URL}/api/orders`, {
-        userId: userInfo.username,
+        userId: user.username,
         cartItems: modifiedCartItems,
         deliveryOption,  // Add delivery option
-        address: deliveryOption === "home" ? userInfo.address : "",  // Include address if home delivery
+        address: deliveryOption === "home" ? user.address : "",  // Include address if home delivery
       });
 
       toast.success("Order placed successfully!");
@@ -121,7 +132,6 @@ const Cart = () => {
       </div>
     );
   }
-console.log(cartItems);
 
   return (
     <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">

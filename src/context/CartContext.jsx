@@ -19,10 +19,23 @@ export const CartProvider = ({ children }) => {
         }
         return [];
     });
+    const parseJwt = (token) => {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            return JSON.parse(jsonPayload);
+        } catch (error) {
+            return null;
+        }
+    };
     // Fetch cart items when user logs in
     useEffect(() => {
-        const storedUserInfo = localStorage.getItem("userInfo");
-        const parsedUserInfo = JSON.parse(storedUserInfo);
+        const storedUserInfo = localStorage.getItem("user");
+        const parsedUserInfo = parseJwt(storedUserInfo);
 
         if (parsedUserInfo && parsedUserInfo._id) {
             fetchCartItems(parsedUserInfo._id);
@@ -50,15 +63,15 @@ export const CartProvider = ({ children }) => {
 
     const updateCartOnServer = async () => {
         try {
-            const storedUserInfo = localStorage.getItem("userInfo");
-            const parsedUserInfo = JSON.parse(storedUserInfo);
+            const storedUserInfo = localStorage.getItem("user");
+            const parsedUserInfo = parseJwt(storedUserInfo);
 
-            if (!parsedUserInfo || !parsedUserInfo._id) {
+            if (!parsedUserInfo || !parsedUserInfo.userId) {
                 console.error("User information is not available.");
                 return;
             }
 
-            const userId = parsedUserInfo._id;
+            const userId = parsedUserInfo.userId;
             const response = await fetch(`${API_URL}/api/users/cart`, {
                 method: 'POST',
                 headers: {
@@ -84,17 +97,18 @@ export const CartProvider = ({ children }) => {
         const token = createCartToken(cartItems);
         localStorage.setItem('carttoken', token);
 
-            updateCartOnServer(); // Send the token to the server only if there are cart items
+        updateCartOnServer(); // Send the token to the server only if there are cart items
         console.log("Token being sent:", token);
     }, [cartItems]);
 
     const addToCart = (newItem) => {
         setCartItems((prevItems) => {
-            
+
             const existingItemIndex = prevItems.findIndex(
-                
+
                 (item) => {
-                    return item._id === newItem.id && item.size === newItem.size}
+                    return item._id === newItem.id && item.size === newItem.size
+                }
             );
 
             if (existingItemIndex >= 0) {
@@ -130,7 +144,7 @@ export const CartProvider = ({ children }) => {
 
     return (
         <CartContext.Provider
-            value={{ cartItems,setCartItems, addToCart, removeFromCart, updateCartItemQuantity, clearCart }}
+            value={{ cartItems, setCartItems, addToCart, removeFromCart, updateCartItemQuantity, clearCart }}
         >
             {children}
         </CartContext.Provider>
