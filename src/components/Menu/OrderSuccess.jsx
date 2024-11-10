@@ -1,4 +1,3 @@
-// src/pages/OrderSuccess.js
 import React, { useEffect, useRef, useState } from "react";
 import { useCart } from "../../context/CartContext";
 import axios from "axios";
@@ -13,10 +12,13 @@ const OrderSuccess = () => {
     const { clearCart } = useCart();
     const { search } = useLocation();
     const sessionId = new URLSearchParams(search).get("session_id");
+
     // Ref to prevent multiple order placement
     const hasPlacedOrderRef = useRef(false);
+
     useEffect(() => {
         const placeOrder = async () => {
+            // If there's no sessionId or the order has already been placed, do nothing
             if (!sessionId || hasPlacedOrderRef.current) return;
 
             try {
@@ -24,6 +26,7 @@ const OrderSuccess = () => {
                 const sessionResponse = await axios.get(`${API_URL}/api/verify-payment-session?session_id=${sessionId}`);
                 const session = sessionResponse.data;
 
+                // If payment was successful
                 if (session.payment_status === "paid") {
                     // Mark that the order has been placed to prevent re-runs
                     hasPlacedOrderRef.current = true;
@@ -50,9 +53,14 @@ const OrderSuccess = () => {
             }
         };
 
-        placeOrder();
-    }, [sessionId]);
+        // Only call placeOrder if sessionId is available and the order has not been placed already
+        if (sessionId && !hasPlacedOrderRef.current) {
+            placeOrder();
+        }
 
+    }, [sessionId, clearCart]); // `clearCart` added to dependencies to ensure consistency.
+
+    // If loading, show loading spinner
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center h-screen">
@@ -62,6 +70,7 @@ const OrderSuccess = () => {
         );
     }
 
+    // If order is not placed, show failure message
     if (!orderPlaced) {
         return (
             <div className="flex flex-col items-center justify-center h-screen">
@@ -73,6 +82,7 @@ const OrderSuccess = () => {
         );
     }
 
+    // If order is successfully placed, show success message
     return (
         <div className="flex flex-col items-center justify-center h-screen">
             <h1 className="text-4xl font-bold text-green-600">Order Placed Successfully!</h1>
