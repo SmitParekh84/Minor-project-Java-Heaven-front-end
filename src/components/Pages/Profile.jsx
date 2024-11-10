@@ -14,6 +14,7 @@ export default function Profile() {
     const [editMode, setEditMode] = useState(false);
     const [showPasswordModal, setShowPasswordModal] = useState(false); // State to control password modal
     const [originalUser, setOriginalUser] = useState({});
+
     const parseJwt = (token) => {
         try {
             const base64Url = token.split('.')[1];
@@ -23,17 +24,20 @@ export default function Profile() {
             ).join(''));
             return JSON.parse(jsonPayload);
         } catch (error) {
+            console.error("Error parsing JWT:", error); // Log parsing errors
             return null;
         }
     };
 
     useEffect(() => {
-        const storedUserInfo = localStorage.getItem("user");
-        const parsedUserInfo = parseJwt(storedUserInfo);
-        if (parsedUserInfo) {
-            setLocalUser(parsedUserInfo);
-            setUser(parsedUserInfo);
-            setOriginalUser(parsedUserInfo); // Store the original data for comparison
+        const token = localStorage.getItem("token"); // Changed to 'token' for consistency
+        if (token) {
+            const parsedUserInfo = parseJwt(token);
+            if (parsedUserInfo) {
+                setLocalUser(parsedUserInfo);
+                setUser(parsedUserInfo);
+                setOriginalUser(parsedUserInfo); // Store the original data for comparison
+            }
         }
         setLoading(false);
     }, [setUser]);
@@ -55,36 +59,33 @@ export default function Profile() {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            // Get current user info from localStorage
-            const storedUserInfo = localStorage.getItem("userInfo");
-            let updatedUserInfo = storedUserInfo ? JSON.parse(storedUserInfo) : {};
+            // Assuming response contains an updated token
+            const newToken = response.data.token;
 
-            // Update only the relevant fields
-            updatedUserInfo = {
-                ...updatedUserInfo, // Spread the existing data
-                address: response.data.user.address,  // Update address if changed
-                mobno: response.data.user.mobno,      // Update mobno if changed
-                // Add any other fields you want to update
-            };
-
-            // Update user context with the new data
-            setUser(updatedUserInfo);
-
-            // Save the updated user info back to localStorage
-            localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
-            toast.success("Profile updated successfully!");
-            setEditMode(false);
+            if (newToken) {
+                // Update both `user` and `localStorage` with the new JWT token
+                setUser(parseJwt(newToken));
+                localStorage.setItem("user", newToken);  // Save the updated JWT in `user` key
+                localStorage.setItem("token", newToken);  // Update `token` key with new token
+                localStorage.setItem("userInfo", newToken);  // Update `token` key with new token
+                toast.success("Profile updated successfully!");
+                setEditMode(false);
+            } else {
+                toast.error("Failed to receive updated token.");
+            }
         } catch (error) {
             console.error("Error updating profile:", error);
             toast.error("Failed to update profile.");
         }
     };
 
+
+
     const handleCancel = () => {
-        // Reset the changes to the original user data
         setLocalUser(originalUser);
         setEditMode(false);
     };
+
     if (loading) return <LoadingIndicator />;
 
     return (
@@ -132,9 +133,7 @@ export default function Profile() {
                             </p>
                         </div>
 
-                        {/* Button Container */}
                         <div className="flex flex-col gap-4 mt-6">
-                            {/* Edit / Save button */}
                             <button
                                 onClick={editMode ? handleUpdate : () => setEditMode(true)}
                                 className={`py-3 rounded-full font-semibold text-secondary 
@@ -143,7 +142,6 @@ export default function Profile() {
                                 {editMode ? "Save Changes" : "Edit Profile"}
                             </button>
 
-                            {/* Cancel button */}
                             {editMode && (
                                 <button
                                     onClick={handleCancel}
@@ -153,7 +151,6 @@ export default function Profile() {
                                 </button>
                             )}
 
-                            {/* Change Password Button */}
                             <button
                                 onClick={() => setShowPasswordModal(true)}
                                 className="py-3 rounded-full font-semibold bg-primary-foreground text-secondary hover:bg-primary-foreground/80"
@@ -166,12 +163,10 @@ export default function Profile() {
                     <p className="text-muted-foreground">No user is logged in.</p>
                 )}
 
-                {/* Password Edit Modal */}
                 {showPasswordModal && (
                     <EditPassword onClose={() => setShowPasswordModal(false)} />
                 )}
             </div>
         </div>
-
     );
 }

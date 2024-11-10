@@ -52,11 +52,12 @@ export default function Navbar() {
   console.log("loggedInUser", loggedInUser);
   const menuRef = useRef(null);
   const [loading, setLoading] = useState(false);
-
+  const buttonRef = useRef(null); // Ref to the profile button
   const handleClickOutside = (event) => {
-    if (menuRef.current && !menuRef.current.contains(event.target)) {
+    // Close the profile menu if click happens outside the menu and button
+    if (menuRef.current && !menuRef.current.contains(event.target) &&
+      buttonRef.current && !buttonRef.current.contains(event.target)) {
       setShowProfileMenu(false);
-
     }
   };
 
@@ -137,11 +138,11 @@ export default function Navbar() {
   // const loggedInAdmin = parseJwt(decodedAdminToken);
   // // const adminInfo = JSON.parse(localStorage.getItem('user'));
   // const isAdmin = loggedInAdmin?.role === 'admin';
-  const ProfileMenu = ({ user, handleLogout, loading }) => (
+  const ProfileMenu = ({ user, handleLogout, loading, setShowProfileMenu }) => (
     <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-100">
       <div className="px-4 py-2 flex items-center text-gray-800">
         <FontAwesomeIcon icon={faUser} className="mr-2 text-gray-600" />
-        <Link to="/profile" className="hover:text-blue-500 font-semibold">
+        <Link to="/profile" className="hover:text-blue-500 font-semibold" onClick={() => handleClickOutside(false)}>
           {loggedInUser?.username || "Guest"}
         </Link>
       </div>
@@ -194,14 +195,15 @@ export default function Navbar() {
           {isLoggedIn ? (
             <div className="relative" ref={menuRef}>
               <button
-                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                ref={buttonRef}
+                onClick={() => setShowProfileMenu((prev) => !prev)}
                 className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4"
                 aria-haspopup="true"
                 aria-expanded={showProfileMenu}
-              >
+              >smit
                 <FontAwesomeIcon icon={faUser} className="cursor-pointer text-2xl" />
               </button>
-              {showProfileMenu && <ProfileMenu user={user} handleLogout={handleLogout} loading={loading} />}
+              {showProfileMenu && <ProfileMenu user={user} handleLogout={handleLogout} loading={loading} setShowProfileMenu={setShowProfileMenu} />}
             </div>
           ) : (
             <Link to="/login" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
