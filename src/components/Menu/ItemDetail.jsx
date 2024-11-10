@@ -61,7 +61,7 @@ const ItemDetail = () => {
 
   const calculatePrice = () => {
     const basePrice = item?.price || 0;
-    if (selectedSize === "Small") return Math.round(basePrice * 0.2);
+    if (selectedSize === "Small") return Math.round(basePrice / 2);
     if (selectedSize === "Medium") return Math.round(basePrice);
     if (selectedSize === "Large") return Math.round(basePrice * 1.5);
     return Math.round(basePrice);

@@ -30,32 +30,11 @@ const parseJwt = (token) => {
   }
 };
 
-const storedUserInfo = localStorage.getItem('user');
-const decodedToken = JSON.stringify(storedUserInfo);
-const loggedInUser = parseJwt(decodedToken);
-const ProfileMenu = ({ user, handleLogout, loading }) => (
-  <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-100">
-    <div className="px-4 py-2 flex items-center text-gray-800">
-      <FontAwesomeIcon icon={faUser} className="mr-2 text-gray-600" />
-      <Link to="/profile" className="hover:text-blue-500 font-semibold">
-        {loggedInUser.username || "Guest"}
-      </Link>
-    </div>
-    <div className="px-4 py-2 flex items-center text-gray-800">
-      <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-gray-600" />
-      <span>{loggedInUser.email || "Guest"}</span>
-    </div>
-    <div className="border-t border-gray-300"></div>
-    <button
-      onClick={handleLogout}
-      className={`flex items-center justify-center w-full text-center px-4 py-2 text-sm text-red-600 hover:bg-gray-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-      disabled={loading}
-    >
-      <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
-      {loading ? "Logging out..." : "Logout"}
-    </button>
-  </div>
-);
+// const storedUserInfo = localStorage.getItem('user');
+// const decodedToken = JSON.stringify(storedUserInfo);
+// const loggedInUser = parseJwt(decodedToken);
+
+
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -158,7 +137,29 @@ export default function Navbar() {
   // const loggedInAdmin = parseJwt(decodedAdminToken);
   // // const adminInfo = JSON.parse(localStorage.getItem('user'));
   // const isAdmin = loggedInAdmin?.role === 'admin';
-
+  const ProfileMenu = ({ user, handleLogout, loading }) => (
+    <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-100">
+      <div className="px-4 py-2 flex items-center text-gray-800">
+        <FontAwesomeIcon icon={faUser} className="mr-2 text-gray-600" />
+        <Link to="/profile" className="hover:text-blue-500 font-semibold">
+          {loggedInUser?.username || "Guest"}
+        </Link>
+      </div>
+      <div className="px-4 py-2 flex items-center text-gray-800">
+        <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-gray-600" />
+        <span>{loggedInUser?.email || "Guest"}</span>
+      </div>
+      <div className="border-t border-gray-300"></div>
+      <button
+        onClick={handleLogout}
+        className={`flex items-center justify-center w-full text-center px-4 py-2 text-sm text-red-600 hover:bg-gray-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+        disabled={loading}
+      >
+        <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
+        {loading ? "Logging out..." : "Logout"}
+      </button>
+    </div>
+  );
   const handleLinkClick = (path) => {
     setMobileMenuOpen(false);
     setShowProfileMenu(false); // Close profile menu on navigation
