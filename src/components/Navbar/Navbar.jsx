@@ -200,7 +200,7 @@ export default function Navbar() {
                 className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4"
                 aria-haspopup="true"
                 aria-expanded={showProfileMenu}
-              >smit
+              >
                 <FontAwesomeIcon icon={faUser} className="cursor-pointer text-2xl" />
               </button>
               {showProfileMenu && <ProfileMenu user={user} handleLogout={handleLogout} loading={loading} setShowProfileMenu={setShowProfileMenu} />}
