@@ -12,6 +12,7 @@ import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import LeadershipTeam from "./components/Pages/LeadershipTeam";
 import About from "./components/Pages/About";
 import NotFound from "./NotFound";
+import OrderSuccess from "./components/Menu/OrderSuccess";
 // Lazy load your components
 const Hero = React.lazy(() => import("./components/Hero/Hero"));
 const GetHelp = React.lazy(() => import("./components/Pages/GetHelp"));
@@ -56,6 +57,7 @@ export default function App() {
                   <Route path="/admin" element={<AdminLogin />} />
                   <Route path="/revenue" element={<RevenuePage />} />
                   {/* Protected User Routes */}
+                  <Route path="/order-success" element={<ProtectedRoute><OrderSuccess /></ProtectedRoute>} />
                   <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
                   <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
                   <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
