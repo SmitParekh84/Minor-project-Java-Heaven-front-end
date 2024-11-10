@@ -4,10 +4,10 @@ import { useCart } from "../../context/CartContext";
 import { useUser } from "../../context/UserContext";
 import toast from "react-hot-toast";
 import { API_URL } from "../../config";
-import Slider from "react-slick"; // Import Slider from react-slick
-import "slick-carousel/slick/slick.css"; // Import slick carousel styles
-import "slick-carousel/slick/slick-theme.css"; // Import slick theme styles
-import ItemCard from './ItemCard'; // Adjust the import path based on your project structure
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import ItemCard from './ItemCard';
 import LoadingIndicator from './LoadingIndicator';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
@@ -19,18 +19,13 @@ const ItemDetail = () => {
   const [item, setItem] = useState(null);
   const [selectedSize, setSelectedSize] = useState("");
   const { user } = useUser();
-  const { addToCart,cartItems } = useCart();
-  
-  const [loading, setLoading] = useState(false); // Loading state for button
+  const { addToCart, cartItems } = useCart();
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [similarItems, setSimilarItems] = useState([]);
   const loggedInUser = localStorage.getItem('user');
 
   useEffect(() => {
-    // const userInfo = parseJwt(user);
-    // console.log("User", user);
-    // Check if user object exists before accessing user.username
-
     const fetchItem = async () => {
       try {
         const response = await fetch(`${API_URL}/api/items/${id}`);
@@ -39,7 +34,6 @@ const ItemDetail = () => {
         const foundItem = await response.json();
         setItem(foundItem);
 
-        // Fetch similar items
         const similarResponse = await fetch(`${API_URL}/api/items?category=${foundItem.category}`);
         const similarItemsData = await similarResponse.json();
         setSimilarItems(similarItemsData.filter(i => i._id !== id));
@@ -50,6 +44,7 @@ const ItemDetail = () => {
 
     fetchItem();
   }, [id]);
+
   const parseJwt = (token) => {
     try {
       const base64Url = token.split('.')[1];
@@ -64,6 +59,13 @@ const ItemDetail = () => {
     }
   };
 
+  const calculatePrice = () => {
+    const basePrice = item?.price || 0;
+    if (selectedSize === "Small") return Math.round(basePrice * 0.2);
+    if (selectedSize === "Medium") return Math.round(basePrice);
+    if (selectedSize === "Large") return Math.round(basePrice * 1.5);
+    return Math.round(basePrice);
+  };
 
   const handleAddToCart = async () => {
     const foundUser = parseJwt(loggedInUser);
@@ -72,33 +74,24 @@ const ItemDetail = () => {
       toast.error("Please select a cup size");
       return;
     }
-    // debugger; 
-    // Check if user object exists before accessing user.username
     if (!foundUser || !foundUser.username) {
       toast.error("Please log in to add items to your cart");
       navigate("/login");
       return;
     }
 
-    setLoading(true); // Set loading to true when adding to cart
+    setLoading(true);
 
     try {
-      await addToCart({ ...item, id: item._id, size: selectedSize });
-      console.log(selectedSize);
-      
-
+      await addToCart({ ...item, id: item._id, size: selectedSize, price: calculatePrice() });
       toast.success("Item added to cart successfully!");
     } catch (err) {
       toast.error("Failed to add item to cart.");
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
   };
 
-  console.log(cartItems,item);
-
-
-  // Loading, error, or item not found states
   if (!item) return <LoadingIndicator />;
   if (error) return <ErrorMessage error={error} />;
 
@@ -116,7 +109,7 @@ const ItemDetail = () => {
             </h2>
             <p className="text-gray-600 mt-2 text-md md:text-lg">{item.description}</p>
             <p className="text-xl md:text-2xl font-semibold mt-4 text-brown-700">
-              Price: ₹ {item.price.toFixed(2)}
+              Price: ₹ {calculatePrice()}
             </p>
           </div>
 
@@ -135,47 +128,43 @@ const ItemDetail = () => {
         </div>
       </div>
 
-
-      {/* Similar Items Section */}
       <div className="mt-10 w-full">
         <h3 className="text-3xl font-semibold mb-6 text-gray-900 hover:text-gray-800 transition duration-300">Similar Items</h3>
         <Slider
-          slidesToShow={3} // Show 3 items at a time
-          slidesToScroll={3} // Scroll 1 item at a time
-          autoplay={true} // Enable autoplay if needed
-          autoplaySpeed={3000} // Autoplay speed
-          dots={true} // Show dots for pagination
+          slidesToShow={3}
+          slidesToScroll={3}
+          autoplay={true}
+          autoplaySpeed={3000}
+          dots={true}
           className="relative"
           responsive={[
             {
               breakpoint: 640,
               settings: {
                 slidesToShow: 1,
-                slidesToScroll: 1, // Show 2 items on small screens
+                slidesToScroll: 1,
               },
             },
             {
               breakpoint: 768,
               settings: {
-                slidesToShow: 2, // Show 3 items on medium and larger screens
+                slidesToShow: 2,
                 slidesToScroll: 2,
               },
             },
           ]}
         >
           {similarItems.map((similarItem) => (
-            <div key={similarItem.id} className="p-2"> {/* Add padding around each item */}
+            <div key={similarItem.id} className="p-2">
               <ItemCard item={similarItem} className="border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300" />
             </div>
           ))}
         </Slider>
       </div>
-
     </div>
   );
 };
 
-// Image Carousel Component
 const ImageCarousel = ({ images }) => (
   <div className="flex justify-center space-x-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory mt-4">
     {images.map((image, index) => (
@@ -187,17 +176,14 @@ const ImageCarousel = ({ images }) => (
       />
     ))}
   </div>
-
 );
 
-// Error Message Component
 const ErrorMessage = ({ error }) => (
   <div className="flex items-center justify-center h-screen">
     <p>Error: {error}</p>
   </div>
 );
 
-// Cup Size Selector Component
 const CupSizeSelector = ({ selectedSize, onSizeSelect }) => (
   <div className="mt-4">
     <h3 className="text-lg font-semibold">Select Cup Size:</h3>

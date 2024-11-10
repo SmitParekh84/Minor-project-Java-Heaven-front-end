@@ -17,18 +17,33 @@ const adminNavigation = [
   { name: 'Add Menu Item', href: '/admin/add-menu-item' },
   { name: 'Best Selling Item', href: 'admin/best-selling' },
 ];
+const parseJwt = (token) => {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+      '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+    ).join(''));
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    return null;
+  }
+};
 
+const storedUserInfo = localStorage.getItem('user');
+const decodedToken = JSON.stringify(storedUserInfo);
+const loggedInUser = parseJwt(decodedToken);
 const ProfileMenu = ({ user, handleLogout, loading }) => (
   <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-100">
     <div className="px-4 py-2 flex items-center text-gray-800">
       <FontAwesomeIcon icon={faUser} className="mr-2 text-gray-600" />
       <Link to="/profile" className="hover:text-blue-500 font-semibold">
-        {user.username || "Guest"}
+        {loggedInUser.username || "Guest"}
       </Link>
     </div>
     <div className="px-4 py-2 flex items-center text-gray-800">
       <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-gray-600" />
-      <span>{user.email || "Guest"}</span>
+      <span>{loggedInUser.email || "Guest"}</span>
     </div>
     <div className="border-t border-gray-300"></div>
     <button
@@ -48,24 +63,14 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   const totalItemsInCart = useMemo(() => cartItems.reduce((total, item) => total + item.quantity, 0), [cartItems]);
-  const parseJwt = (token) => {
-    try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
-        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-      ).join(''));
-      return JSON.parse(jsonPayload);
-    } catch (error) {
-      return null;
-    }
-  };
 
   const storedUserInfo = localStorage.getItem('user');
   const decodedToken = JSON.stringify(storedUserInfo);
   const loggedInUser = parseJwt(decodedToken);
+  console.log("loggedInUser", loggedInUser);
   const menuRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
@@ -86,12 +91,35 @@ export default function Navbar() {
 
 
   useEffect(() => {
+
     if (loggedInUser) {
       const foundUser = JSON.stringify(loggedInUser);
+      // const parseUser = JSON.parse(foundUser);
+
       setUser(foundUser);
+
       setIsLoggedIn(true);
     }
+
   }, [loggedInUser]);
+
+  useEffect(() => {
+    const storedAdminInfo = localStorage.getItem("user");
+
+    if (storedAdminInfo) {
+      const decodedAdminToken = parseJwt(storedAdminInfo);
+      console.log("decodedAdminToken", decodedAdminToken);
+      if (decodedAdminToken) {
+        console.log("decodedAdminToken", decodedAdminToken);
+        console.log("loggedInUser", loggedInUser);
+        setUser(decodedAdminToken);
+        setIsLoggedIn(true);
+
+        // Check if the user has admin role
+        setIsAdmin(decodedAdminToken.role === "admin");
+      }
+    }
+  }, []);
 
   const handleLogout = async () => {
     setLoading(true);
@@ -110,7 +138,7 @@ export default function Navbar() {
 
       sessionStorage.clear();
       localStorage.clear();
-
+      setIsAdmin(false);
       setIsLoggedIn(false);
       setUser(null);
 
@@ -125,8 +153,11 @@ export default function Navbar() {
     }
 
   };
-
-  const isAdmin = user?.role === 'admin';
+  // const storedAdminInfo = localStorage.getItem('user');
+  // const decodedAdminToken = JSON.stringify(storedAdminInfo);
+  // const loggedInAdmin = parseJwt(decodedAdminToken);
+  // // const adminInfo = JSON.parse(localStorage.getItem('user'));
+  // const isAdmin = loggedInAdmin?.role === 'admin';
 
   const handleLinkClick = (path) => {
     setMobileMenuOpen(false);
@@ -233,7 +264,7 @@ export default function Navbar() {
                 aria-expanded={showProfileMenu}
               >
                 <FontAwesomeIcon icon={faUser} className=" cursor-pointer" />
-                <span className="truncate">{user.username || "Guest"}</span>
+                <span className="truncate">{loggedInUser.username || "Guest"}</span>
               </button>
               {showProfileMenu && <ProfileMenu user={user} handleLogout={handleLogout} loading={loading} />}
             </div>
