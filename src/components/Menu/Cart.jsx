@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { useCart } from "../../context/CartContext"; // Adjust path if necessary
+import { useCart } from "../../context/CartContext";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -8,45 +8,39 @@ import { useUser } from "../../context/UserContext";
 
 const Cart = () => {
   const { user, setUser } = useUser();
-
   const navigate = useNavigate();
   const { cartItems, updateCartItemQuantity, removeFromCart, clearCart } = useCart();
 
-  const [userInfo, setUserInfo] = useState({
-    username: "",
-    email: "",
-    address: "",
-  });
+  const [userInfo, setUserInfo] = useState({ username: "", email: "", address: "" });
   const [deliveryOption, setDeliveryOption] = useState("hand");
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [loading, setLoading] = useState(false);
+
   const parseJwt = (token) => {
     try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
-        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-      ).join(''));
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
+      );
       return JSON.parse(jsonPayload);
     } catch (error) {
       return null;
     }
   };
-  // Calculate total amount in cart
-  const totalAmount = useMemo(
-    () => cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
-    [cartItems]
-  );
 
-  // Load user info on component mount
+  const totalAmount = useMemo(() => cartItems.reduce((total, item) => total + item.price * item.quantity, 0), [cartItems]);
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const parsedUserInfo = parseJwt(storedUser);
     if (parsedUserInfo) {
-      const parsedUser = parsedUserInfo;
       setUser((prev) => ({
         ...prev,
-        username: parsedUser.username,
-        email: parsedUser.email,
+        username: parsedUserInfo.username,
+        email: parsedUserInfo.email,
       }));
     }
   }, []);
@@ -67,74 +61,65 @@ const Cart = () => {
     const { name, value } = e.target;
     setUserInfo((prev) => ({ ...prev, [name]: value }));
   };
-  const modifiedCartItems = cartItems.map(item => ({
-    id: item._id, // Rename _id to id
+
+  const modifiedCartItems = cartItems.map((item) => ({
+    id: item._id,
     name: item.name,
     price: item.price,
     quantity: item.quantity,
     size: item.size,
   }));
+
   const handleCheckout = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading
+    setLoading(true);
 
     if (!user.username) {
       toast.error("User not logged in. Please log in to place an order.");
-      setLoading(false); // Stop loading
+      setLoading(false);
       return;
     }
 
     if (deliveryOption === "home" && !user.address.trim()) {
       toast.error("Address is required for home delivery.");
-      setLoading(false); // Stop loading
+      setLoading(false);
       return;
     }
 
     try {
-      const response = await axios.post(`${API_URL}/api/orders`, {
+      const response = await axios.post(`${API_URL}/api/create-checkout-session`, {
         userId: user.username,
         cartItems: modifiedCartItems,
         deliveryOption,  // Add delivery option
         address: deliveryOption === "home" ? user.address : "",  // Include address if home delivery
+
+        successUrl: `${window.location.origin}/order-success`,
+        cancelUrl: `${window.location.origin}/cart`,
       });
 
-      toast.success("Order placed successfully!");
-      navigate("/my-orders");
-      clearCart();
+      // Redirect to Stripe Checkout
+      window.location.href = response.data.url;
     } catch (error) {
-      console.error("Error during checkout:", error);
+      console.error("Error creating checkout session:", error);
       const errorMessage = error.response?.data?.message || "Checkout failed. Please try again.";
       toast.error(errorMessage);
     } finally {
-      setLoading(false); // Stop loading after checkout
+      setLoading(false);
     }
   };
-
 
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <div className="w-16 h-16 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-        <p className="mt-4 text-gray-700">Placing your order...</p>
-      </div>
-    );
-  }
-
-  if (!cartItems.length) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
-          <div className="p-8 text-center text-gray-700">
-            <h2 className="text-2xl font-semibold">Your Cart is Empty</h2>
-            <p className="mt-2">Browse our products and add items to your cart!</p>
-          </div>
-        </div>
+        <p className="mt-4 text-gray-700">Redirecting to payment...</p>
       </div>
     );
   }
 
   return (
     <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
+      {/* Rest of your component structure here */}
       <div className="container mx-auto p-4 mt-2">
         <h2 className="text-4xl font-bold mb-8 text-center text-gray-900">Your Shopping Cart</h2>
 
@@ -178,12 +163,10 @@ const Cart = () => {
             </div>
           </div>
         </div>
-
-        {/* Checkout Form */}
         <form onSubmit={handleCheckout} className="mt-8 bg-white shadow-lg rounded-lg p-6">
           <h3 className="text-2xl font-bold mb-4 text-gray-900">Checkout</h3>
 
-          {/* Radio buttons for delivery option */}
+          {/* Delivery Option Radio Buttons */}
           <div className="flex items-center mb-4">
             <input type="radio" id="hand" name="deliveryOption" value="hand" checked={deliveryOption === "hand"} onChange={() => setDeliveryOption("hand")} className="mr-2" />
             <label htmlFor="hand" className="text-gray-700">Hand to Hand</label>
@@ -204,12 +187,12 @@ const Cart = () => {
               className="border border-gray-300 p-2 w-full mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           )}
+
           <button type="submit" className="w-full bg-secondary text-white py-2 rounded-lg hover:bg-secondary-light transition duration-200">
-            Place Order
+            Proceed to Payment
           </button>
         </form>
       </div>
-
     </div>
   );
 };
