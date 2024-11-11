@@ -49,7 +49,7 @@ export default function Navbar() {
   const storedUserInfo = localStorage.getItem('user');
   const decodedToken = JSON.stringify(storedUserInfo);
   const loggedInUser = parseJwt(decodedToken);
-  console.log("loggedInUser", loggedInUser);
+  // console.log("loggedInUser", loggedInUser);
   const menuRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const buttonRef = useRef(null); // Ref to the profile button
@@ -88,10 +88,10 @@ export default function Navbar() {
 
     if (storedAdminInfo) {
       const decodedAdminToken = parseJwt(storedAdminInfo);
-      console.log("decodedAdminToken", decodedAdminToken);
+      // console.log("decodedAdminToken", decodedAdminToken);
       if (decodedAdminToken) {
-        console.log("decodedAdminToken", decodedAdminToken);
-        console.log("loggedInUser", loggedInUser);
+        // console.log("decodedAdminToken", decodedAdminToken);
+        // console.log("loggedInUser", loggedInUser);
         setUser(decodedAdminToken);
         setIsLoggedIn(true);
 

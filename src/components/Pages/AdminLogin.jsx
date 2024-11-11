@@ -77,7 +77,7 @@ export default function AdminLogin() {
             // Ensure userInfo and sessionId are not undefined
 
             // Log values before storing them
-            console.log('Login response:', response.data);
+            // console.log('Login response:', response.data);
 
             sessionStorage.setItem('sessionId', sessionId);
             sessionStorage.setItem('userId', userId);

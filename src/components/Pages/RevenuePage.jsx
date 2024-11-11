@@ -32,7 +32,7 @@ const RevenuePage = () => {
     const fetchRevenueData = async () => {
         try {
             const response = await axios.get(`${API_URL}/api/dashboard`);
-            console.log("Dashboard API Response:", response.data); // Log the full response
+            // console.log("Dashboard API Response:", response.data); // Log the full response
 
             if (response.data && response.data.status === 'success') {
                 const data = response.data.data;

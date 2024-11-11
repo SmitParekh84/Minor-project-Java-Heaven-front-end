@@ -34,7 +34,7 @@ const AdminDashboard = () => {
         const fetchDashboardData = async () => {
             try {
                 const response = await axios.get(`${API_URL}/api/dashboard`);
-                console.log("API Response:", response.data); // Log the full response
+                // console.log("API Response:", response.data); // Log the full response
 
                 if (response.data && response.data.status === 'success') {
                     const data = response.data.data;
@@ -145,11 +145,11 @@ const AdminDashboard = () => {
         );
     }
 
-    console.log('Rendering:', {
-        totalOrders,
-        totalSales,
-        bestSellingItems,
-    });
+    // console.log('Rendering:', {
+    //     totalOrders,
+    //     totalSales,
+    //     bestSellingItems,
+    // });
 
     return (
         <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">

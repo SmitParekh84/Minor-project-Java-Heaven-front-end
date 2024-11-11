@@ -65,7 +65,7 @@ export default function SignUp() {
     const formattedMobileNumber = `${formData.countryCode}-${formData.mobno.replace(/-/g, '')}`; // Correctly remove hyphen for concatenation
 
     // Log the data being sent
-    console.log("Sending data:", { ...formData, mobno: formattedMobileNumber });
+    // console.log("Sending data:", { ...formData, mobno: formattedMobileNumber });
 
     // Client-side validations
     let newErrors = {};

@@ -43,7 +43,7 @@ export const CartProvider = ({ children }) => {
     }, []);
     const fetchCartItems = async (userId) => {
         try {
-            console.log('Fetching cart items for user:', userId);
+            // console.log('Fetching cart items for user:', userId);
             const response = await fetch(`${API_URL}/api/users/cart/${userId}`);
             const data = await response.json();
 
@@ -51,7 +51,7 @@ export const CartProvider = ({ children }) => {
                 throw new Error(data.error || 'Failed to fetch cart items');
             }
             setCartItems(data.cart || []); // Ensure fallback to empty array
-            console.log('Fetched cart items:', data.cart);
+            // console.log('Fetched cart items:', data.cart);
         } catch (error) {
             console.error('Error fetching cart items:', error);
         }
@@ -84,7 +84,7 @@ export const CartProvider = ({ children }) => {
             if (!response.ok) {
                 throw new Error(data.error || 'Failed to update cart on server');
             }
-            console.log('Cart updated on server:', data);
+            // console.log('Cart updated on server:', data);
         } catch (error) {
             console.error('Error updating cart on server:', error);
         }
@@ -98,7 +98,7 @@ export const CartProvider = ({ children }) => {
         localStorage.setItem('carttoken', token);
 
         updateCartOnServer(); // Send the token to the server only if there are cart items
-        console.log("Token being sent:", token);
+        // console.log("Token being sent:", token);
     }, [cartItems]);
 
     const addToCart = (newItem) => {

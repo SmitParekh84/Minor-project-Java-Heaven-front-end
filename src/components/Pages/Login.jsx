@@ -80,11 +80,11 @@ export default function Login() {
             // console.log("Parsed User Info:", parsedUserInfo);
 
 
-            console.log("User ID:", uId);
+            // console.log("User ID:", uId);
 
             const cartResponse = await fetch(`${API_URL}/api/users/cart/${uId}`);
             const cartData = await cartResponse.json(); // Parse the response to JSON
-            console.log('Cart data:', cartData);
+            // console.log('Cart data:', cartData);
             setCartItems(cartData?.cart)
             // Create and store the cart token
             const cartToken = btoa(JSON.stringify(cartData)); // Generate the cart token

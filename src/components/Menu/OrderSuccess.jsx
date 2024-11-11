@@ -34,7 +34,8 @@ const OrderSuccess = () => {
                 address: session.metadata.address || "",  // Use the address passed in metadata
               });
       
-              console.log("Order address:", session.metadata.address); // Check the address value
+              // console.log("Order address:", session.metadata.address); // Check the address value
+              
               clearCart();
               setOrderPlaced(true);
               toast.success("Order placed successfully!");
