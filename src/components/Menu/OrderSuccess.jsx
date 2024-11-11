@@ -18,49 +18,40 @@ const OrderSuccess = () => {
 
     useEffect(() => {
         const placeOrder = async () => {
-            // If there's no sessionId or the order has already been placed, do nothing
-            if (!sessionId || hasPlacedOrderRef.current) return;
-
-            try {
-                // Verify the session with Stripe
-                const sessionResponse = await axios.get(`${API_URL}/api/verify-payment-session?session_id=${sessionId}`);
-                const session = sessionResponse.data;
-
-                // If payment was successful
-                if (session.payment_status === "paid") {
-                    // Mark that the order has been placed to prevent re-runs
-                    hasPlacedOrderRef.current = true;
-
-                    // Place the order in your backend
-                    await axios.post(`${API_URL}/api/orders`, {
-                        userId: session.metadata.userId,
-                        cartItems: JSON.parse(session.metadata.cartItems),
-                        deliveryOption: session.metadata.deliveryOption,
-                        address: session.metadata.address,
-                    });
-
-                    clearCart();
-                    setOrderPlaced(true);
-                    toast.success("Order placed successfully!");
-                } else {
-                    toast.error("Payment was not completed.");
-                }
-            } catch (error) {
-                console.error("Error verifying payment:", error);
-                toast.error("Order could not be placed. Please try again.");
-            } finally {
-                setLoading(false);
+          if (!sessionId || hasPlacedOrderRef.current) return;
+      
+          try {
+            hasPlacedOrderRef.current = true;
+      
+            const sessionResponse = await axios.get(`${API_URL}/api/verify-payment-session?session_id=${sessionId}`);
+            const session = sessionResponse.data;
+      
+            if (session.payment_status === "paid") {
+              await axios.post(`${API_URL}/api/orders`, {
+                userId: session.metadata.userId,
+                cartItems: JSON.parse(session.metadata.cartItems),
+                deliveryOption: session.metadata.deliveryOption,
+                address: session.metadata.address || "",  // Use the address passed in metadata
+              });
+      
+              console.log("Order address:", session.metadata.address); // Check the address value
+              clearCart();
+              setOrderPlaced(true);
+              toast.success("Order placed successfully!");
+            } else {
+              toast.error("Payment was not completed.");
             }
+          } catch (error) {
+            console.error("Error verifying payment:", error);
+            toast.error("Order could not be placed. Please try again.");
+          } finally {
+            setLoading(false);
+          }
         };
-
-        // Only call placeOrder if sessionId is available and the order has not been placed already
-        if (sessionId && !hasPlacedOrderRef.current) {
-            placeOrder();
-        }
-
-    }, [sessionId, clearCart]); // `clearCart` added to dependencies to ensure consistency.
-
-    // If loading, show loading spinner
+      
+        placeOrder();
+      }, [sessionId, clearCart]);
+      
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center h-screen">
@@ -75,7 +66,9 @@ const OrderSuccess = () => {
         return (
             <div className="flex flex-col items-center justify-center h-screen">
                 <h1 className="text-3xl font-semibold text-red-600">Order placement failed.</h1>
-                <button onClick={() => navigate("/")} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+                <button onClick={() => navigate("/")} className="mt-4 px-6 py-3 w-full sm:w-auto  bg-secondary text-white font-semibold text-lg rounded-lg 
+                hover:bg-secondary-light shadow-md transition duration-200 transform hover:scale-105 focus:outline-none 
+                focus:ring-2 focus:ring-secondary focus:ring-offset-2">
                     Return to Home
                 </button>
             </div>
@@ -87,8 +80,19 @@ const OrderSuccess = () => {
         <div className="flex flex-col items-center justify-center h-screen">
             <h1 className="text-4xl font-bold text-green-600">Order Placed Successfully!</h1>
             <p className="text-lg text-gray-700 mt-2">Thank you for your purchase.</p>
-            <button onClick={() => navigate("/")} className="mt-6 px-6 py-2 bg-blue-500 text-white rounded">
+            <button
+                onClick={() => navigate("/menu")}
+                className="mt-4 px-6 py-3 w-full sm:w-auto  bg-secondary text-white font-semibold text-lg rounded-lg 
+                hover:bg-secondary-light shadow-md transition duration-200 transform hover:scale-105 focus:outline-none 
+                focus:ring-2 focus:ring-secondary focus:ring-offset-2">
                 Continue Shopping
+            </button>
+            <button
+                onClick={() => navigate("/my-orders")}
+                className="mt-4 px-6 py-3 w-full sm:w-auto  bg-secondary text-white font-semibold text-lg rounded-lg 
+                hover:bg-secondary-light shadow-md transition duration-200 transform hover:scale-105 focus:outline-none 
+                focus:ring-2 focus:ring-secondary focus:ring-offset-2">
+                View Orders
             </button>
         </div>
     );
