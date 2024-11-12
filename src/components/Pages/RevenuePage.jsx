@@ -213,32 +213,38 @@ const RevenuePage = () => {
 
             {/* Pie Chart Section */}
             <div className="mt-6">
-                <h2 className="text-2xl font-semibold text-gray-700 mb-4">Sales by Delivery Option</h2>
-                <div className="relative" style={{ width: '100%', height: '400px' }}>
-                    <Pie
-                        data={deliveryChartData}
-                        options={{
-                            responsive: true,
-                            plugins: {
-                                legend: {
-                                    position: 'top',
-                                    labels: {
+                <h2 className="text-2xl font-semibold text-gray-700 mb-4 text-center">Sales by Delivery Option</h2>
+
+                {/* Center and make responsive */}
+                <div className="flex justify-center">
+                    <div className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl" style={{ height: '400px' }}>
+                        <Pie
+                            data={deliveryChartData}
+                            options={{
+                                responsive: true,
+                                maintainAspectRatio: false, // Ensures responsiveness
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                        labels: {
+                                            color: 'gray',
+                                        },
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: 'Sales by Delivery Option',
                                         color: 'gray',
+                                        font: {
+                                            size: 20,
+                                        },
                                     },
                                 },
-                                title: {
-                                    display: true,
-                                    text: 'Sales by Delivery Option',
-                                    color: 'gray',
-                                    font: {
-                                        size: 20,
-                                    },
-                                },
-                            },
-                        }}
-                    />
+                            }}
+                        />
+                    </div>
                 </div>
             </div>
+
         </div>
     );
 };

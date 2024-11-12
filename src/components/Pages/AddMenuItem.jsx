@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faEdit, faTrash, faCoffee, faDollar, faImage, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faEdit, faTrash, faCoffee, faDollar, faImage, faArrowLeft, faArrowRight, faRupee, faRupeeSign, faInr } from '@fortawesome/free-solid-svg-icons';
 import { API_URL } from '../../config';
 
 // Spinner component
@@ -186,7 +186,7 @@ const AddMenuItem = () => {
                             />
                         </div>
                         <div className="flex items-center border border-gray-300 rounded-lg">
-                            <FontAwesomeIcon icon={faDollar} className="ml-3" />
+                            <FontAwesomeIcon icon={faInr} className="ml-3" />
                             <input
                                 type="number"
                                 value={price}
