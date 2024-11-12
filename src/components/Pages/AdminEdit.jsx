@@ -44,15 +44,43 @@ const AdminEdit = () => {
     const [loading, setLoading] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [deleteAdminId, setDeleteAdminId] = useState(null);
+    const [currentAdminId, setCurrentAdminId] = useState(null); // or an initial value if needed
+
 
     // Validation states
     const [validationErrors, setValidationErrors] = useState({});
+
+    const parseJwt = (token) => {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+                '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+            ).join(''));
+            return JSON.parse(jsonPayload);
+        } catch (error) {
+            console.error("Error parsing JWT:", error); // Log parsing errors
+            return null;
+        }
+    };
 
     // Fetch admins on component mount
     const fetchAdmins = async () => {
         setLoading(true);
         try {
+
             const { data } = await axios.get(`${API_URL}/api/admin/list`);
+            const adminIds = data.admins.map(admin => admin._id);
+            console.log(adminIds);
+            const token = localStorage.getItem("token"); // Changed to 'token' for consistency
+            if (token) {
+                const parsedUserInfo = parseJwt(token);
+                console.log(parsedUserInfo);
+                if (parsedUserInfo) {
+                    setCurrentAdminId(parsedUserInfo.userId);
+                }
+            }
+
             setAdmins(data.admins || []);
             setError(null);
         } catch (err) {
@@ -268,16 +296,28 @@ const AdminEdit = () => {
 
             </div>
 
+            {/* Admin List */}
             <div className="mt-6 bg-white p-6 rounded shadow-md">
                 <h2 className="text-xl font-semibold mb-4">Admin List</h2>
                 {loading && <Spinner />}
                 {!loading && admins.length === 0 && <p>No admins found.</p>}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
                     {admins.map((admin) => (
-                        <div key={admin._id} className="border p-4 rounded-lg shadow-lg bg-gray-50 hover:bg-gray-100 transition duration-300">
-                            <h3 className="font-bold">{admin.username}</h3>
+
+                        <div
+                            key={admin._id}
+                            className="border p-4 rounded-lg shadow-lg bg-gray-50 hover:bg-gray-100 transition duration-300"
+                        >
+                            <div className="flex justify-between items-center">
+                                <h3 className="font-bold">{admin.username}</h3>
+                                {currentAdminId === admin._id && (
+                                    <span className="text-green-600 font-semibold">Current</span>
+                                )}
+                            </div>
                             <p className="text-gray-600">{admin.email}</p>
                             <p className="text-gray-600">{admin.mobno}</p>
+
                             <div className="flex space-x-2 mt-2">
                                 <button
                                     className="bg-secondary text-white rounded-lg py-1 px-2 hover:brightness-150 transition duration-300"
@@ -293,10 +333,12 @@ const AdminEdit = () => {
                                 </button>
                             </div>
                         </div>
+
                     ))}
                 </div>
             </div>
 
+            {/* Confirmation Modal */}
             {showConfirm && (
                 <ConfirmationCard
                     onConfirm={handleDelete}
