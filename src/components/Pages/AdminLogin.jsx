@@ -95,9 +95,9 @@ export default function AdminLogin() {
             // const parsedUserInfo = JSON.parse(userInfoString);
             // console.log("Parsed User Info:", parsedUserInfo);
 
-            setUser(admin); // Store user info
-            localStorage.setItem("userRole", parsedUserInfo.role ?? ""); // Store user role safely
 
+            localStorage.setItem("userRole", parsedUserInfo.role ?? ""); // Store user role safely
+            setUser(admin); // Store user info
             // setUser(userInfo); // Set user information in context
             toast.success(response.data.msg ?? 'Admin login successful.');
 
