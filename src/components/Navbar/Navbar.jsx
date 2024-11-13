@@ -229,9 +229,9 @@ export default function Navbar() {
               <Link key="about" to="/about" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
                 About
               </Link>
-              <Link key="leadership-team" to="/leadership-team" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
+              {/* <Link key="leadership-team" to="/leadership-team" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
                 Leadership
-              </Link>
+              </Link> */}
               <Link key="menu" to="/menu" className="text-sm font-semibold leading-6 text-gray-900 hover:text-secondary">
                 Menu
               </Link>
@@ -317,9 +317,9 @@ export default function Navbar() {
                     >
                       Menu
                     </Link>
-                    <Link key="leadership-team" to="/leadership-team" onClick={() => handleLinkClick('/leadership-team')} className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
+                    {/* <Link key="leadership-team" to="/leadership-team" onClick={() => handleLinkClick('/leadership-team')} className="-mx-3 block rounded-lg py-1.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-200">
                       Leadership
-                    </Link>
+                    </Link> */}
                     <Link
                       key="about"
                       to="/about"

@@ -9,7 +9,7 @@ import Footer from "./components/Pages/Footer";
 import ProtectedRoute from "./components/Pages/ProtectedRoute";
 import LoadingIndicator from "./components/Menu/LoadingIndicator"
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
-import LeadershipTeam from "./components/Pages/LeadershipTeam";
+// import LeadershipTeam from "./components/Pages/LeadershipTeam";
 import About from "./components/Pages/About";
 import NotFound from "./NotFound";
 import OrderSuccess from "./components/Menu/OrderSuccess";
@@ -52,7 +52,7 @@ export default function App() {
                   <Route path="/login" element={<Login />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/sign-up" element={<SignUp />} />
-                  <Route path="/leadership-team" element={<LeadershipTeam />} />
+                  {/* <Route path="/leadership-team" element={<LeadershipTeam />} /> */}
                   <Route path="/item/:id" element={<ItemDetail />} />
                   <Route path="/admin" element={<AdminLogin />} />
                   <Route path="/revenue" element={<RevenuePage />} />
