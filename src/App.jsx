@@ -13,6 +13,7 @@ import LeadershipTeam from "./components/Pages/LeadershipTeam";
 import About from "./components/Pages/About";
 import NotFound from "./NotFound";
 import OrderSuccess from "./components/Menu/OrderSuccess";
+import StockManagement from "./components/Pages/Stock";
 // Lazy load your components
 const Hero = React.lazy(() => import("./components/Hero/Hero"));
 const GetHelp = React.lazy(() => import("./components/Pages/GetHelp"));
@@ -62,9 +63,11 @@ export default function App() {
                   <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
                   <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                   {/* Protected Admin Routes */}
+
                   <Route path="/admin-dashboard" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
                   <Route path="/admin/edit" element={<ProtectedRoute adminOnly><AdminEdit /></ProtectedRoute>} />
                   <Route path="/admin/add-menu-item" element={<ProtectedRoute adminOnly><AddMenuItem /></ProtectedRoute>} />
+                  <Route path="/admin/stock" element={<ProtectedRoute adminOnly><StockManagement /></ProtectedRoute>} />
                   <Route path="/admin/orders" element={<ProtectedRoute adminOnly><AdminOrders /></ProtectedRoute>} />
                   <Route path="/admin/best-selling" element={<ProtectedRoute adminOnly><BestSellingItem /></ProtectedRoute>} />
                   {/* 404 Route */}

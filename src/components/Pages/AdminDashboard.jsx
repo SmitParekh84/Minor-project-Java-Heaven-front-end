@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart, faUsers, faDollarSign, faChartLine, faClipboardCheck } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faUsers, faDollarSign, faChartLine, faClipboardCheck, faClock, faCheckCircle, faBoxOpen, faHourglassStart } from '@fortawesome/free-solid-svg-icons';
 import { Bar, Pie } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -22,6 +22,8 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 const AdminDashboard = () => {
     const [totalOrders, setTotalOrders] = useState(0);
     const [totalDeliveredOrders, setTotalDeliveredOrders] = useState(0);
+    const [totalPendingOrders, setTotalPendingOrders] = useState(0);
+    const [totalItemsOrder, setTotalItemsOrder] = useState(0);
     const [totalUsers, setTotalUsers] = useState(0);
     const [totalSales, setTotalSales] = useState(0);
     const [bestSellingItems, setBestSellingItems] = useState([]);
@@ -41,6 +43,8 @@ const AdminDashboard = () => {
 
                     setTotalOrders(data.totalOrders || 0);
                     setTotalDeliveredOrders(data.totalDeliveredOrders || 0);
+                    setTotalPendingOrders(data.totalPendingOrders || 0);
+                    setTotalItemsOrder(data.totalItemsOrders || 0);
                     setTotalUsers(data.totalUsers || 0);
                     setTotalSales(data.totalSales || 0);
                     setBestSellingItems(data.bestSellingItems || []);
@@ -81,6 +85,7 @@ const AdminDashboard = () => {
                         ],
                     });
                 }
+
             } catch (err) {
                 setError(err.message);
                 console.error("Error fetching dashboard data: ", err);
@@ -138,9 +143,11 @@ const AdminDashboard = () => {
     }
     if (error) {
         return (
-            <div className="text-red-600 text-center font-bold">
-                {`Error: ${error}`}
-                <button onClick={handleRetry} className="ml-4 text-blue-600 underline">Retry</button>
+            <div className="flex items-center justify-center h-screen">
+                <div className="text-red-600 text-center font-bold">
+                    {`Error: ${error}`}
+                    <button onClick={handleRetry} className="ml-4 text-blue-600 underline">Retry</button>
+                </div>
             </div>
         );
     }
@@ -159,7 +166,7 @@ const AdminDashboard = () => {
                 <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
                     <FontAwesomeIcon icon={faShoppingCart} className="text-5xl mr-4 text-blue-500" />
                     <div>
-                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Orders</h2>
+                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Placed Orders</h2>
                         <p className="text-2xl sm:text-3xl font-bold text-blue-600">{totalOrders}</p>
                     </div>
                 </div>
@@ -197,17 +204,35 @@ const AdminDashboard = () => {
                             <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Best Selling Items</h2>
                         </div>
                     </div>
-                    <ul className="list-disc mt-4 pl-4 text-gray-700 space-y-1">
+                    <ul className="mt-4 pl-4 text-gray-700 space-y-1">
                         {bestSellingItems.length > 0 ? (
                             bestSellingItems.map((item) => (
-                                <li key={item.name}>
-                                    {item.name} - <span className="font-bold">Sold: {item.totalSold}</span>
+                                <li key={item.name} className="flex items-center space-x-2">
+                                    <FontAwesomeIcon icon={faCheckCircle} className="text-green-500" />
+                                    <span>{item.name} - <span className="font-bold">Sold: {item.totalSold}</span></span>
                                 </li>
                             ))
                         ) : (
                             <li>No best-selling items found.</li>
                         )}
                     </ul>
+                </div>
+
+                {/* Total Items Pending */}
+                <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
+                    <FontAwesomeIcon icon={faHourglassStart} className="text-5xl mr-4 text-indigo-500" />
+                    <div>
+                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Orders Panding</h2>
+                        <p className="text-2xl sm:text-3xl font-bold text-indigo-600">{totalPendingOrders}</p>
+                    </div>
+                </div>
+                {/* Total Items Ordered */}
+                <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
+                    <FontAwesomeIcon icon={faBoxOpen} className="text-5xl mr-4 text-indigo-500" />
+                    <div>
+                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Items Ordered</h2>
+                        <p className="text-2xl sm:text-3xl font-bold text-indigo-600">{totalItemsOrder}</p>
+                    </div>
                 </div>
             </div>
 

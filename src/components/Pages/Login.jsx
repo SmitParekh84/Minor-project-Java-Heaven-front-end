@@ -53,40 +53,22 @@ export default function Login() {
             // Log values before storing them
             console.log('Login response:', response.data);
 
-            // Save necessary data in sessionStorage and localStorage
             localStorage.setItem('token', token);
             sessionStorage.setItem('sessionId', sessionId);
             sessionStorage.setItem('userId', userId);
             localStorage.setItem("userInfo", token);
-            // console.log("User Info:", user);
-            // const storedUserInfo = localStorage.getItem("userInfo");
-            // const parsedUserInfo = JSON.parse(storedUserInfo);
-            // const uId = parsedUserInfo._id;
-            // setUser(user);
-            // new code
-            const userInfoString = JSON.stringify(user);
-            // const storedUserInfo = localStorage.getItem("userInfo");
-            // Parse the string to access the properties
-            const parsedUserInfo = JSON.parse(userInfoString);
-            // const decodedToken = parseJwt(storedUserInfo);
-            // const userInfoString = JSON.stringify(decodedToken);
-            // console.log("User userInfoString:", userInfoString);
 
-            // // console.log("User userInfoString:", userInfoString);
-            // const parsedUserInfo = JSON.parse(userInfoString);
-            // console.log("Parsed User Info:", parsedUserInfo);
+            const userInfoString = JSON.stringify(user);
+
+            const parsedUserInfo = JSON.parse(userInfoString);
+
             const uId = parsedUserInfo._id;
             setUser(user);
-            // console.log("Parsed User Info:", parsedUserInfo);
-
-
-            // console.log("User ID:", uId);
+   
 
             const cartResponse = await fetch(`${API_URL}/api/users/cart/${uId}`);
             const cartData = await cartResponse.json(); // Parse the response to JSON
-            // console.log('Cart data:', cartData);
             setCartItems(cartData?.cart)
-            // Create and store the cart token
             const cartToken = btoa(JSON.stringify(cartData)); // Generate the cart token
             localStorage.setItem('carttoken', cartToken); // Store it in localStorage
 

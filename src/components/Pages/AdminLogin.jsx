@@ -78,10 +78,10 @@ export default function AdminLogin() {
 
             // Log values before storing them
             // console.log('Login response:', response.data);
-
+            localStorage.setItem("token", token);
             sessionStorage.setItem('sessionId', sessionId);
             sessionStorage.setItem('userId', userId);
-            localStorage.setItem("token", token)
+
             localStorage.setItem("userInfo", token);
             const userInfoString = JSON.stringify(admin);
             // const storedUserInfo = localStorage.getItem("userInfo");
@@ -100,11 +100,13 @@ export default function AdminLogin() {
             setUser(admin); // Store user info
             // setUser(userInfo); // Set user information in context
             toast.success(response.data.msg ?? 'Admin login successful.');
-
             navigate("/admin-dashboard"); // Redirect to admin dashboard
-            window.location.reload(); // Reload the page
-            // setError("Login failed. Please try again."); // Set error for UI
-            // toast.error("Login failed. Please try again.");
+            // Optionally reload the page
+            setTimeout(() => {
+                window.location.reload();
+            }, 500); // Small delay to ensure state/context updates before reload
+
+
 
         } catch (err) {
             console.error("Login error:", err); // Log the error for debugging

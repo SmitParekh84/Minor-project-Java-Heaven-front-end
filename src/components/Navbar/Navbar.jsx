@@ -15,6 +15,7 @@ const adminNavigation = [
   { name: 'Admin Edit', href: '/admin/edit' },
   { name: 'Revenue', href: '/revenue' },
   { name: 'Add Menu Item', href: '/admin/add-menu-item' },
+  { name: 'Stock Management', href: '/admin/stock' },
   { name: 'Best Selling Item', href: 'admin/best-selling' },
 ];
 const parseJwt = (token) => {
@@ -99,6 +100,7 @@ export default function Navbar() {
         setIsAdmin(decodedAdminToken.role === "admin");
       }
     }
+
   }, []);
 
   const handleLogout = async () => {
