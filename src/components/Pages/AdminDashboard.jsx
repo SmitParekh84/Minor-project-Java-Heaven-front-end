@@ -207,7 +207,7 @@ const AdminDashboard = () => {
                     </div>
                     <ul className="mt-4 pl-4 text-gray-700 space-y-1">
                         {bestSellingItems.length > 0 ? (
-                            bestSellingItems.map((item) => (
+                            bestSellingItems.slice(0, 3).map((item) => (
                                 <li key={item.name} className="flex items-center space-x-2">
                                     <FontAwesomeIcon icon={faCheckCircle} className="text-green-500" />
                                     <span>{item.name} - <span className="font-bold">Sold: {item.totalSold}</span></span>

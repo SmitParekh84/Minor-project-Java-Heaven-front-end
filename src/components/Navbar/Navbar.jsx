@@ -18,7 +18,7 @@ const adminNavigation = [
 
   { name: 'Stock Management', href: '/admin/stock' },
   { name: 'Best Selling Item', href: 'admin/best-selling' },
-  { name: 'Profile', href: '/profile' },
+
 ];
 const parseJwt = (token) => {
   try {
@@ -57,9 +57,7 @@ export default function Navbar() {
   const [loading, setLoading] = useState(false);
   const buttonRef = useRef(null); // Ref to the profile button
   const handleClickOutside = (event) => {
-    // Close the profile menu if click happens outside the menu and button
-    if (menuRef.current && !menuRef.current.contains(event.target) &&
-      buttonRef.current && !buttonRef.current.contains(event.target)) {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
       setShowProfileMenu(false);
     }
   };
