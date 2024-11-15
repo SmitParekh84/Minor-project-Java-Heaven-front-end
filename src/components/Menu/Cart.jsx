@@ -69,34 +69,50 @@ const Cart = () => {
     quantity: item.quantity,
     size: item.size,
   }));
-
+  const modifiedCartItemsCheck = cartItems.map(item => ({
+    productId: item.id, // Use `productId` as expected by the backend
+    name: item.name,
+    price: item.price,
+    quantity: item.quantity,
+    size: item.size,
+  }));
   const handleCheckout = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
+
     if (!user.username) {
       toast.error("User not logged in. Please log in to place an order.");
       setLoading(false);
       return;
     }
-  
+
     if (deliveryOption === "home" && (!userInfo.address || userInfo.address.trim() === "")) {
       toast.error("Address is required for home delivery.");
       setLoading(false);
       return;
     }
-  
+
+
     try {
+      // Verify stock availability
+      const stockCheckResponse = await axios.post(`${API_URL}/api/stock/check-stock`, {
+        cartItems: modifiedCartItemsCheck,
+      });
+      if (!stockCheckResponse.data.success) {
+        toast.error(stockCheckResponse.data.message || "Insufficient stock for one or more items.");
+        setLoading(false);
+        return;
+      }
       const response = await axios.post(`${API_URL}/api/create-checkout-session`, {
         userId: user.username,
         cartItems: modifiedCartItems,
         deliveryOption,  // Include the delivery option
         address: deliveryOption === "hand" ? "" : userInfo.address,  // Include the address if home delivery
-  
+
         successUrl: `${window.location.origin}/order-success`,
         cancelUrl: `${window.location.origin}/cart`,
       });
-  
+
       // Redirect to Stripe Checkout
       window.location.href = response.data.url;
     } catch (error) {
@@ -107,7 +123,7 @@ const Cart = () => {
       setLoading(false);
     }
   };
-  
+
 
   if (loading) {
     return (
