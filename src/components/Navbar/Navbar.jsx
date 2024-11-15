@@ -15,8 +15,10 @@ const adminNavigation = [
   { name: 'Admin Edit', href: '/admin/edit' },
   { name: 'Revenue', href: '/revenue' },
   { name: 'Add Menu Item', href: '/admin/add-menu-item' },
+
   { name: 'Stock Management', href: '/admin/stock' },
   { name: 'Best Selling Item', href: 'admin/best-selling' },
+  { name: 'Profile', href: '/profile' },
 ];
 const parseJwt = (token) => {
   try {
@@ -196,16 +198,7 @@ export default function Navbar() {
 
           {isLoggedIn ? (
             <div className="relative" ref={menuRef}>
-              <button
-                ref={buttonRef}
-                onClick={() => setShowProfileMenu((prev) => !prev)}
-                className="flex items-center text-sm font-semibold leading-6 text-gray-900 hover:text-secondary mr-4"
-                aria-haspopup="true"
-                aria-expanded={showProfileMenu}
-              >
-                <FontAwesomeIcon icon={faUser} className="cursor-pointer text-2xl" />
-              </button>
-              {showProfileMenu && <ProfileMenu user={user} handleLogout={handleLogout} loading={loading} setShowProfileMenu={setShowProfileMenu} />}
+
             </div>
           ) : (
             <Link to="/login" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">

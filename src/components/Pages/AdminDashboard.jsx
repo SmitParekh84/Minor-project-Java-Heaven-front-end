@@ -162,15 +162,22 @@ const AdminDashboard = () => {
         <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
             <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 p-4">
-                {/* Total Orders Card */}
+                {/* Total Delivered Orders Card */}
                 <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
-                    <FontAwesomeIcon icon={faShoppingCart} className="text-5xl mr-4 text-blue-500" />
+                    <FontAwesomeIcon icon={faClipboardCheck} className="text-5xl mr-4 text-indigo-500" />
                     <div>
-                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Placed Orders</h2>
-                        <p className="text-2xl sm:text-3xl font-bold text-blue-600">{totalOrders}</p>
+                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Delivered Orders</h2>
+                        <p className="text-2xl sm:text-3xl font-bold text-indigo-600">{totalDeliveredOrders}</p>
                     </div>
                 </div>
-
+                {/* Total Items Pending */}
+                <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
+                    <FontAwesomeIcon icon={faHourglassStart} className="text-5xl mr-4 text-indigo-500" />
+                    <div>
+                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Orders Pending</h2>
+                        <p className="text-2xl sm:text-3xl font-bold text-indigo-600">{totalPendingOrders}</p>
+                    </div>
+                </div>
                 {/* Total Users Card */}
                 <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
                     <FontAwesomeIcon icon={faUsers} className="text-5xl mr-4 text-green-500" />
@@ -188,14 +195,8 @@ const AdminDashboard = () => {
                         <p className="text-2xl sm:text-3xl font-bold text-yellow-600">₹{totalSales}</p>
                     </div>
                 </div>
-                {/* Total Delivered Orders Card */}
-                <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
-                    <FontAwesomeIcon icon={faClipboardCheck} className="text-5xl mr-4 text-indigo-500" />
-                    <div>
-                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Delivered Orders</h2>
-                        <p className="text-2xl sm:text-3xl font-bold text-indigo-600">{totalDeliveredOrders}</p>
-                    </div>
-                </div>
+
+
                 {/* Best Selling Items Card */}
                 <div className="border p-6 rounded-xl shadow-lg bg-white hover:shadow-2xl transition-shadow duration-300">
                     <div className="flex items-center">
@@ -217,15 +218,15 @@ const AdminDashboard = () => {
                         )}
                     </ul>
                 </div>
-
-                {/* Total Items Pending */}
+                {/* Total Orders Card */}
                 <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
-                    <FontAwesomeIcon icon={faHourglassStart} className="text-5xl mr-4 text-indigo-500" />
+                    <FontAwesomeIcon icon={faShoppingCart} className="text-5xl mr-4 text-blue-500" />
                     <div>
-                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Orders Panding</h2>
-                        <p className="text-2xl sm:text-3xl font-bold text-indigo-600">{totalPendingOrders}</p>
+                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Placed Orders</h2>
+                        <p className="text-2xl sm:text-3xl font-bold text-blue-600">{totalOrders}</p>
                     </div>
                 </div>
+
                 {/* Total Items Ordered */}
                 <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
                     <FontAwesomeIcon icon={faBoxOpen} className="text-5xl mr-4 text-indigo-500" />
