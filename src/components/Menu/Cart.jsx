@@ -141,7 +141,7 @@ const Cart = () => {
         <h2 className="text-4xl font-bold mb-8 text-center text-gray-900">Your Shopping Cart</h2>
 
         {cartItems.length === 0 ? (
-          <div className="text-center p-6 bg-gray-100 rounded-lg">
+          <div className="text-center p-6  rounded-lg">
             <p className="text-xl text-gray-700">Your cart is currently empty. Start adding some items!</p>
             <button
               onClick={() => navigate("/menu")}

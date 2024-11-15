@@ -21,7 +21,7 @@ const MyOrders = () => {
             return null;
         }
     };
-   
+
     const userInfo = parseJwt(localStorage.getItem('user'));
     const StriUserInfo = JSON.stringify(userInfo); // Convert to string for JSON.parse() TO
     const loggedInUser = StriUserInfo;
@@ -193,7 +193,7 @@ const MyOrders = () => {
                         </div>
                     ))
                 ) : (
-                    <div className="text-center text-gray-500 py-20">
+                    <div className="text-center h-screen text-gray-500 py-20">
                         {activeTab === 'pending' && "No pending orders found."}
                         {activeTab === 'delivered' && "No delivered orders found."}
                         {activeTab === 'cancelled' && "No cancelled orders found."}

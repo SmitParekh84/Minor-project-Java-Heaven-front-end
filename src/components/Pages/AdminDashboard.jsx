@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart, faUsers, faDollarSign, faChartLine, faClipboardCheck, faClock, faCheckCircle, faBoxOpen, faHourglassStart } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faUsers, faDollarSign, faChartLine, faTruck, faCartArrowDown, faInfoCircle, faListAlt, faClock, faCheckCircle, faBoxOpen, faHourglassStart, faUtensils } from '@fortawesome/free-solid-svg-icons';
 import { Bar, Pie } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -24,6 +24,7 @@ const AdminDashboard = () => {
     const [totalDeliveredOrders, setTotalDeliveredOrders] = useState(0);
     const [totalPendingOrders, setTotalPendingOrders] = useState(0);
     const [totalItemsOrder, setTotalItemsOrder] = useState(0);
+    const [totalRecentOrders, setTotalRecentOrders] = useState(0);
     const [totalUsers, setTotalUsers] = useState(0);
     const [totalSales, setTotalSales] = useState(0);
     const [bestSellingItems, setBestSellingItems] = useState([]);
@@ -44,8 +45,9 @@ const AdminDashboard = () => {
                     setTotalOrders(data.totalOrders || 0);
                     setTotalDeliveredOrders(data.totalDeliveredOrders || 0);
                     setTotalPendingOrders(data.totalPendingOrders || 0);
-                    setTotalItemsOrder(data.totalItemsOrders || 0);
                     setTotalUsers(data.totalUsers || 0);
+                    setTotalItemsOrder(data.totalItemsOrders || 0);
+                    setTotalRecentOrders(data.recentOrders.length || 0);
                     setTotalSales(data.totalSales || 0);
                     setBestSellingItems(data.bestSellingItems || []);
 
@@ -163,44 +165,45 @@ const AdminDashboard = () => {
             <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 p-4">
                 {/* Total Delivered Orders Card */}
-                <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
-                    <FontAwesomeIcon icon={faClipboardCheck} className="text-5xl mr-4 text-indigo-500" />
+                <div className="border p-6 rounded-xl shadow-lg bg-gradient-to-r from-green-50 to-green-100 flex items-center hover:shadow-2xl transition-shadow duration-300">
+                    <FontAwesomeIcon icon={faTruck} className="text-5xl mr-4  text-green-600" />
                     <div>
                         <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Delivered Orders</h2>
-                        <p className="text-2xl sm:text-3xl font-bold text-indigo-600">{totalDeliveredOrders}</p>
+                        <p className="text-2xl sm:text-3xl font-bold  text-green-600">{totalDeliveredOrders}</p>
                     </div>
                 </div>
-                {/* Total Items Pending */}
-                <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
-                    <FontAwesomeIcon icon={faHourglassStart} className="text-5xl mr-4 text-indigo-500" />
-                    <div>
-                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Orders Pending</h2>
-                        <p className="text-2xl sm:text-3xl font-bold text-indigo-600">{totalPendingOrders}</p>
-                    </div>
-                </div>
+
+
                 {/* Total Users Card */}
-                <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
-                    <FontAwesomeIcon icon={faUsers} className="text-5xl mr-4 text-green-500" />
+                <div className="border p-6 rounded-xl shadow-lg bg-gradient-to-r from-green-50 to-green-100 flex items-center hover:shadow-2xl transition-shadow duration-300">
+                    <FontAwesomeIcon icon={faUsers} className="text-5xl mr-4 text-green-600" />
                     <div>
                         <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Users</h2>
                         <p className="text-2xl sm:text-3xl font-bold text-green-600">{totalUsers}</p>
                     </div>
                 </div>
 
+                {/* Total Items Pending */}
+                <div className="border p-6 rounded-xl shadow-lg bg-gradient-to-r from-yellow-50 to-yellow-100 flex items-center hover:shadow-2xl transition-shadow duration-300">
+                    <FontAwesomeIcon icon={faHourglassStart} className="text-5xl mr-4 text-yellow-600" />
+                    <div>
+                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Orders Pending</h2>
+                        <p className="text-2xl sm:text-3xl font-bold text-yellow-600">{totalPendingOrders}</p>
+                    </div>
+                </div>
                 {/* Total Sales Card */}
-                <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
-                    <FontAwesomeIcon icon={faDollarSign} className="text-5xl mr-4 text-yellow-500" />
+                <div className="border p-6 rounded-xl shadow-lg bg-gradient-to-r from-yellow-50 to-yellow-100 flex items-center hover:shadow-2xl transition-shadow duration-300">
+                    <FontAwesomeIcon icon={faDollarSign} className="text-5xl mr-4 text-yellow-600" />
                     <div>
                         <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Sales</h2>
                         <p className="text-2xl sm:text-3xl font-bold text-yellow-600">₹{totalSales}</p>
                     </div>
                 </div>
 
-
                 {/* Best Selling Items Card */}
-                <div className="border p-6 rounded-xl shadow-lg bg-white hover:shadow-2xl transition-shadow duration-300">
+                <div className="border p-6 rounded-xl shadow-lg bg-gradient-to-r from-blue-50 to-blue-100  hover:shadow-2xl transition-shadow duration-300">
                     <div className="flex items-center">
-                        <FontAwesomeIcon icon={faChartLine} className="text-5xl mr-4 text-purple-500" />
+                        <FontAwesomeIcon icon={faChartLine} className="text-5xl mr-4 text-blue-600" />
                         <div>
                             <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Best Selling Items</h2>
                         </div>
@@ -209,7 +212,7 @@ const AdminDashboard = () => {
                         {bestSellingItems.length > 0 ? (
                             bestSellingItems.slice(0, 3).map((item) => (
                                 <li key={item.name} className="flex items-center space-x-2">
-                                    <FontAwesomeIcon icon={faCheckCircle} className="text-green-500" />
+                                    <FontAwesomeIcon icon={faCheckCircle} className="text-green-600" />
                                     <span>{item.name} - <span className="font-bold">Sold: {item.totalSold}</span></span>
                                 </li>
                             ))
@@ -218,9 +221,10 @@ const AdminDashboard = () => {
                         )}
                     </ul>
                 </div>
+
                 {/* Total Orders Card */}
-                <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
-                    <FontAwesomeIcon icon={faShoppingCart} className="text-5xl mr-4 text-blue-500" />
+                <div className="border p-6 rounded-xl shadow-lg bg-gradient-to-r from-blue-50 to-blue-100 flex items-center hover:shadow-2xl transition-shadow duration-300">
+                    <FontAwesomeIcon icon={faCartArrowDown} className="text-5xl mr-4 text-blue-600" />
                     <div>
                         <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Placed Orders</h2>
                         <p className="text-2xl sm:text-3xl font-bold text-blue-600">{totalOrders}</p>
@@ -228,14 +232,28 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Total Items Ordered */}
-                <div className="border p-6 rounded-xl shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
-                    <FontAwesomeIcon icon={faBoxOpen} className="text-5xl mr-4 text-indigo-500" />
+                <div className="border p-6 rounded-xl shadow-lg bg-gradient-to-r from-indigo-50 to-indigo-100 flex items-center hover:shadow-2xl transition-shadow duration-300">
+                    <FontAwesomeIcon icon={faBoxOpen} className="text-5xl mr-4 text-indigo-600" />
                     <div>
                         <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Items Ordered</h2>
                         <p className="text-2xl sm:text-3xl font-bold text-indigo-600">{totalItemsOrder}</p>
                     </div>
                 </div>
+
+                {/* Recent Orders */}
+                <div className="border p-6 rounded-xl shadow-lg bg-gradient-to-r from-indigo-50 to-indigo-100 flex items-center hover:shadow-2xl transition-shadow duration-300">
+                    <FontAwesomeIcon icon={faUtensils} className="text-5xl mr-4 text-indigo-600" />
+                    <div>
+                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Recent Orders (Last 7 days)</h2>
+                        <p className="text-2xl sm:text-3xl font-bold text-indigo-600">{totalRecentOrders}</p>
+                    </div>
+                </div>
             </div>
+
+
+
+
+
 
 
             {/* Bar Chart Section */}

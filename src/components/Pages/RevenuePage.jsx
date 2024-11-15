@@ -15,7 +15,7 @@ import {
 import { API_URL } from '../../config';
 import LoadingIndicator from '../Menu/LoadingIndicator';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHandHoldingHeart, faHome } from '@fortawesome/free-solid-svg-icons';
+import { faCartArrowDown, faHandHoldingHeart, faHome, faShoppingBag, faTruck, faUtensils } from '@fortawesome/free-solid-svg-icons';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
@@ -140,14 +140,14 @@ const RevenuePage = () => {
             {/* Cards for Total Revenue by Delivery Option */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
                 <div className="border p-6 rounded-lg shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
-                    <FontAwesomeIcon icon={faHome} className="text-5xl mr-4 text-blue-500" />
+                    <FontAwesomeIcon icon={faTruck} className="text-5xl mr-4 text-blue-500" />
                     <div>
                         <h2 className="text-lg font-semibold text-gray-800">Coffee-to-Home Revenue</h2>
                         <p className="text-2xl font-bold text-blue-600">₹{deliveryChartData.labels?.includes('home') ? deliveryChartData.datasets[0].data[deliveryChartData.labels.indexOf('home')] : 0}</p>
                     </div>
                 </div>
                 <div className="border p-6 rounded-lg shadow-lg bg-white flex items-center hover:shadow-2xl transition-shadow duration-300">
-                    <FontAwesomeIcon icon={faHandHoldingHeart} className="text-5xl mr-4 text-green-500" />
+                    <FontAwesomeIcon icon={faUtensils} className="text-5xl mr-4 text-green-500" />
                     <div>
                         <h2 className="text-lg font-semibold text-gray-800">Takeaway Revenue</h2>
                         <p className="text-2xl font-bold text-green-600">₹{deliveryChartData.labels?.includes('hand') ? deliveryChartData.datasets[0].data[deliveryChartData.labels.indexOf('hand')] : 0}</p>

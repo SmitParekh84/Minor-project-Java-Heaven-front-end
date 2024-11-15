@@ -118,9 +118,9 @@ export default function AdminLogin() {
     };
 
     return (
-        <div className="container mx-auto max-w-7xl pt-6 sm:py-18 lg:pt-6 min-h-screen ">
-            <div className="flex items-center justify-center bg-background">
-                <div className="bg-secondary rounded-lg shadow-lg m-5 p-11 max-w-sm w-full">
+        <div className="rounded-lg p-6 w-full container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0 ">
+            <div className="container  h-screen  flex flex-col items-center justify-center bg-background">
+                <div className="bg-secondary rounded-lg  shadow-lg m-5 p-11 max-w-sm w-full">
                     <h2 className="text-2xl text-center font-bold text-primary-foreground mb-6">
                         Admin Login
                     </h2>
