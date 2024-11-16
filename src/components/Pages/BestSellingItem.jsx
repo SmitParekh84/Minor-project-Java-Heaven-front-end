@@ -82,7 +82,7 @@ const BestSellingItem = () => {
 
             {/* Best Selling Items Section */}
             <div className="bg-white p-4 rounded-lg shadow-lg ">
-                <h2 className="text-xl font-bold mb-4 text-secondary border-b-2 border-setext-secondary pb-2">Top 5 Selling Items</h2>
+                <h2 className="text-xl font-bold mb-4 text-secondary border-b-2 border-setext-secondary pb-2">Top Selling Items</h2>
                 <div className="max-h-60 overflow-y-auto">
                     <ul className="list-disc pl-4">
                         {bestSellingItems.length > 0 ? (

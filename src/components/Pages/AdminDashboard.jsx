@@ -226,7 +226,7 @@ const AdminDashboard = () => {
                 <div className="border p-6 rounded-xl shadow-lg bg-gradient-to-r from-blue-50 to-blue-100 flex items-center hover:shadow-2xl transition-shadow duration-300">
                     <FontAwesomeIcon icon={faCartArrowDown} className="text-5xl mr-4 text-blue-600" />
                     <div>
-                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Placed Orders</h2>
+                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Orders</h2>
                         <p className="text-2xl sm:text-3xl font-bold text-blue-600">{totalOrders}</p>
                     </div>
                 </div>
