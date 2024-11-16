@@ -135,21 +135,23 @@ const Cart = () => {
   }
 
   return (
-    <div className="rounded-lg p-6 w-full h-screen container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
+    <div className="rounded-lg p-6 w-full  container mx-auto max-w-7xl pt-0 sm:py-18 lg:pt-0">
       {/* Rest of your component structure here */}
       <div className="container mx-auto p-4 mt-2">
         <h2 className="text-4xl font-bold mb-8 text-center text-gray-900">Your Shopping Cart</h2>
 
         {cartItems.length === 0 ? (
-          <div className="text-center p-6  rounded-lg">
-            <p className="text-xl text-gray-700">Your cart is currently empty. Start adding some items!</p>
-            <button
-              onClick={() => navigate("/menu")}
-              className="mt-4 px-6 py-3 bg-secondary text-white font-semibold rounded-lg hover:bg-secondary-light transition duration-200"
-            >
-              Continue Shopping
-            </button>
-          </div>
+          <div className="h-screen">
+            <div className="text-center p-6  rounded-lg">
+              <p className="text-xl text-gray-700">Your cart is currently empty. Start adding some items!</p>
+              <button
+                onClick={() => navigate("/menu")}
+                className="mt-4 px-6 py-3 bg-secondary text-white font-semibold rounded-lg hover:bg-secondary-light transition duration-200"
+              >
+                Continue Shopping
+              </button>
+            </div>
+          </div >
         ) : (
           // Display cart items if not empty
           <>
