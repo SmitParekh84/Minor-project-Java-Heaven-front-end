@@ -34,6 +34,7 @@
     "swiper": "^11.1.14"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^5.15.11",
     "@types/lodash": "^4.17.0",
     "@types/node": "^20.14.0",
     "@types/react": "^18.3.3",
