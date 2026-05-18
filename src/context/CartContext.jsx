@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { API_URL } from '../config';
 
 const CartContext = createContext();
@@ -6,6 +6,7 @@ const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
+    const isMounted = useRef(false);
     const [cartItems, setCartItems] = useState(() => {
         const savedToken = localStorage.getItem('carttoken');
         if (savedToken) {
@@ -92,13 +93,16 @@ export const CartProvider = ({ children }) => {
 
 
 
-    // Update localStorage and send token to the server whenever cartItems change
+    // Update localStorage and sync to server whenever cartItems change (skip initial mount)
     useEffect(() => {
         const token = createCartToken(cartItems);
         localStorage.setItem('carttoken', token);
 
-        updateCartOnServer(); // Send the token to the server only if there are cart items
-        // console.log("Token being sent:", token);
+        if (isMounted.current) {
+            updateCartOnServer();
+        } else {
+            isMounted.current = true;
+        }
     }, [cartItems]);
 
     const addToCart = (newItem) => {

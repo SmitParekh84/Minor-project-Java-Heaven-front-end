@@ -45,7 +45,7 @@ export default function App() {
               <Navbar />
 
               <Suspense fallback={<div className="flex-grow"><LoadingIndicator /></div>}>
-                <Routes className="flex-grow">
+                <Routes>
                   {/* Public Routes */}
                   <Route path="/" element={<Hero />} />
                   <Route path="/menu/:category?" element={<ItemList />} />

@@ -164,7 +164,7 @@ const Cart = () => {
                     <p className="text-gray-700 mt-1">Price: <span className="font-semibold">₹ {item.price.toFixed(2)}</span></p>
                     <p className="text-gray-700 mt-1">Size: <span className="font-semibold">{item.size}</span></p>
                     <p className="text-gray-800 mt-2 font-semibold">
-                      Subtotal: <span className="text-blue-600">₹ {(item.price * item.quantity).toFixed(2)}</span>
+                      Subtotal: <span className="text-secondary-light">₹ {(item.price * item.quantity).toFixed(2)}</span>
                     </p>
                   </div>
                   <div className="flex items-center justify-between mt-4">

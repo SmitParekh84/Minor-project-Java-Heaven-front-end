@@ -6,12 +6,18 @@ import { faFacebook, faTwitter, faInstagram, faLinkedin } from '@fortawesome/fre
 const FooterSection = ({ title, links }) => (
   <div className="mr-10">
     <h3 className="font-semibold mb-2 text-primary-foreground">{title}</h3>
-    <ul>
-      {links.map(({ to, label, ariaLabel }) => (
-        <li key={to}>
-          <Link to={to} className="text-muted-foreground hover:text-primary" aria-label={ariaLabel}>
-            {label}
-          </Link>
+    <ul className="space-y-1">
+      {links.map(({ to, href, label, ariaLabel }) => (
+        <li key={label}>
+          {href ? (
+            <a href={href} aria-label={ariaLabel} className="text-muted-foreground hover:text-primary transition-colors duration-200">
+              {label}
+            </a>
+          ) : (
+            <Link to={to} className="text-muted-foreground hover:text-primary transition-colors duration-200" aria-label={ariaLabel}>
+              {label}
+            </Link>
+          )}
         </li>
       ))}
     </ul>
@@ -27,24 +33,23 @@ const SocialMediaLink = ({ href, label, ariaLabel, icon }) => (
 
 export default function Footer() {
   const aboutUsLinks = [
-    { to: "/heritage", label: "Our Heritage", ariaLabel: "Learn about our heritage" },
-    { to: "/coffeehouse", label: "Coffeehouse", ariaLabel: "Explore our coffeehouse" },
-    { to: "/company", label: "Our Company", ariaLabel: "Discover more about our company" },
+    { to: "/about", label: "Our Story", ariaLabel: "Learn about our story" },
+    { to: "/leadership-team", label: "Leadership Team", ariaLabel: "Meet our leadership team" },
+    { to: "/menu", label: "Our Menu", ariaLabel: "Explore our menu" },
   ];
 
   const responsibilityLinks = [
-    { to: "/diversity", label: "Diversity", ariaLabel: "Learn about our diversity initiatives" },
-    { to: "/community", label: "Community", ariaLabel: "Read about our community efforts" },
-    { to: "/ethical-sourcing", label: "Ethical Sourcing", ariaLabel: "Understand our ethical sourcing" },
-    { to: "/environment", label: "Environmental Stewardship", ariaLabel: "Explore our environmental stewardship" },
-    { to: "/learn-more", label: "Learn More", ariaLabel: "Learn more about us" },
+    { href: "#", label: "Diversity", ariaLabel: "Learn about our diversity initiatives" },
+    { href: "#", label: "Community", ariaLabel: "Read about our community efforts" },
+    { href: "#", label: "Ethical Sourcing", ariaLabel: "Understand our ethical sourcing" },
+    { href: "#", label: "Environmental Stewardship", ariaLabel: "Explore our environmental stewardship" },
   ];
 
   const quickLinks = [
-    { to: "/privacy-policy", label: "Privacy Policy", ariaLabel: "Read our privacy policy" },
-    { to: "/faqs", label: "FAQs", ariaLabel: "Frequently asked questions" },
-    { to: "/customer-service", label: "Customer Service", ariaLabel: "Contact our customer service" },
-    { to: "/delivery", label: "Delivery", ariaLabel: "Learn about our delivery options" },
+    { href: "#", label: "Privacy Policy", ariaLabel: "Read our privacy policy" },
+    { href: "#", label: "FAQs", ariaLabel: "Frequently asked questions" },
+    { to: "/get-help", label: "Customer Service", ariaLabel: "Contact our customer service" },
+    { href: "#", label: "Delivery Info", ariaLabel: "Learn about our delivery options" },
   ];
 
   const socialMediaLinks = [
