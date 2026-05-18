@@ -1,29 +1,31 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useUser } from "../../context/UserContext"; // Adjust the import path
+import { Link, useNavigate } from "react-router-dom";
+import { useUser } from "../../context/UserContext";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { API_URL } from "../../config";
 import { useCart } from "../../context/CartContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 export default function Login() {
     const navigate = useNavigate();
-    const { setCartItems } = useCart(); // Access setCartItems from CartContext
-    const { setUser } = useUser(); // Access setUser from UserContext
-    const [loading, setLoading] = useState(false); // New loading state
+    const { setCartItems } = useCart();
+    const { setUser } = useUser();
+    const [loading, setLoading] = useState(false);
 
     const [credentials, setCredentials] = useState({
         identifier: "",
         password: "",
     });
-    const [error, setError] = useState("");
-    const [showPassword, setShowPassword] = useState(false); // State to manage password visibility
-    const [showModal, setShowModal] = useState(false); // State to manage modal visibility
-    const [sessionConflict, setSessionConflict] = useState(false); // State to check if session conflict exists
+    const [showPassword, setShowPassword] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setCredentials({ ...credentials, [name]: value });
     };
+
     const parseJwt = (token) => {
         try {
             const base64Url = token.split('.')[1];
@@ -32,91 +34,69 @@ export default function Login() {
                 '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
             ).join(''));
             return JSON.parse(jsonPayload);
-        } catch (error) {
+        } catch {
             return null;
         }
     };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true); // Set loading to true when submitting
+        setLoading(true);
         try {
             const response = await axios.post(`${API_URL}/api/login`, credentials);
-
             const { token, sessionId, userId, user, conflict } = response.data;
+
             if (conflict) {
-                // If conflict exists, show the modal to the user
-                setSessionConflict(true);
                 setShowModal(true);
                 return;
             }
-
-            // Log values before storing them
-            console.log('Login response:', response.data);
 
             localStorage.setItem('token', token);
             sessionStorage.setItem('sessionId', sessionId);
             sessionStorage.setItem('userId', userId);
             localStorage.setItem("userInfo", token);
 
-            const userInfoString = JSON.stringify(user);
-
-            const parsedUserInfo = JSON.parse(userInfoString);
-
-            const uId = parsedUserInfo._id;
+            const uId = user._id;
             setUser(user);
-   
 
             const cartResponse = await fetch(`${API_URL}/api/users/cart/${uId}`);
-            const cartData = await cartResponse.json(); // Parse the response to JSON
-            setCartItems(cartData?.cart)
-            const cartToken = btoa(JSON.stringify(cartData)); // Generate the cart token
-            localStorage.setItem('carttoken', cartToken); // Store it in localStorage
+            const cartData = await cartResponse.json();
+            setCartItems(cartData?.cart);
+            const cartToken = btoa(JSON.stringify(cartData));
+            localStorage.setItem('carttoken', cartToken);
 
             toast.success(response.data.msg ?? 'Login successful.');
-
             navigate("/");
         } catch (err) {
             toast.error(err.response?.data?.msg || "Login failed. Please try again.");
         } finally {
-            setLoading(false); // Set loading to false after request completes
+            setLoading(false);
         }
     };
-    // // Function to create a cart token by encoding the cart items to a base64 string
-    // const createCartToken = (items) => {
-    //     return btoa(JSON.stringify({ cartItems: items })); // Convert items to JSON and then to Base64
-    // };
+
     const handleLogoutOtherSessions = async () => {
         try {
-            // Get the userId from session storage
-            const response1 = await axios.post(`${API_URL}/api/login`, credentials);
-            const { userId } = response1.data;
+            const loginResponse = await axios.post(`${API_URL}/api/login`, credentials);
+            const { userId } = loginResponse.data;
 
-            // const { userId } = response1.data;
             if (!userId) {
                 toast.error("User ID is not available. Please log in again.");
-                return; // Exit if userId is not found
+                return;
             }
 
-            // Send request to logout other sessions
             const response = await axios.post(`${API_URL}/api/logout-other-sessions`, { userId });
 
-            // Handle response
             if (response.data.success) {
-                setShowModal(false); // Close any modal if applicable
+                setShowModal(false);
                 toast.success("Logged out from other sessions. Please log in again.");
-                // If necessary, you can call a function to refresh the session or redirect
-                navigate("/login"); // Or wherever you want to redirect after logging out
+                navigate("/login");
             } else {
                 toast.error("Failed to log out from other sessions. Please try again.");
             }
-        } catch (err) {
-            // Log error for debugging purposes
-            console.error("Error logging out from other sessions:", err);
+        } catch {
             toast.error("An error occurred. Please try again.");
         }
     };
-
-
 
     const handleCancel = () => {
         setShowModal(false);
@@ -124,7 +104,7 @@ export default function Login() {
     };
 
     return (
-        <div className="container mx-auto max-w-7xl pt-6 sm:py-18 lg:pt-6 min-h-screen ">
+        <div className="container mx-auto max-w-7xl pt-6 sm:py-18 lg:pt-6 min-h-screen">
             <div className="flex items-center justify-center bg-background">
                 <div className="bg-secondary rounded-lg shadow-lg m-5 p-11 max-w-sm w-full">
                     <h2 className="text-2xl text-center font-bold text-primary-foreground mb-6">
@@ -133,8 +113,8 @@ export default function Login() {
 
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
-                            <label className="block text-muted-foreground" htmlFor="username">
-                                Email
+                            <label className="block text-muted-foreground" htmlFor="identifier">
+                                Email or Mobile
                             </label>
                             <input
                                 type="text"
@@ -147,53 +127,54 @@ export default function Login() {
                                 required
                             />
                         </div>
-                        <div className="mb-4 relative"> {/* Added relative positioning */}
+                        <div className="mb-4 relative">
                             <label className="block text-muted-foreground" htmlFor="password">
                                 Password
                             </label>
                             <input
-                                type={showPassword ? "text" : "password"} // Toggle input type
+                                type={showPassword ? "text" : "password"}
                                 id="password"
                                 name="password"
                                 placeholder="Enter Password *"
-                                className="mt-1 block w-full border border-border rounded-md p-2 focus:outline-none focus:ring focus:ring-ring"
+                                className="mt-1 block w-full border border-border rounded-md p-2 pr-10 focus:outline-none focus:ring focus:ring-ring"
                                 value={credentials.password}
                                 onChange={handleChange}
                                 required
                             />
                             <button
                                 type="button"
-                                className="absolute right-2 top-9 text-secondary hover:brightness-150"
-                                onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
+                                className="absolute right-2 top-9 text-gray-500 hover:text-gray-700"
+                                onClick={() => setShowPassword(!showPassword)}
                             >
-                                <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
                             </button>
                         </div>
                         <p className="mb-4 text-muted-foreground">
                             Don&apos;t have an account?{" "}
-                            <a href="/sign-up" className="text-primary-foreground">
+                            <Link to="/sign-up" className="text-primary-foreground font-semibold hover:underline">
                                 Sign Up
-                            </a>
+                            </Link>
                         </p>
                         <button
                             type="submit"
-                            className={`w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            disabled={loading} // Disable button based on loading state
+                            className={`w-full bg-primary-foreground text-secondary hover:bg-primary-foreground/80 py-2 rounded-full font-semibold transition duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            disabled={loading}
                         >
-                            {loading ? "Logging in..." : "Login"} {/* Conditional button text */}
+                            {loading ? "Logging in..." : "Login"}
                         </button>
                     </form>
 
                     <p className="mt-2 text-muted-foreground">
                         Facing trouble logging in?{" "}
-                        <a href="/get-help" className="text-primary-foreground">
+                        <Link to="/get-help" className="text-primary-foreground font-semibold hover:underline">
                             Get Help
-                        </a>
+                        </Link>
                     </p>
                 </div>
             </div>
+
             {showModal && (
-                <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+                <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-xl">
                         <h2 className="text-xl font-bold mb-4">Session Conflict</h2>
                         <p className="mb-6">

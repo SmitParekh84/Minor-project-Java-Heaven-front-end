@@ -29,7 +29,7 @@ const TypeMenu = () => {
         // Group items by category and find the oldest item in each category
         const categoryMap = data.reduce((acc, item) => {
           const category = item.category;
-          const imageUrl = item.imageUrl || defaultImage; // Use default image if not provided
+          const imageUrl = item.imageUrl || DEFAULT_IMAGE; // Use default image if not provided
 
           // If category doesn't exist, initialize it with the item
           if (!acc[category]) {

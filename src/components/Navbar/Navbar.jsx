@@ -11,14 +11,12 @@ import { faArrowRight, faEnvelope, faSignOutAlt, faUser, faBars, faXmark, faShop
 
 const adminNavigation = [
   { name: 'Dashboard', href: '/admin-dashboard' },
-  { name: 'Orders', href: 'admin/orders' },
+  { name: 'Orders', href: '/admin/orders' },
   { name: 'Admin Edit', href: '/admin/edit' },
   { name: 'Revenue', href: '/revenue' },
   { name: 'Add Menu Item', href: '/admin/add-menu-item' },
-
   { name: 'Stock Management', href: '/admin/stock' },
-  { name: 'Best Selling Item', href: 'admin/best-selling' },
-
+  { name: 'Best Selling Item', href: '/admin/best-selling' },
 ];
 const parseJwt = (token) => {
   try {
@@ -33,11 +31,29 @@ const parseJwt = (token) => {
   }
 };
 
-// const storedUserInfo = localStorage.getItem('user');
-// const decodedToken = JSON.stringify(storedUserInfo);
-// const loggedInUser = parseJwt(decodedToken);
-
-
+const ProfileMenu = ({ loggedInUser, handleLogout, loading, onClose }) => (
+  <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-[100]">
+    <div className="px-4 py-3 flex items-center text-gray-800">
+      <FontAwesomeIcon icon={faUser} className="mr-2 text-gray-500" />
+      <Link to="/profile" className="hover:text-secondary font-semibold truncate" onClick={onClose}>
+        {loggedInUser?.username || "Guest"}
+      </Link>
+    </div>
+    <div className="px-4 py-2 flex items-center text-gray-600 text-sm">
+      <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-gray-400" />
+      <span className="truncate">{loggedInUser?.email || ""}</span>
+    </div>
+    <div className="border-t border-gray-200" />
+    <button
+      onClick={handleLogout}
+      className={`flex items-center justify-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 rounded-b-lg ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+      disabled={loading}
+    >
+      <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
+      {loading ? "Logging out..." : "Logout"}
+    </button>
+  </div>
+);
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -49,10 +65,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const totalItemsInCart = useMemo(() => cartItems.reduce((total, item) => total + item.quantity, 0), [cartItems]);
 
-  const storedUserInfo = localStorage.getItem('user');
-  const decodedToken = JSON.stringify(storedUserInfo);
-  const loggedInUser = parseJwt(decodedToken);
-  // console.log("loggedInUser", loggedInUser);
+  const loggedInUser = useMemo(() => parseJwt(localStorage.getItem('user')), [isLoggedIn]);
   const menuRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const buttonRef = useRef(null); // Ref to the profile button
@@ -135,34 +148,6 @@ export default function Navbar() {
     }
 
   };
-  // const storedAdminInfo = localStorage.getItem('user');
-  // const decodedAdminToken = JSON.stringify(storedAdminInfo);
-  // const loggedInAdmin = parseJwt(decodedAdminToken);
-  // // const adminInfo = JSON.parse(localStorage.getItem('user'));
-  // const isAdmin = loggedInAdmin?.role === 'admin';
-  const ProfileMenu = ({ user, handleLogout, loading, setShowProfileMenu }) => (
-    <div className="absolute right-0 mt-2 w-auto bg-white border border-gray-300 rounded-md shadow-lg z-100">
-      <div className="px-4 py-2 flex items-center text-gray-800">
-        <FontAwesomeIcon icon={faUser} className="mr-2 text-gray-600" />
-        <Link to="/profile" className="hover:text-blue-500 font-semibold" onClick={() => handleClickOutside(false)}>
-          {loggedInUser?.username || "Guest"}
-        </Link>
-      </div>
-      <div className="px-4 py-2 flex items-center text-gray-800">
-        <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-gray-600" />
-        <span>{loggedInUser?.email || "Guest"}</span>
-      </div>
-      <div className="border-t border-gray-300"></div>
-      <button
-        onClick={handleLogout}
-        className={`flex items-center justify-center w-full text-center px-4 py-2 text-sm text-red-600 hover:bg-gray-200 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-        disabled={loading}
-      >
-        <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
-        {loading ? "Logging out..." : "Logout"}
-      </button>
-    </div>
-  );
   const handleLinkClick = (path) => {
     setMobileMenuOpen(false);
     setShowProfileMenu(false); // Close profile menu on navigation
@@ -194,11 +179,7 @@ export default function Navbar() {
             </Link>
           )}
 
-          {isLoggedIn ? (
-            <div className="relative" ref={menuRef}>
-
-            </div>
-          ) : (
+          {!isLoggedIn && (
             <Link to="/login" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
               <span className="mr-2">Log in</span> <FontAwesomeIcon icon={faArrowRight} aria-hidden="true" />
             </Link>
@@ -262,7 +243,7 @@ export default function Navbar() {
                 <FontAwesomeIcon icon={faUser} className=" cursor-pointer" />
                 <span className="truncate">{loggedInUser.username || "Guest"}</span>
               </button>
-              {showProfileMenu && <ProfileMenu user={user} handleLogout={handleLogout} loading={loading} />}
+              {showProfileMenu && <ProfileMenu loggedInUser={loggedInUser} handleLogout={handleLogout} loading={loading} onClose={() => setShowProfileMenu(false)} />}
             </div>
           ) : (
             <Link to="/login" className="text-sm bg-secondary rounded-full py-2 px-8 font-semibold leading-6 text-primary shadow-md transition-transform duration-300 ease-in-out hover:scale-105">
