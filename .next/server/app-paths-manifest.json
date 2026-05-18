@@ -1,0 +1,13 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/tenant/route": "app/api/tenant/route.js",
+  "/api/super-admin/tenants/route": "app/api/super-admin/tenants/route.js",
+  "/menu/page": "app/menu/page.js",
+  "/page": "app/page.js",
+  "/api/super-admin/auth/route": "app/api/super-admin/auth/route.js",
+  "/api/super-admin/tenants/[id]/route": "app/api/super-admin/tenants/[id]/route.js",
+  "/super-admin/page": "app/super-admin/page.js",
+  "/super-admin/tenants/new/page": "app/super-admin/tenants/new/page.js",
+  "/super-admin/login/page": "app/super-admin/login/page.js",
+  "/super-admin/tenants/[id]/page": "app/super-admin/tenants/[id]/page.js"
+}
