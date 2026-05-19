@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import ItemDetailClient from '@/components/item/ItemDetailClient';
+import { JsonLd } from '@/components/JsonLd';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
@@ -47,5 +49,31 @@ export default async function ItemPage({ params }: { params: { id: string } }) {
 
   const similar = item.category ? await getSimilar(item.category, params.id) : [];
 
-  return <ItemDetailClient item={item} similar={similar} />;
+  const domain = headers().get('x-tenant-domain') ?? 'localhost';
+  const protocol = domain.startsWith('localhost') ? 'http' : 'https';
+  const baseUrl = `${protocol}://${domain}`;
+
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: item.name,
+    description: item.description,
+    ...(item.imageUrl ? { image: item.imageUrl } : {}),
+    offers: {
+      '@type': 'Offer',
+      price: String(item.price),
+      priceCurrency: 'INR',
+      availability: (item.stock ?? 1) > 0
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+      url: `${baseUrl}/item/${item._id}`,
+    },
+  };
+
+  return (
+    <>
+      <JsonLd data={schema} />
+      <ItemDetailClient item={item} similar={similar} />
+    </>
+  );
 }
