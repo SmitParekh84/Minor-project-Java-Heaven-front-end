@@ -7,7 +7,7 @@ import { JsonLd } from '@/components/JsonLd';
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const domain = headers().get('x-tenant-domain') ?? 'localhost';
+  const domain = (await headers()).get('x-tenant-domain') ?? 'localhost';
   const tenant = await getTenantByDomain(domain);
   return {
     title: `Menu — ${tenant.brandName}`,
@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function MenuPage() {
-  const domain = headers().get('x-tenant-domain') ?? 'localhost';
+  const domain = (await headers()).get('x-tenant-domain') ?? 'localhost';
   const protocol = domain.startsWith('localhost') ? 'http' : 'https';
   const baseUrl = `${protocol}://${domain}`;
   const tenant = await getTenantByDomain(domain);

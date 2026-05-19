@@ -5,7 +5,7 @@ import { getTenantByDomain } from '@/lib/tenant';
 import { JsonLd } from '@/components/JsonLd';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const domain = headers().get('x-tenant-domain') ?? 'localhost';
+  const domain = (await headers()).get('x-tenant-domain') ?? 'localhost';
   const tenant = await getTenantByDomain(domain);
   return {
     title: 'About',
@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
-  const domain = headers().get('x-tenant-domain') ?? 'localhost';
+  const domain = (await headers()).get('x-tenant-domain') ?? 'localhost';
   const protocol = domain.startsWith('localhost') ? 'http' : 'https';
   const baseUrl = `${protocol}://${domain}`;
   const tenant = await getTenantByDomain(domain);

@@ -4,7 +4,7 @@ import HeroClient from '@/components/hero/HeroClient';
 import { JsonLd } from '@/components/JsonLd';
 
 export default async function HomePage() {
-  const domain = headers().get('x-tenant-domain') ?? 'localhost';
+  const domain = (await headers()).get('x-tenant-domain') ?? 'localhost';
   const protocol = domain.startsWith('localhost') ? 'http' : 'https';
   const baseUrl = `${protocol}://${domain}`;
   const tenant = await getTenantByDomain(domain);
