@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { ImageUploadField } from '@/components/super-admin/ImageUploadField';
 
 interface TenantForm {
   brandName: string;
@@ -181,10 +182,11 @@ export default function TenantEditor() {
 
               {activeTab === 'assets' && (
                 <>
-                  <Field label="Logo URL"        value={form.assets.logoUrl}       onChange={v => setAssets('logoUrl', v)}       placeholder="https://cdn.example.com/logo.png" />
-                  <Field label="Favicon URL"     value={form.assets.faviconUrl}    onChange={v => setAssets('faviconUrl', v)}    placeholder="https://cdn.example.com/favicon.png" />
-                  <Field label="Hero Image URL"  value={form.assets.heroImage}     onChange={v => setAssets('heroImage', v)}     placeholder="https://cdn.example.com/hero.jpg" />
-                  <Field label="Footer Logo URL" value={form.assets.footerLogoUrl} onChange={v => setAssets('footerLogoUrl', v)} placeholder="https://cdn.example.com/footer-logo.png" />
+                  <p className="text-xs text-gray-500">Paste a URL or click <span className="text-indigo-400 font-semibold">↑ Upload</span> to upload directly to Cloudinary.</p>
+                  <ImageUploadField label="Logo"         value={form.assets.logoUrl}       onChange={v => setAssets('logoUrl', v)}       placeholder="https://cdn.example.com/logo.png" />
+                  <ImageUploadField label="Favicon"      value={form.assets.faviconUrl}    onChange={v => setAssets('faviconUrl', v)}    placeholder="https://cdn.example.com/favicon.ico" />
+                  <ImageUploadField label="Hero Image"   value={form.assets.heroImage}     onChange={v => setAssets('heroImage', v)}     placeholder="https://cdn.example.com/hero.jpg" />
+                  <ImageUploadField label="Footer Logo"  value={form.assets.footerLogoUrl} onChange={v => setAssets('footerLogoUrl', v)} placeholder="https://cdn.example.com/footer-logo.png" />
                 </>
               )}
 
