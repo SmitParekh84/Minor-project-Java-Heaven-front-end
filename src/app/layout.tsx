@@ -9,7 +9,7 @@ import Footer from '@/components/Footer';
 import Providers from '@/components/providers/Providers';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const domain = headers().get('x-tenant-domain') ?? 'localhost';
+  const domain = (await headers()).get('x-tenant-domain') ?? 'localhost';
   const tenant = await getTenantByDomain(domain);
   return {
     title: {
@@ -26,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const domain = headers().get('x-tenant-domain') ?? 'localhost';
+  const domain = (await headers()).get('x-tenant-domain') ?? 'localhost';
   const tenant = await getTenantByDomain(domain);
   const cssVars = buildCSSVars(tenant);
   const inlineStyle = cssVarsToString(cssVars);

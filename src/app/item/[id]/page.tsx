@@ -32,9 +32,10 @@ async function getSimilar(category: string, excludeId: string) {
 export async function generateMetadata({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }): Promise<Metadata> {
-  const item = await getItem(params.id);
+  const { id } = await params;
+  const item = await getItem(id);
   if (!item) return { title: 'Item not found' };
   return {
     title: item.name,
@@ -43,13 +44,14 @@ export async function generateMetadata({
   };
 }
 
-export default async function ItemPage({ params }: { params: { id: string } }) {
-  const item = await getItem(params.id);
+export default async function ItemPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const item = await getItem(id);
   if (!item) notFound();
 
-  const similar = item.category ? await getSimilar(item.category, params.id) : [];
+  const similar = item.category ? await getSimilar(item.category, id) : [];
 
-  const domain = headers().get('x-tenant-domain') ?? 'localhost';
+  const domain = (await headers()).get('x-tenant-domain') ?? 'localhost';
   const protocol = domain.startsWith('localhost') ? 'http' : 'https';
   const baseUrl = `${protocol}://${domain}`;
 
@@ -66,7 +68,7 @@ export default async function ItemPage({ params }: { params: { id: string } }) {
       availability: (item.stock ?? 1) > 0
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
-      url: `${baseUrl}/item/${item._id}`,
+      url: `${baseUrl}/item/${id}`,
     },
   };
 

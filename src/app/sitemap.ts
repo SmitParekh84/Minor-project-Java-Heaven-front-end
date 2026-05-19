@@ -14,7 +14,7 @@ const STATIC_ROUTES: { path: string; priority: number; changeFrequency: Metadata
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const domain = headers().get('x-tenant-domain') ?? 'localhost';
+  const domain = (await headers()).get('x-tenant-domain') ?? 'localhost';
   const protocol = domain.startsWith('localhost') ? 'http' : 'https';
   const baseUrl = `${protocol}://${domain}`;
   const now = new Date();

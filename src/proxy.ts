@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 const SUPER_ADMIN_PATH = '/super-admin';
 const SUPER_ADMIN_PASSWORD = process.env.SUPER_ADMIN_PASSWORD ?? 'changeme';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hostname = request.headers.get('host') ?? 'localhost';
 

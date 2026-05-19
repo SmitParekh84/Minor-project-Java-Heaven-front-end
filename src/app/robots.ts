@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { headers } from 'next/headers';
 
-export default function robots(): MetadataRoute.Robots {
-  const domain = headers().get('x-tenant-domain') ?? 'localhost';
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const domain = (await headers()).get('x-tenant-domain') ?? 'localhost';
   const protocol = domain.startsWith('localhost') ? 'http' : 'https';
   return {
     rules: [
