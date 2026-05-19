@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import Image from 'next/image';
 import { getTenantByDomain } from '@/lib/tenant';
+import { JsonLd } from '@/components/JsonLd';
 
 export async function generateMetadata(): Promise<Metadata> {
   const domain = headers().get('x-tenant-domain') ?? 'localhost';
@@ -14,7 +15,23 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function AboutPage() {
   const domain = headers().get('x-tenant-domain') ?? 'localhost';
+  const protocol = domain.startsWith('localhost') ? 'http' : 'https';
+  const baseUrl = `${protocol}://${domain}`;
   const tenant = await getTenantByDomain(domain);
+
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: `About ${tenant.brandName}`,
+    url: `${baseUrl}/about`,
+    description: `Learn about ${tenant.brandName}'s coffee brewing philosophy and story.`,
+    publisher: {
+      '@type': 'Organization',
+      name: tenant.brandName,
+      url: baseUrl,
+      logo: tenant.assets.logoUrl.startsWith('/') ? `${baseUrl}${tenant.assets.logoUrl}` : tenant.assets.logoUrl,
+    },
+  };
 
   const sections = [
     {
@@ -41,6 +58,8 @@ export default async function AboutPage() {
   ];
 
   return (
+    <>
+    <JsonLd data={schema} />
     <div className="bg-brand-bg min-h-screen">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-14">
         <h1 className="text-4xl font-bold text-brand-text mb-2">About {tenant.brandName}</h1>
@@ -71,5 +90,6 @@ export default async function AboutPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
